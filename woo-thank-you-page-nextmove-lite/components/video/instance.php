@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+#[AllowDynamicProperties]
 class XLWCTY_Video extends XLWCTY_Component {
 
 	private static $instance = null;

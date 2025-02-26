@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+#[AllowDynamicProperties]
 class XLWCTY_Social_Sharing extends XLWCTY_Component {
 
 	private static $instance = null;

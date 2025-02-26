@@ -1,5 +1,6 @@
 <?php
 
+#[AllowDynamicProperties]
 final class Xlwcty_Dynamic_Component {
 	public $page_id = 0;
 	public $current_index = 1;

@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+#[AllowDynamicProperties]
 class xlwcty_Input_Cart_Category_Select {
 	public function __construct() {
 		// vars

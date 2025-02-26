@@ -1,6 +1,6 @@
 <?php
 defined( 'ABSPATH' ) || exit;
-
+#[AllowDynamicProperties]
 class xlwcty_Admin {
 
 	protected static $instance = null;
@@ -497,7 +497,7 @@ class xlwcty_Admin {
 				$option   .= $page->post_title;
 				$option   .= '</option>';
 
-				echo esc_attr( $option );
+				echo ( $option );
 			}
 			?>
         </select>

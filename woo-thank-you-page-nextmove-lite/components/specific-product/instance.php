@@ -1,6 +1,6 @@
 <?php
 defined( 'ABSPATH' ) || exit;
-
+#[AllowDynamicProperties]
 class XLWCTY_Specific_Product extends XLWCTY_Component {
 
 	private static $instance = null;

@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+#[AllowDynamicProperties]
 class XLWCTY_Klarna_compatibility {
 	private static $ins = null;
 

@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) || exit;
  * This file is to initiate XL core and to run some common methods and decide which XL core should run
  */
 
-$this_current_version = '6.3';
+$this_current_version = '6.5';
 
 if ( ! class_exists( 'XL_Common' ) ) {
 
@@ -13,7 +13,7 @@ if ( ! class_exists( 'XL_Common' ) ) {
 
 		public static $is_xl_loaded = false;
 
-		public static $current_version = '6.3';
+		public static $current_version = '6.5';
 
 		public static function include_xl_core() {
 

@@ -20,10 +20,20 @@ class XL_deactivate {
 	public static function init() {
 
 		self::load_all_str();
-
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'xl_core_enqueue_scripts' ) );
 		add_action( 'admin_footer', array( __CLASS__, 'maybe_load_deactivate_options' ) );
 
 		add_action( 'wp_ajax_xl_submit_uninstall_reason', array( __CLASS__, '_submit_uninstall_reason_action' ) );
+	}
+
+	/**
+	 * Enqueue styles and scripts for the admin area
+	 */
+	public static function xl_core_enqueue_scripts( $hook ) {
+		// Enqueue only on the plugins page
+		if ( $hook === 'plugins.php' ) {
+			wp_enqueue_style( 'xl-core-css', plugin_dir_url( __FILE__ ) . 'assets/css/xl-core.css', array(), '1.0' );
+		}
 	}
 
 	/**
@@ -155,9 +165,18 @@ class XL_deactivate {
 	 * @since  1.1.2
 	 */
 	public static function _submit_uninstall_reason_action() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'You do not have sufficient permissions to perform this action.' );
+			exit();
+		}
+		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'xl_uninstall_reason_nonce' ) ) {
+			wp_send_json_error( 'Security error.' );
+			exit;
+		}
 
 		if ( ! isset( $_POST['reason_id'] ) ) {
-			exit;
+			wp_send_json_error( 'Missing required data: reason ID.' );
+			exit();
 		}
 
 		$reason_info = isset( $_REQUEST['reason_info'] ) ? trim( stripslashes( $_REQUEST['reason_info'] ) ) : '';
@@ -200,8 +219,8 @@ class XL_deactivate {
 
 		XL_API::post_deactivation_data_v2( $deactivations, $licenses_info_pass );
 		// Print '1' for successful operation.
-		echo 1;
-		exit;
+		wp_send_json_success( array( 'message' => 'Deactivation reason submitted successfully.' ) );
+		exit();
 	}
 
 }

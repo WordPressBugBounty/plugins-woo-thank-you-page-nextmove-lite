@@ -1,15 +1,15 @@
-# Copyright (C) 2024 XLPlugins
+# Copyright (C) 2025 XLPlugins
 # This file is distributed under the GPLv3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: NextMove Lite - Thank You Page for WooCommerce 2.19.0\n"
+"Project-Id-Version: NextMove Lite - Thank You Page for WooCommerce 2.20.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woo-thank-you-page-nextmove-lite\n"
 "Last-Translator: XLPlugins <support@xlplugins.com>\n"
 "Language-Team: XLPlugins <support@xlplugins.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-08-29T10:52:05+00:00\n"
+"POT-Creation-Date: 2025-02-26T08:09:30+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: woo-thank-you-page-nextmove-lite\n"
@@ -31,7 +31,7 @@ msgstr ""
 
 #. Author of the plugin
 #: thank-you-page-for-woocommerce-nextmove-lite.php
-#: includes/xlwcty-xl-support.php:186
+#: includes/xlwcty-xl-support.php:187
 msgid "XLPlugins"
 msgstr ""
 
@@ -65,7 +65,7 @@ msgid "Select Live button to go live. In <strong>Sandbox mode</strong>, only pre
 msgstr ""
 
 #: admin/includes/cmb2-settings-config.php:21
-#: includes/xlwcty-common.php:1669
+#: includes/xlwcty-common.php:1704
 msgid "Live"
 msgstr ""
 
@@ -74,7 +74,7 @@ msgid "Sandbox"
 msgstr ""
 
 #: admin/includes/cmb2-settings-config.php:24
-#: includes/xlwcty-common.php:594
+#: includes/xlwcty-common.php:595
 msgid "General"
 msgstr ""
 
@@ -186,218 +186,218 @@ msgstr ""
 msgid "Log into your google analytics account to <a href=\"https://support.google.com/analytics/answer/1008080?hl=en#trackingID\" target=\"_blank\">find your ID</a>. eg: G-XXXXXXXX."
 msgstr ""
 
-#: admin/includes/pages/xl-automation.php:21
+#: admin/includes/pages/xl-automation.php:22
 msgid "FunnelKit Automations CRM for WordPress by FunnelKit"
 msgstr ""
 
-#: admin/includes/pages/xl-automation.php:22
+#: admin/includes/pages/xl-automation.php:23
 msgid "The All-In-One Email Marketing Platform For WordPress to Create Email Broadcasts and Automated Campaigns"
 msgstr ""
 
-#: admin/includes/pages/xl-automation.php:45
+#: admin/includes/pages/xl-automation.php:46
 msgid "Automated campaigns - abandoned cart recovery, follow-up emails, and more"
 msgstr ""
 
-#: admin/includes/pages/xl-automation.php:46
+#: admin/includes/pages/xl-automation.php:47
 msgid "Text-based email builder to send engaging emails"
 msgstr ""
 
-#: admin/includes/pages/xl-automation.php:47
+#: admin/includes/pages/xl-automation.php:48
 msgid "Abandoned users and cart-related information in one place"
 msgstr ""
 
-#: admin/includes/pages/xl-automation.php:48
+#: admin/includes/pages/xl-automation.php:49
 msgid "Pre-built one-click import automation recipes"
 msgstr ""
 
-#: admin/includes/pages/xl-automation.php:49
+#: admin/includes/pages/xl-automation.php:50
 msgid "Powerful analytics to track and analyze your campaigns"
 msgstr ""
 
-#: admin/includes/pages/xl-automation.php:68
+#: admin/includes/pages/xl-automation.php:69
 msgid "Install and Activate FunnelKit Automations"
 msgstr ""
 
-#: admin/includes/pages/xl-automation.php:69
+#: admin/includes/pages/xl-automation.php:70
 msgid "Click on the button below to install and activate the FunnelKit Automations."
 msgstr ""
 
-#: admin/includes/pages/xl-automation.php:71
-#: admin/includes/pages/xl-cart.php:71
-#: admin/includes/pages/xl-checkout.php:72
-#: admin/includes/pages/xl-stripe.php:74
+#: admin/includes/pages/xl-automation.php:72
+#: admin/includes/pages/xl-cart.php:72
+#: admin/includes/pages/xl-checkout.php:73
+#: admin/includes/pages/xl-stripe.php:75
 msgid "Activate %s"
 msgstr ""
 
-#: admin/includes/pages/xl-automation.php:89
+#: admin/includes/pages/xl-automation.php:90
 msgid "Set Up FunnelKit Automations"
 msgstr ""
 
-#: admin/includes/pages/xl-automation.php:90
+#: admin/includes/pages/xl-automation.php:91
 msgid "Start setting up FunnelKit Automations from the button below. Complete the setup and turn your WooCommerce business into a revenue-generating machine 💰"
 msgstr ""
 
-#: admin/includes/pages/xl-automation.php:91
+#: admin/includes/pages/xl-automation.php:92
 msgid "Start setup FunnelKit Automations"
 msgstr ""
 
-#: admin/includes/pages/xl-cart.php:21
+#: admin/includes/pages/xl-cart.php:22
 msgid "Cart For WooCommerce By FunnelKit"
 msgstr ""
 
-#: admin/includes/pages/xl-cart.php:22
+#: admin/includes/pages/xl-cart.php:23
 msgid "Replace your default WooCommerce cart page with a modern sliding cart for direct checkout - Edit cart, Add upsells and set up a rewards system"
 msgstr ""
 
-#: admin/includes/pages/xl-cart.php:45
+#: admin/includes/pages/xl-cart.php:46
 msgid "Beautiful modern sliding cart for WooCommerce store"
 msgstr ""
 
-#: admin/includes/pages/xl-cart.php:46
+#: admin/includes/pages/xl-cart.php:47
 msgid "Myriad display options to set up the cart"
 msgstr ""
 
-#: admin/includes/pages/xl-cart.php:47
+#: admin/includes/pages/xl-cart.php:48
 msgid "Customize your cart on-brand with styling settings"
 msgstr ""
 
-#: admin/includes/pages/xl-cart.php:48
+#: admin/includes/pages/xl-cart.php:49
 msgid "Modify the items in your WooCommerce cart"
 msgstr ""
 
-#: admin/includes/pages/xl-cart.php:49
+#: admin/includes/pages/xl-cart.php:50
 msgid "Embed the shopping cart on the menu or via shortcodes"
 msgstr ""
 
-#: admin/includes/pages/xl-cart.php:68
+#: admin/includes/pages/xl-cart.php:69
 msgid "Install and Activate FunnelKit Cart"
 msgstr ""
 
-#: admin/includes/pages/xl-cart.php:69
+#: admin/includes/pages/xl-cart.php:70
 msgid "Click on the button below to install and activate the FunnelKit Cart."
 msgstr ""
 
-#: admin/includes/pages/xl-cart.php:89
+#: admin/includes/pages/xl-cart.php:90
 msgid "Setup FunnelKit Cart"
 msgstr ""
 
-#: admin/includes/pages/xl-cart.php:90
+#: admin/includes/pages/xl-cart.php:91
 msgid "Start setting up FunnelKit Cart from the button below."
 msgstr ""
 
-#: admin/includes/pages/xl-cart.php:91
+#: admin/includes/pages/xl-cart.php:92
 msgid "Start setup FunnelKit Cart"
 msgstr ""
 
-#: admin/includes/pages/xl-checkout.php:21
+#: admin/includes/pages/xl-checkout.php:22
 msgid "Funnel Builder for WordPress by FunnelKit"
 msgstr ""
 
-#: admin/includes/pages/xl-checkout.php:22
+#: admin/includes/pages/xl-checkout.php:23
 msgid "Customize WooCommerce Checkout Pages, Conversion Friendly Templates, Performance Stats & A/B Funnel Testing"
 msgstr ""
 
-#: admin/includes/pages/xl-checkout.php:45
+#: admin/includes/pages/xl-checkout.php:46
 msgid "Optimized WooCommerce checkout templates"
 msgstr ""
 
-#: admin/includes/pages/xl-checkout.php:46
+#: admin/includes/pages/xl-checkout.php:47
 msgid "Easy customization and works with all page builders"
 msgstr ""
 
-#: admin/includes/pages/xl-checkout.php:47
+#: admin/includes/pages/xl-checkout.php:48
 msgid "Built-in advanced checkout form fields editor"
 msgstr ""
 
-#: admin/includes/pages/xl-checkout.php:48
+#: admin/includes/pages/xl-checkout.php:49
 msgid "Conversion tracking with pixel events"
 msgstr ""
 
-#: admin/includes/pages/xl-checkout.php:49
+#: admin/includes/pages/xl-checkout.php:50
 msgid "Compatible with all popular payment gateways"
 msgstr ""
 
-#: admin/includes/pages/xl-checkout.php:50
+#: admin/includes/pages/xl-checkout.php:51
 msgid "Powerful analytics for performance tracking"
 msgstr ""
 
-#: admin/includes/pages/xl-checkout.php:69
+#: admin/includes/pages/xl-checkout.php:70
 msgid "Install and Activate the Funnel Builder"
 msgstr ""
 
-#: admin/includes/pages/xl-checkout.php:70
+#: admin/includes/pages/xl-checkout.php:71
 msgid "Click on the button below to install and activate the Funnel Builder."
 msgstr ""
 
-#: admin/includes/pages/xl-checkout.php:90
+#: admin/includes/pages/xl-checkout.php:91
 msgid "Set Up Funnel Builder"
 msgstr ""
 
-#: admin/includes/pages/xl-checkout.php:91
+#: admin/includes/pages/xl-checkout.php:92
 msgid "Start setting up the FunnelKit Funnel Builder from the button below. This could be the start of something awesome! Start building your funnels and skyrocket your sales 🚀 "
 msgstr ""
 
-#: admin/includes/pages/xl-checkout.php:92
+#: admin/includes/pages/xl-checkout.php:93
 msgid "Start setup Funnel Builder"
 msgstr ""
 
-#: admin/includes/pages/xl-stripe.php:21
+#: admin/includes/pages/xl-stripe.php:22
 msgid "Stripe Payment Gateway for WooCommerce by FunnelKit"
 msgstr ""
 
-#: admin/includes/pages/xl-stripe.php:22
+#: admin/includes/pages/xl-stripe.php:23
 msgid "SCA-Ensured Secure Gateway to Accept Payments in WooCommerce, Quick Onboarding, Multiple Payment Methods and Recurring Subscriptions"
 msgstr ""
 
-#: admin/includes/pages/xl-stripe.php:45
+#: admin/includes/pages/xl-stripe.php:46
 msgid "Quick onboarding and easy setup process"
 msgstr ""
 
-#: admin/includes/pages/xl-stripe.php:46
+#: admin/includes/pages/xl-stripe.php:47
 msgid "Major debit and credit cards such as MasterCard, Visa, American Express, etc."
 msgstr ""
 
-#: admin/includes/pages/xl-stripe.php:47
+#: admin/includes/pages/xl-stripe.php:48
 msgid "Local payment methods such as iDEAL, P24, SEPA, Bancontact, and more"
 msgstr ""
 
-#: admin/includes/pages/xl-stripe.php:48
+#: admin/includes/pages/xl-stripe.php:49
 msgid "Express checkout payments such as Apple Pay and Google Pay"
 msgstr ""
 
-#: admin/includes/pages/xl-stripe.php:49
+#: admin/includes/pages/xl-stripe.php:50
 msgid "Automatic webhook creation and synchronization"
 msgstr ""
 
-#: admin/includes/pages/xl-stripe.php:50
+#: admin/includes/pages/xl-stripe.php:51
 msgid "SCA-ensured, 3D secure payments"
 msgstr ""
 
-#: admin/includes/pages/xl-stripe.php:51
+#: admin/includes/pages/xl-stripe.php:52
 msgid "Recurring payments for subscriptions"
 msgstr ""
 
-#: admin/includes/pages/xl-stripe.php:52
+#: admin/includes/pages/xl-stripe.php:53
 msgid "Deep compatibility with the complete FunnelKit suite"
 msgstr ""
 
-#: admin/includes/pages/xl-stripe.php:71
+#: admin/includes/pages/xl-stripe.php:72
 msgid "Install and Activate Stripe Gateway For WooCommerce"
 msgstr ""
 
-#: admin/includes/pages/xl-stripe.php:72
+#: admin/includes/pages/xl-stripe.php:73
 msgid "Click on the button below to install and activate the Stripe Gateway For WooCommerce.."
 msgstr ""
 
-#: admin/includes/pages/xl-stripe.php:92
+#: admin/includes/pages/xl-stripe.php:93
 msgid " Set Up FunnelKit Stripe Gateway For WooCommerce"
 msgstr ""
 
-#: admin/includes/pages/xl-stripe.php:93
+#: admin/includes/pages/xl-stripe.php:94
 msgid "Start setting up FunnelKit Stripe Gateway For WooCommerce from the button below."
 msgstr ""
 
-#: admin/includes/pages/xl-stripe.php:94
+#: admin/includes/pages/xl-stripe.php:95
 msgid "Start setup FunnelKit Stripe"
 msgstr ""
 
@@ -409,85 +409,85 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: admin/includes/xlwcty-admin-wcthankyou-options.php:28
+#: admin/includes/xlwcty-admin-wcthankyou-options.php:29
 msgid "Component Builder Settings"
 msgstr ""
 
-#: admin/includes/xlwcty-admin-wcthankyou-options.php:73
+#: admin/includes/xlwcty-admin-wcthankyou-options.php:74
 msgid "Global Settings"
 msgstr ""
 
-#: admin/includes/xlwcty-admin-wcthankyou-options.php:92
+#: admin/includes/xlwcty-admin-wcthankyou-options.php:93
 msgid "Debug Settings"
 msgstr ""
 
-#: admin/includes/xlwcty-admin-wcthankyou-options.php:144
+#: admin/includes/xlwcty-admin-wcthankyou-options.php:145
 msgid "Thank You Page Priority"
 msgstr ""
 
-#: admin/includes/xlwcty-admin-wcthankyou-options.php:153
+#: admin/includes/xlwcty-admin-wcthankyou-options.php:154
 msgid "Page Priority features come into play when multiple Thank You pages are set."
 msgstr ""
 
-#: admin/includes/xlwcty-admin-wcthankyou-options.php:154
+#: admin/includes/xlwcty-admin-wcthankyou-options.php:155
 msgid "Priority works in ascending order. Lower the number higher the priority."
 msgstr ""
 
-#: admin/includes/xlwcty-admin-wcthankyou-options.php:161
+#: admin/includes/xlwcty-admin-wcthankyou-options.php:162
 msgid "Need Help with priority? "
 msgstr ""
 
-#: admin/includes/xlwcty-admin-wcthankyou-options.php:162
+#: admin/includes/xlwcty-admin-wcthankyou-options.php:163
 msgid "Read Docs"
 msgstr ""
 
-#: admin/includes/xlwcty-admin-wcthankyou-options.php:199
+#: admin/includes/xlwcty-admin-wcthankyou-options.php:200
 msgid "Quick View"
 msgstr ""
 
-#: admin/includes/xlwcty-post-table.php:39
+#: admin/includes/xlwcty-post-table.php:40
 msgid "No Page Available"
 msgstr ""
 
-#: admin/includes/xlwcty-post-table.php:85
-#: includes/xlwcty-common.php:536
+#: admin/includes/xlwcty-post-table.php:86
+#: includes/xlwcty-common.php:537
 msgid "Deactivated"
 msgstr ""
 
-#: admin/includes/xlwcty-post-table.php:88
-#: includes/xlwcty-common.php:531
+#: admin/includes/xlwcty-post-table.php:89
+#: includes/xlwcty-common.php:532
 msgid "Activated"
 msgstr ""
 
-#: admin/includes/xlwcty-post-table.php:229
+#: admin/includes/xlwcty-post-table.php:230
 msgid "&nbsp;"
 msgstr ""
 
-#: admin/includes/xlwcty-post-table.php:230
+#: admin/includes/xlwcty-post-table.php:231
 msgid "Title"
 msgstr ""
 
-#: admin/includes/xlwcty-post-table.php:231
-#: includes/xlwcty-common.php:740
+#: admin/includes/xlwcty-post-table.php:232
+#: includes/xlwcty-common.php:741
 msgid "Components"
 msgstr ""
 
-#: admin/includes/xlwcty-post-table.php:232
+#: admin/includes/xlwcty-post-table.php:233
 #: components/customer-info/data.php:129
 #: components/image-content/data.php:99
 #: components/order-details/data.php:98
 msgid "Layout"
 msgstr ""
 
-#: admin/includes/xlwcty-post-table.php:233
+#: admin/includes/xlwcty-post-table.php:234
 msgid "Template"
 msgstr ""
 
-#: admin/includes/xlwcty-post-table.php:234
+#: admin/includes/xlwcty-post-table.php:235
 msgid "Status"
 msgstr ""
 
-#: admin/includes/xlwcty-post-table.php:235
+#: admin/includes/xlwcty-post-table.php:236
 msgid "Priority"
 msgstr ""
 
@@ -679,8 +679,8 @@ msgid "Thank You Pages"
 msgstr ""
 
 #: admin/xlwcty-admin.php:632
-#: includes/xlwcty-common.php:125
 #: includes/xlwcty-common.php:126
+#: includes/xlwcty-common.php:127
 msgid "Add New"
 msgstr ""
 
@@ -948,8 +948,8 @@ msgid "Unable to Deactivate"
 msgstr ""
 
 #: admin/xlwcty-admin.php:1395
-#: includes/xlwcty-common.php:123
 #: includes/xlwcty-common.php:124
+#: includes/xlwcty-common.php:125
 msgid "Thank You Page"
 msgstr ""
 
@@ -1242,7 +1242,7 @@ msgid "Billing Address"
 msgstr ""
 
 #: components/customer-info/data.php:134
-#: includes/xlwcty-common.php:1325
+#: includes/xlwcty-common.php:1326
 msgid "Two Column"
 msgstr ""
 
@@ -2187,7 +2187,7 @@ msgid "Flag"
 msgstr ""
 
 #: components/order-acknowledge/data.php:67
-#: includes/xlwcty-xl-support.php:195
+#: includes/xlwcty-xl-support.php:196
 msgid "Cart"
 msgstr ""
 
@@ -2212,7 +2212,7 @@ msgid "Sub Heading Color"
 msgstr ""
 
 #: components/order-acknowledge/data.php:189
-#: includes/xlwcty-common.php:597
+#: includes/xlwcty-common.php:598
 msgid "Order"
 msgstr ""
 
@@ -2278,494 +2278,498 @@ msgstr ""
 msgid "Embed source of video"
 msgstr ""
 
-#: includes/xlwcty-common.php:127
 #: includes/xlwcty-common.php:128
+#: includes/xlwcty-common.php:129
 msgid "Edit"
 msgstr ""
 
-#: includes/xlwcty-common.php:129
+#: includes/xlwcty-common.php:130
 msgid "New"
 msgstr ""
 
-#: includes/xlwcty-common.php:130
 #: includes/xlwcty-common.php:131
+#: includes/xlwcty-common.php:132
 msgid "View"
 msgstr ""
 
-#: includes/xlwcty-common.php:132
+#: includes/xlwcty-common.php:133
 msgid "Search"
 msgstr ""
 
-#: includes/xlwcty-common.php:133
+#: includes/xlwcty-common.php:134
 msgid "No Thank You Page"
 msgstr ""
 
-#: includes/xlwcty-common.php:134
+#: includes/xlwcty-common.php:135
 msgid "No Thank You Page found in trash"
 msgstr ""
 
-#: includes/xlwcty-common.php:135
+#: includes/xlwcty-common.php:136
 msgid "Parent"
 msgstr ""
 
-#: includes/xlwcty-common.php:359
+#: includes/xlwcty-common.php:360
 msgid "Choose a Coupon"
 msgstr ""
 
-#: includes/xlwcty-common.php:446
+#: includes/xlwcty-common.php:447
 msgid "Choose a Product"
 msgstr ""
 
-#: includes/xlwcty-common.php:595
+#: includes/xlwcty-common.php:596
 msgid "Always"
 msgstr ""
 
-#: includes/xlwcty-common.php:598
-#: merge-tags/xlwcty-dynamic-merge-tags.php:108
+#: includes/xlwcty-common.php:599
+#: merge-tags/xlwcty-dynamic-merge-tags.php:109
 msgid "Order Total"
 msgstr ""
 
-#: includes/xlwcty-common.php:599
+#: includes/xlwcty-common.php:600
 msgid "Order Item(s)"
 msgstr ""
 
-#: includes/xlwcty-common.php:600
+#: includes/xlwcty-common.php:601
 msgid "Order Category(s)"
 msgstr ""
 
-#: includes/xlwcty-common.php:601
+#: includes/xlwcty-common.php:602
 msgid "Order Item Count"
 msgstr ""
 
-#: includes/xlwcty-common.php:602
+#: includes/xlwcty-common.php:603
 msgid "Order Item Type"
 msgstr ""
 
-#: includes/xlwcty-common.php:603
+#: includes/xlwcty-common.php:604
 msgid "Order Coupons"
 msgstr ""
 
-#: includes/xlwcty-common.php:604
+#: includes/xlwcty-common.php:605
 msgid "Order Payment Gateway"
 msgstr ""
 
-#: includes/xlwcty-common.php:605
+#: includes/xlwcty-common.php:606
 msgid "Order Shipping Method"
 msgstr ""
 
-#: includes/xlwcty-common.php:606
+#: includes/xlwcty-common.php:607
 msgid "Is First Order"
 msgstr ""
 
-#: includes/xlwcty-common.php:607
+#: includes/xlwcty-common.php:608
 msgid "Is Order Renewal"
 msgstr ""
 
-#: includes/xlwcty-common.php:608
+#: includes/xlwcty-common.php:609
 msgid "Is Order Upgrade"
 msgstr ""
 
-#: includes/xlwcty-common.php:609
+#: includes/xlwcty-common.php:610
 msgid "Is Order Downgrade"
 msgstr ""
 
-#: includes/xlwcty-common.php:611
 #: includes/xlwcty-common.php:612
+#: includes/xlwcty-common.php:613
 msgid "Customer"
 msgstr ""
 
-#: includes/xlwcty-common.php:613
+#: includes/xlwcty-common.php:614
 msgid "Customer User Role"
 msgstr ""
 
-#: includes/xlwcty-common.php:614
+#: includes/xlwcty-common.php:615
 msgid "Customer Order Count"
 msgstr ""
 
-#: includes/xlwcty-common.php:615
+#: includes/xlwcty-common.php:616
 msgid "Customer Total Spent"
 msgstr ""
 
-#: includes/xlwcty-common.php:617
+#: includes/xlwcty-common.php:618
 msgid "Guest"
 msgstr ""
 
-#: includes/xlwcty-common.php:618
+#: includes/xlwcty-common.php:619
 msgid "Is Customer Guest"
 msgstr ""
 
-#: includes/xlwcty-common.php:619
+#: includes/xlwcty-common.php:620
 msgid "Guest Order Count"
 msgstr ""
 
-#: includes/xlwcty-common.php:620
+#: includes/xlwcty-common.php:621
 msgid "Guest Total Spent"
 msgstr ""
 
-#: includes/xlwcty-common.php:622
+#: includes/xlwcty-common.php:623
 msgid "Geography"
 msgstr ""
 
-#: includes/xlwcty-common.php:623
-#: merge-tags/xlwcty-dynamic-merge-tags.php:132
+#: includes/xlwcty-common.php:624
+#: merge-tags/xlwcty-dynamic-merge-tags.php:133
 msgid "Order Shipping Country"
 msgstr ""
 
-#: includes/xlwcty-common.php:624
-#: merge-tags/xlwcty-dynamic-merge-tags.php:128
+#: includes/xlwcty-common.php:625
+#: merge-tags/xlwcty-dynamic-merge-tags.php:129
 msgid "Order Billing Country"
 msgstr ""
 
-#: includes/xlwcty-common.php:626
+#: includes/xlwcty-common.php:627
 msgid "Date/Time"
 msgstr ""
 
-#: includes/xlwcty-common.php:627
+#: includes/xlwcty-common.php:628
 msgid "Day"
 msgstr ""
 
-#: includes/xlwcty-common.php:628
+#: includes/xlwcty-common.php:629
 msgid "Date"
 msgstr ""
 
-#: includes/xlwcty-common.php:629
+#: includes/xlwcty-common.php:630
 msgid "Time"
 msgstr ""
 
-#: includes/xlwcty-common.php:746
+#: includes/xlwcty-common.php:747
 msgid "Edit/ Rules"
 msgstr ""
 
-#: includes/xlwcty-common.php:752
-#: includes/xlwcty-common.php:758
+#: includes/xlwcty-common.php:753
+#: includes/xlwcty-common.php:759
 msgid "Activate"
 msgstr ""
 
-#: includes/xlwcty-common.php:766
+#: includes/xlwcty-common.php:767
 msgid "Deactivate"
 msgstr ""
 
-#: includes/xlwcty-common.php:774
+#: includes/xlwcty-common.php:775
 msgid "Duplicate"
 msgstr ""
 
-#: includes/xlwcty-common.php:780
+#: includes/xlwcty-common.php:781
 msgid "Delete Permanently"
 msgstr ""
 
-#: includes/xlwcty-common.php:826
+#: includes/xlwcty-common.php:827
 msgid "Disabled"
 msgstr ""
 
-#: includes/xlwcty-common.php:831
+#: includes/xlwcty-common.php:832
 msgid "Disabled <span class=\"count\">(%s)</span>"
 msgid_plural "Disabled <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/xlwcty-common.php:1320
+#: includes/xlwcty-common.php:1321
 msgid "One Column"
 msgstr ""
 
-#: includes/xlwcty-common.php:1417
+#: includes/xlwcty-common.php:1418
 msgid "Unauthorized access. "
 msgstr ""
 
-#: includes/xlwcty-common.php:1466
+#: includes/xlwcty-common.php:1467
 msgid "No Thank You Page found. Create one or check rules for the existing page to see if Rules set for the page match selected order."
 msgstr ""
 
-#: includes/xlwcty-common.php:1589
+#: includes/xlwcty-common.php:1590
 msgid "Unable to Duplicate"
 msgstr ""
 
-#: includes/xlwcty-common.php:1666
+#: includes/xlwcty-common.php:1700
 msgid "Something is wrong with settings. Thank You page won't appear until all points turn green."
 msgstr ""
 
-#: includes/xlwcty-common.php:1670
+#: includes/xlwcty-common.php:1705
 msgid "NextMove mode is Sandbox. Click here to change it to"
 msgstr ""
 
-#: includes/xlwcty-common.php:1673
+#: includes/xlwcty-common.php:1709
 msgid "Reset"
 msgstr ""
 
-#: includes/xlwcty-common.php:1674
+#: includes/xlwcty-common.php:1710
 msgid "Permalink needs reset. Click here to"
 msgstr ""
 
-#: includes/xlwcty-common.php:1674
+#: includes/xlwcty-common.php:1710
 msgid " it."
 msgstr ""
 
-#: includes/xlwcty-common.php:1677
-msgid "There are no Active Thank You pages. Create a New page or Activate existing one."
+#: includes/xlwcty-common.php:1714
+msgid "There are no Active Thank You pages. Create a New page or Activate an existing one."
 msgstr ""
 
-#: includes/xlwcty-common.php:1680
-msgid "There are no Active WooCommerce Orders with selected order states"
+#: includes/xlwcty-common.php:1718
+msgid "There are no Active WooCommerce Orders with selected order statuses"
 msgstr ""
 
-#: includes/xlwcty-common.php:1680
+#: includes/xlwcty-common.php:1718
 msgid "Kindly create an order to see the preview."
 msgstr ""
 
-#: includes/xlwcty-common.php:1684
-msgid "If still unable to setup Thank You page. Create a"
+#: includes/xlwcty-common.php:1721
+msgid "If still unable to set up the Thank You page, create a"
 msgstr ""
 
-#: includes/xlwcty-public.php:279
-msgid "Unable to process the request."
+#: includes/xlwcty-common.php:1726
+msgid "Looks Good! <a target=\"_blank\" href=\"%s\">See Order Preview</a>"
 msgstr ""
 
 #: includes/xlwcty-public.php:280
-msgid "Google Map API quota limit reached."
+msgid "Unable to process the request."
 msgstr ""
 
 #: includes/xlwcty-public.php:281
+msgid "Google Map API quota limit reached."
+msgstr ""
+
+#: includes/xlwcty-public.php:282
 msgid "This API project is not authorized to use this API. Please ensure that this API is activated in the APIs Console."
 msgstr ""
 
-#: includes/xlwcty-public.php:415
+#: includes/xlwcty-public.php:416
 msgid "We are unable to show preview for this thank you page."
 msgstr ""
 
-#: includes/xlwcty-public.php:495
+#: includes/xlwcty-public.php:496
 msgid "Unable to process your request."
 msgstr ""
 
-#: includes/xlwcty-xl-support.php:83
+#: includes/xlwcty-xl-support.php:84
 msgid "<p>You are <strong>not receiving</strong> Latest Updates, New Features, Security Updates &amp; Bug Fixes for <strong>%1$s</strong>. <a href=\"%2$s\">Click Here To Fix This</a>.</p>"
 msgstr ""
 
-#: includes/xlwcty-xl-support.php:191
+#: includes/xlwcty-xl-support.php:192
 msgid "Payments"
 msgstr ""
 
-#: includes/xlwcty-xl-support.php:200
+#: includes/xlwcty-xl-support.php:201
 msgid "Checkout"
 msgstr ""
 
-#: includes/xlwcty-xl-support.php:205
+#: includes/xlwcty-xl-support.php:206
 msgid "Automations"
 msgstr ""
 
-#: includes/xlwcty-xl-support.php:211
+#: includes/xlwcty-xl-support.php:212
 msgid "Licenses"
 msgstr ""
 
-#: includes/xlwcty-xl-support.php:211
+#: includes/xlwcty-xl-support.php:212
 msgid "License"
 msgstr ""
 
-#: includes/xlwcty-xl-support.php:219
+#: includes/xlwcty-xl-support.php:220
 msgid "NextMove Lite"
 msgstr ""
 
-#: includes/xlwcty-xl-support.php:247
-#: includes/xlwcty-xl-support.php:249
+#: includes/xlwcty-xl-support.php:248
+#: includes/xlwcty-xl-support.php:250
 msgid "Other"
 msgstr ""
 
-#: includes/xlwcty-xl-support.php:255
-#: includes/xlwcty-xl-support.php:257
+#: includes/xlwcty-xl-support.php:256
+#: includes/xlwcty-xl-support.php:258
 msgid "I am going to upgrade to PRO version"
 msgstr ""
 
-#: includes/xlwcty-xl-support.php:261
-#: includes/xlwcty-xl-support.php:263
+#: includes/xlwcty-xl-support.php:262
+#: includes/xlwcty-xl-support.php:264
 msgid "NextMove Thank You page shows 404 error"
 msgstr ""
 
-#: includes/xlwcty-xl-support.php:267
-#: includes/xlwcty-xl-support.php:269
+#: includes/xlwcty-xl-support.php:268
+#: includes/xlwcty-xl-support.php:270
 msgid "Native Woocommerce Thank You page is still showing"
 msgstr ""
 
-#: includes/xlwcty-xl-support.php:273
-#: includes/xlwcty-xl-support.php:275
+#: includes/xlwcty-xl-support.php:274
+#: includes/xlwcty-xl-support.php:276
 msgid "I was unable to set up Thank You Page"
 msgstr ""
 
-#: includes/xlwcty-xl-support.php:297
-#: includes/xlwcty-xl-support.php:299
+#: includes/xlwcty-xl-support.php:298
+#: includes/xlwcty-xl-support.php:300
 msgid "Google Map not showing on Thank You Page"
 msgstr ""
 
-#: includes/xlwcty-xl-support.php:303
-#: includes/xlwcty-xl-support.php:305
+#: includes/xlwcty-xl-support.php:304
+#: includes/xlwcty-xl-support.php:306
 msgid "I didn't like the design of Thank You Page"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:60
+#: merge-tags/xlwcty-dynamic-merge-tags.php:61
 msgid "Customer ID"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:64
+#: merge-tags/xlwcty-dynamic-merge-tags.php:65
 msgid "Customer First Name"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:68
+#: merge-tags/xlwcty-dynamic-merge-tags.php:69
 msgid "Customer Last Name"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:72
+#: merge-tags/xlwcty-dynamic-merge-tags.php:73
 msgid "Customer Full Name"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:76
+#: merge-tags/xlwcty-dynamic-merge-tags.php:77
 msgid "Customer First Name Uppercase"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:80
+#: merge-tags/xlwcty-dynamic-merge-tags.php:81
 msgid "Customer Last Name Uppercase"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:84
+#: merge-tags/xlwcty-dynamic-merge-tags.php:85
 msgid "Customer Full Name Uppercase"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:88
+#: merge-tags/xlwcty-dynamic-merge-tags.php:89
 msgid "Customer Email"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:92
+#: merge-tags/xlwcty-dynamic-merge-tags.php:93
 msgid "Customer Phone"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:96
+#: merge-tags/xlwcty-dynamic-merge-tags.php:97
 msgid "Order Number"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:100
+#: merge-tags/xlwcty-dynamic-merge-tags.php:101
 msgid "Order Status"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:104
+#: merge-tags/xlwcty-dynamic-merge-tags.php:105
 msgid "Order Date"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:112
+#: merge-tags/xlwcty-dynamic-merge-tags.php:113
 msgid "Order Total Raw"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:116
+#: merge-tags/xlwcty-dynamic-merge-tags.php:117
 msgid "Order Items Count"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:120
+#: merge-tags/xlwcty-dynamic-merge-tags.php:121
 msgid "Order Shipping method"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:124
+#: merge-tags/xlwcty-dynamic-merge-tags.php:125
 msgid "Order payment method"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:136
+#: merge-tags/xlwcty-dynamic-merge-tags.php:137
 msgid "Order Billing Address"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:140
+#: merge-tags/xlwcty-dynamic-merge-tags.php:141
 msgid "Order Shipping Address"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:152
+#: merge-tags/xlwcty-dynamic-merge-tags.php:153
 msgid "Users IP Address"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:156
+#: merge-tags/xlwcty-dynamic-merge-tags.php:157
 msgid "Customer Provided Note"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:160
+#: merge-tags/xlwcty-dynamic-merge-tags.php:161
 msgid "Subscription ID"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:164
+#: merge-tags/xlwcty-dynamic-merge-tags.php:165
 msgid "Subscription Status"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:168
+#: merge-tags/xlwcty-dynamic-merge-tags.php:169
 msgid "Subscription Start Date"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:172
+#: merge-tags/xlwcty-dynamic-merge-tags.php:173
 msgid "Subscription Next Payment Date"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:176
+#: merge-tags/xlwcty-dynamic-merge-tags.php:177
 msgid "Subscription End Date"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:180
+#: merge-tags/xlwcty-dynamic-merge-tags.php:181
 msgid "Coupon Expiry Date"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:182
-#: merge-tags/xlwcty-dynamic-merge-tags.php:187
+#: merge-tags/xlwcty-dynamic-merge-tags.php:183
+#: merge-tags/xlwcty-dynamic-merge-tags.php:188
 msgid "This tag will only work inside Smart Bribe or Dynamic Coupon components."
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:185
+#: merge-tags/xlwcty-dynamic-merge-tags.php:186
 msgid "Coupon Value"
 msgstr ""
 
-#: merge-tags/xlwcty-dynamic-merge-tags.php:192
+#: merge-tags/xlwcty-dynamic-merge-tags.php:193
 msgid "License Key"
 msgstr ""
 
-#: merge-tags/xlwcty-shortcode-merge-tags.php:291
+#: merge-tags/xlwcty-shortcode-merge-tags.php:292
 msgid "tomorrow"
 msgstr ""
 
-#: merge-tags/xlwcty-shortcode-merge-tags.php:307
+#: merge-tags/xlwcty-shortcode-merge-tags.php:308
 msgid "today"
 msgstr ""
 
-#: merge-tags/xlwcty-static-merge-tags.php:57
+#: merge-tags/xlwcty-static-merge-tags.php:58
 msgid "Shop Title"
 msgstr ""
 
-#: merge-tags/xlwcty-static-merge-tags.php:61
+#: merge-tags/xlwcty-static-merge-tags.php:62
 msgid "Home Url"
 msgstr ""
 
-#: merge-tags/xlwcty-static-merge-tags.php:65
+#: merge-tags/xlwcty-static-merge-tags.php:66
 msgid "Shop URL"
 msgstr ""
 
-#: merge-tags/xlwcty-static-merge-tags.php:69
+#: merge-tags/xlwcty-static-merge-tags.php:70
 msgid "Shop Admin Email"
 msgstr ""
 
-#: rules/inputs/cart-category-select.php:30
-#: rules/inputs/cart-product-select.php:27
+#: rules/inputs/cart-category-select.php:31
+#: rules/inputs/cart-product-select.php:28
 msgid "Quantity"
 msgstr ""
 
-#: rules/inputs/cart-category-select.php:31
+#: rules/inputs/cart-category-select.php:32
 msgid "Categories"
 msgstr ""
 
-#: rules/inputs/cart-category-select.php:38
-#: rules/inputs/chosen-select.php:30
+#: rules/inputs/cart-category-select.php:39
+#: rules/inputs/chosen-select.php:31
 msgid "Search..."
 msgstr ""
 
-#: rules/inputs/cart-product-select.php:28
+#: rules/inputs/cart-product-select.php:29
 msgid "Products"
 msgstr ""
 
-#: rules/inputs/geo-postal-code-entry.php:29
+#: rules/inputs/geo-postal-code-entry.php:30
 msgid "Distance ( km )"
 msgstr ""
 
-#: rules/inputs/geo-postal-code-entry.php:30
+#: rules/inputs/geo-postal-code-entry.php:31
 msgid "Zip/Postalcode ( One per line )"
 msgstr ""
 
-#: rules/inputs/html-always.php:18
+#: rules/inputs/html-always.php:19
 msgid "Trigger will always display for all shoppers on your site. This will override any other rule you define."
 msgstr ""
 

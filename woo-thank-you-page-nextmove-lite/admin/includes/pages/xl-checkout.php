@@ -2,6 +2,7 @@
 defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'XL_Addon_Install_Checkout' ) ) {
+	#[AllowDynamicProperties]
 	class XL_Addon_Install_Checkout {
 		public static $name = 'Checkout';
 

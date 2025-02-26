@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+#[AllowDynamicProperties]
 class XLWCTY_Paybox {
 	private static $ins = null;
 

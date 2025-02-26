@@ -1,0 +1,146 @@
+.xl-modal {
+        position: fixed;
+        overflow: auto;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        z-index: 100000;
+        display: none;
+        background: rgba(0, 0, 0, 0.6)
+    }
+
+    a.button.button-secondary.button-skip.allow-deactivate {
+        float: left;
+    }
+
+    .xl-modal .xl-modal-dialog {
+        background: transparent;
+        position: absolute;
+        left: 50%;
+        margin-left: -298px;
+        padding-bottom: 30px;
+        top: -100%;
+        z-index: 100001;
+        width: 596px
+    }
+
+    .xl-modal li.reason.has_html .reason_html {
+        display: none;
+        border: 1px solid #ddd;
+        padding: 4px 6px;
+        margin: 6px 0 0 20px;
+    }
+
+    .xl-modal li.reason.has_html.li-active .reason_html {
+        display: block;
+    }
+
+    @media (max-width: 650px) {
+        .xl-modal .xl-modal-dialog {
+            margin-left: -50%;
+            box-sizing: border-box;
+            padding-left: 10px;
+            padding-right: 10px;
+            width: 100%
+        }
+
+        .xl-modal .xl-modal-dialog .xl-modal-panel > h3 > strong {
+            font-size: 1.3em
+        }
+
+        .xl-modal .xl-modal-dialog li.reason {
+            margin-bottom: 10px
+        }
+
+        .xl-modal .xl-modal-dialog li.reason .reason-input {
+            margin-left: 29px
+        }
+
+        .xl-modal .xl-modal-dialog li.reason label {
+            display: table
+        }
+
+        .xl-modal .xl-modal-dialog li.reason label > span {
+            display: table-cell;
+            font-size: 1.3em
+        }
+    }
+
+    .xl-modal.active {
+        display: block
+    }
+
+    .xl-modal.active:before {
+        display: block
+    }
+
+    .xl-modal.active .xl-modal-dialog {
+        top: 10%
+    }
+
+    .xl-modal .xl-modal-body, .xl-modal .xl-modal-footer {
+        border: 0;
+        background: #fefefe;
+        padding: 20px
+    }
+
+    .xl-modal .xl-modal-body {
+        border-bottom: 0
+    }
+
+    .xl-modal .xl-modal-body h2 {
+        font-size: 20px
+    }
+
+    .xl-modal .xl-modal-body > div {
+        margin-top: 10px
+    }
+
+    .xl-modal .xl-modal-body > div h2 {
+        font-weight: bold;
+        font-size: 20px;
+        margin-top: 0
+    }
+
+    .xl-modal .xl-modal-footer {
+        border-top: #eeeeee solid 1px;
+        text-align: right
+    }
+
+    .xl-modal .xl-modal-footer > .button {
+        margin: 0 7px
+    }
+
+    .xl-modal .xl-modal-footer > .button:first-child {
+        margin: 0
+    }
+
+    .xl-modal .xl-modal-panel:not(.active) {
+        display: none
+    }
+
+    .xl-modal .reason-input {
+        margin: 3px 0 3px 22px
+    }
+
+    .xl-modal .reason-input input, .xl-modal .reason-input textarea {
+        width: 100%
+    }
+
+    body.has-xl-modal {
+        overflow: hidden
+    }
+
+    #the-list .deactivate > .xl-slug {
+        display: none
+    }
+
+    .xl-modal li.reason-hide {
+        display: none;
+    }
+
+    .error-message {
+        color: red;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }

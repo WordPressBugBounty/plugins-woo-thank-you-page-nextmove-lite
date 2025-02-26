@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+#[AllowDynamicProperties]
 class xlwcty_Input_Html_Always {
 	public function __construct() {
 		// vars

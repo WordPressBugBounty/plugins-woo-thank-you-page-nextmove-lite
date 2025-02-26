@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+#[AllowDynamicProperties]
 class XLWCTY_Shipping_Billing_Based_Map extends XLWCTY_Component {
 
 	private static $instance = null;

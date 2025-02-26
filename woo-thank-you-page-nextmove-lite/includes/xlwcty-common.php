@@ -7,6 +7,7 @@ defined( 'ABSPATH' ) || exit;
  * @package NextMove
  * @author XlPlugins
  */
+#[AllowDynamicProperties]
 class XLWCTY_Common {
 
 	public static $xlwcty_post;
@@ -1591,13 +1592,29 @@ class XLWCTY_Common {
 		}
 	}
 
+	/**
+	 * Handle Quick View logic for NextMove Lite.
+	 *
+	 * This function performs the following:
+	 * - Checks for available Thank You pages.
+	 * - Verifies permalink state.
+	 * - Queries recent WooCommerce orders based on allowed statuses.
+	 * - Prepares a response with status indicators and possible solutions.
+	 */
 	public static function handle_quick_view() {
-
+		// Initialize states
 		$permalink_state         = false;
 		$available_thankyou_page = false;
 		$recent_order_state      = false;
-		$mode                    = XLWCTY_Core()->data->get_option( 'xlwcty_preview_mode' );
-		$args                    = array(
+
+		// Get the current mode (sandbox or live)
+		$mode = XLWCTY_Core()->data->get_option( 'xlwcty_preview_mode' );
+
+		/**
+		 * Step 1: Check if a Thank You page exists.
+		 * - Query published Thank You pages ordered by the menu order.
+		 */
+		$args = array(
 			'post_type'   => XLWCTY_Common::get_thank_you_page_post_type_slug(),
 			'post_status' => 'publish',
 			'nopaging'    => true,
@@ -1609,12 +1626,15 @@ class XLWCTY_Common {
 		);
 
 		$get_posts_all = get_posts( $args );
-
-		if ( $get_posts_all && is_array( $get_posts_all ) && count( $get_posts_all ) > 0 ) {
+		if ( ! empty( $get_posts_all ) ) {
 			$available_thankyou_page = true;
 			$get_link                = get_permalink( $get_posts_all[0] );
 		}
 
+		/**
+		 * Step 2: Verify permalink state.
+		 * - Check the accessibility of the Thank You page.
+		 */
 		$get_posts_check = get_posts( array(
 			'post_type'   => XLWCTY_Common::get_thank_you_page_post_type_slug(),
 			'fields'      => 'ids',
@@ -1622,79 +1642,100 @@ class XLWCTY_Common {
 			'showposts'   => 1,
 		) );
 
-		if ( $get_posts_check && is_array( $get_posts_check ) && count( $get_posts_check ) > 0 ) {
+		if ( ! empty( $get_posts_check ) ) {
 			$get_link_check = get_permalink( $get_posts_check[0] );
 			$get_link_check = self::parse_url_for_ssl( $get_link_check );
 
-			$remote        = wp_remote_get( add_query_arg( array(
-				'permalink_check' => 'yes',
-			), $get_link_check ), array(
-				'sslverify' => false,
-			) );
+			$remote = wp_remote_get( add_query_arg( array( 'permalink_check' => 'yes' ), $get_link_check ), array( 'sslverify' => false ) );
+
 			$response_code = wp_remote_retrieve_response_code( $remote );
+
+			// If no errors and the response code is valid, set permalink state
 			if ( is_wp_error( $remote ) ) {
-				// $remote->get_error_message();
-				$permalink_state = true; // we are assuming permalink state ok as curl didn't able to connect
-			} elseif ( 404 != $response_code ) {
-				// if response not 404 then all ok
+				$permalink_state = true; // Assume state is OK if request fails
+			} elseif ( $response_code !== 404 ) {
 				$permalink_state = true;
 			}
 
-			$matches     = array();
-			$api_respnse = preg_match( '/{"status.*}/', wp_remote_retrieve_body( $remote ), $matches );
-			$api_respnse = current( $matches );
-			$api_respnse = json_decode( $api_respnse, true );
-			if ( is_array( $api_respnse ) && isset( $api_respnse['status'] ) && $api_respnse['status'] == 'success' ) {
+			$matches      = array();
+			$api_response = preg_match( '/{"status.*}/', wp_remote_retrieve_body( $remote ), $matches );
+			$api_response = current( $matches );
+			$api_response = json_decode( $api_response, true );
+
+			if ( is_array( $api_response ) && isset( $api_response['status'] ) && $api_response['status'] === 'success' ) {
 				$permalink_state = true;
 			}
 		}
 
+		/**
+		 * Step 3: Query recent WooCommerce orders based on allowed statuses.
+		 * - Retrieve allowed statuses from options.
+		 * - Use WC_Order_Query to check for recent orders.
+		 */
 		$nm_allowed_order_statuses = XLWCTY_Core()->data->get_option( 'allowed_order_statuses' );
+		$clean_statuses            = array_map( function ( $status ) {
+			return trim( sanitize_key( $status ) );
+		}, $nm_allowed_order_statuses );
 
-		$recent_order = get_posts( array(
-			'post_type'   => 'shop_order',
-			'fields'      => 'ids',
-			'post_status' => $nm_allowed_order_statuses,
-			'showposts'   => 1,
+		$order_query = new WC_Order_Query( array(
+			'status'     => $clean_statuses,
+			'limit'      => 1,  // Only fetch one order
+			'return'     => 'ids',
+			'post_types' => array( 'shop_order', 'shop_order_placehold' ),
 		) );
-		if ( is_array( $recent_order ) && count( $recent_order ) > 0 ) {
+
+		$recent_orders = $order_query->get_orders();
+
+		// Check if there are recent orders
+		if ( ! empty( $recent_orders ) ) {
 			$recent_order_state = true;
 		}
 
+		/**
+		 * Step 4: Prepare status response and suggestions.
+		 * - Include suggestions for fixing issues if any conditions fail.
+		 */
 		$nextmove_state = 'failed';
 
-		$check_preview = '<p>' . __( 'Something is wrong with settings. Thank You page won\'t appear until all points turn green.', 'woo-thank-you-page-nextmove-lite' ) . '</p><h3>Possible Solutions</h3>';
-		$check_preview .= '<ul>';
-		if ( 'sandbox' == $mode ) {
+		$check_preview = '<p>' . __( 'Something is wrong with settings. Thank You page won\'t appear until all points turn green.', 'woo-thank-you-page-nextmove-lite' ) . '</p><h3>Possible Solutions</h3><ul>';
+
+		// Add suggestions for each failed condition
+		if ( $mode === 'sandbox' ) {
 			$change_mod_link = ' <a href="' . admin_url( 'admin.php?page=wc-settings&tab=xl-thank-you&section=settings' ) . '" target="_blank">' . __( 'Live', 'woo-thank-you-page-nextmove-lite' ) . '</a>';
 			$check_preview   .= '<li>' . __( 'NextMove mode is Sandbox. Click here to change it to', 'woo-thank-you-page-nextmove-lite' ) . $change_mod_link . '</li>';
 		}
-		if ( false === $permalink_state ) {
+
+		if ( ! $permalink_state ) {
 			$reset_link    = ' <a href="' . admin_url( 'options-permalink.php' ) . '" target="_blank">' . __( 'Reset', 'woo-thank-you-page-nextmove-lite' ) . '</a>';
 			$check_preview .= '<li>' . __( 'Permalink needs reset. Click here to', 'woo-thank-you-page-nextmove-lite' ) . $reset_link . __( ' it.', 'woo-thank-you-page-nextmove-lite' ) . '</li>';
 		}
-		if ( false === $available_thankyou_page ) {
-			$check_preview .= '<li>' . __( 'There are no Active Thank You pages. Create a New page or Activate existing one.', 'woo-thank-you-page-nextmove-lite' ) . '</li>';
-		}
-		if ( false === $recent_order_state ) {
-			$check_preview .= '<li>' . __( 'There are no Active WooCommerce Orders with selected order states', 'woo-thank-you-page-nextmove-lite' ) . ' (' . self::order_status_label_output( $nm_allowed_order_statuses ) . '). ' . __( 'Kindly create an order to see the preview.', 'woo-thank-you-page-nextmove-lite' ) . '</li>';
-		}
-		$check_preview .= '</ul>';
 
-		$check_preview .= '<p><strong>' . __( 'If still unable to setup Thank You page. Create a', 'woo-thank-you-page-nextmove-lite' ) . ' <a target="_blank" href="' . admin_url( 'admin.php?page=xlplugins&tab=support' ) . '">support ticket</a>.</strong></p>';
-		if ( $mode === 'live' && $available_thankyou_page === true && $permalink_state === true && $recent_order_state === true ) {
+		if ( ! $available_thankyou_page ) {
+			$check_preview .= '<li>' . __( 'There are no Active Thank You pages. Create a New page or Activate an existing one.', 'woo-thank-you-page-nextmove-lite' ) . '</li>';
+		}
+
+		if ( ! $recent_order_state ) {
+			$check_preview .= '<li>' . __( 'There are no Active WooCommerce Orders with selected order statuses', 'woo-thank-you-page-nextmove-lite' ) . ' (' . self::order_status_label_output( $nm_allowed_order_statuses ) . '). ' . __( 'Kindly create an order to see the preview.', 'woo-thank-you-page-nextmove-lite' ) . '</li>';
+		}
+
+		$check_preview .= '</ul><p><strong>' . __( 'If still unable to set up the Thank You page, create a', 'woo-thank-you-page-nextmove-lite' ) . ' <a target="_blank" href="' . admin_url( 'admin.php?page=xlplugins&tab=support' ) . '">support ticket</a>.</strong></p>';
+
+		// Mark success if all conditions are met
+		if ( $mode === 'live' && $available_thankyou_page && $permalink_state && $recent_order_state ) {
 			$nextmove_state = 'success';
-			$check_preview  = '<p>' . __( sprintf( 'Looks Good! <a target="_blank" href="%s" target="_blank">See Order Preview</a>', $get_link ) ) . '</p>';
-
-			$change_settings_link = admin_url( 'admin.php?page=wc-settings&tab=xl-thank-you&section=settings' );
-
-			$check_preview .= '<p>' . __( sprintf( '<strong>Thank You Page(s) will show on <em>Order Status: %s</em> only.</strong> <a href="%s">Check Settings</a>.', self::order_status_label_output( $nm_allowed_order_statuses ), $change_settings_link ) ) . '</p>';
+			$check_preview  = '<p>' . sprintf( __( 'Looks Good! <a target="_blank" href="%s">See Order Preview</a>', 'woo-thank-you-page-nextmove-lite' ), esc_url( $get_link ) ) . '</p>';
 		}
-		$html = sprintf( '<li><i class="xl_circle_%s"></i>Mode: %s (<a href="%s" target="_blank">Change</a>)</li>', ( $mode == 'live' ) ? 'success' : 'error', ucfirst( $mode ), admin_url( 'admin.php?page=wc-settings&tab=xl-thank-you&section=settings' ) );
-		$html .= sprintf( '<li><i class="xl_circle_%s"></i>Permalink State: %s %s</li>', ( $permalink_state == true ) ? 'success' : 'error', ( $permalink_state == true ) ? 'OK' : 'Needs ', ( $permalink_state == true ) ? '' : '<a target="_blank" href="' . admin_url( 'options-permalink.php' ) . '">Reset</a>' );
-		$html .= sprintf( '<li><i class="xl_circle_%s"></i>Active Pages: %s</li>', ( $available_thankyou_page == true ) ? 'success' : 'error', ( $available_thankyou_page == true ) ? 'Yes' : 'No' );
-		$html .= sprintf( '<li><i class="xl_circle_%s"></i>Active WC Orders: %s</li>', ( $recent_order_state == true ) ? 'success' : 'error', ( $recent_order_state == true ) ? 'Yes' : 'No' );
 
+		// Prepare final HTML for the status
+		$html = sprintf( '<li><i class="xl_circle_%s"></i>Mode: %s (<a href="%s" target="_blank">Change</a>)</li>', ( $mode === 'live' ) ? 'success' : 'error', ucfirst( $mode ), admin_url( 'admin.php?page=wc-settings&tab=xl-thank-you&section=settings' ) );
+
+		$html .= sprintf( '<li><i class="xl_circle_%s"></i>Permalink State: %s %s</li>', ( $permalink_state ) ? 'success' : 'error', ( $permalink_state ) ? 'OK' : 'Needs Reset', ( $permalink_state ) ? '' : '<a target="_blank" href="' . admin_url( 'options-permalink.php' ) . '">Reset</a>' );
+
+		$html .= sprintf( '<li><i class="xl_circle_%s"></i>Active Pages: %s</li>', ( $available_thankyou_page ) ? 'success' : 'error', ( $available_thankyou_page ) ? 'Yes' : 'No' );
+
+		$html .= sprintf( '<li><i class="xl_circle_%s"></i>Active WC Orders: %s</li>', ( $recent_order_state ) ? 'success' : 'error', ( $recent_order_state ) ? 'Yes' : 'No' );
+
+		// Send JSON response
 		wp_send_json( array(
 			'status'         => 'success',
 			'nextmove_state' => $nextmove_state,
@@ -1702,6 +1743,7 @@ class XLWCTY_Common {
 			'after_text'     => $check_preview,
 		) );
 	}
+
 
 	public static function parse_url_for_ssl( $url ) {
 		if ( ! empty( $url ) ) {

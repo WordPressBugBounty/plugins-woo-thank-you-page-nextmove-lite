@@ -2,6 +2,7 @@
 defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'XL_Addon_Install_Automation' ) ) {
+	#[AllowDynamicProperties]
 	class XL_Addon_Install_Automation {
 		public static $name = 'FunnelKit Automations';
 

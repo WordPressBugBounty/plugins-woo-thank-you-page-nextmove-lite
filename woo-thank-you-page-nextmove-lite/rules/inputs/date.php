@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+#[AllowDynamicProperties]
 class xlwcty_Input_Date extends xlwcty_Input_Text {
 
 	public function __construct() {

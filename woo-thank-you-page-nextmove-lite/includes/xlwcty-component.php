@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+#[AllowDynamicProperties]
 abstract class XLWCTY_Component {
 
 	public static $order_meta_data = array();

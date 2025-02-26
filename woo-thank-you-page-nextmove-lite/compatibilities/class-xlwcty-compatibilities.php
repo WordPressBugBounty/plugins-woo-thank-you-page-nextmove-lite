@@ -5,6 +5,7 @@ defined( 'ABSPATH' ) || exit;
  * Class XLWCTY_Compatibilities
  * Loads all the compatibilities files we have in finale against plugins
  */
+#[AllowDynamicProperties]
 class XLWCTY_Compatibilities {
 
 

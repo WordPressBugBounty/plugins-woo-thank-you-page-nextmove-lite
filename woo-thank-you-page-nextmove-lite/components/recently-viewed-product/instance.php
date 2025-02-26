@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+#[AllowDynamicProperties]
 class XLWCTY_Recently_Viewed_products extends XLWCTY_Component {
 
 	private static $instance = null;

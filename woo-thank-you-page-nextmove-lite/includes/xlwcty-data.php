@@ -6,6 +6,7 @@ defined( 'ABSPATH' ) || exit;
  * @package NextMove
  * @author XlPlugins
  */
+#[AllowDynamicProperties]
 class XLWCTY_Data {
 
 	private static $ins = null;

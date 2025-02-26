@@ -2,6 +2,7 @@
 defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'XL_Addon_Install_Stripe' ) ) {
+	#[AllowDynamicProperties]
 	class XL_Addon_Install_Stripe {
 		public static $name = 'Payments';
 

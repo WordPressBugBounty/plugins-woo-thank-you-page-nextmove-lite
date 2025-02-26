@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+#[AllowDynamicProperties]
 class xlwcty_Input_Geo_Postal_Code_Entry {
 
 	public function __construct() {

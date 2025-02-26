@@ -2,6 +2,7 @@
 defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'XL_Addon_Install_Cart' ) ) {
+	#[AllowDynamicProperties]
 	class XL_Addon_Install_Cart {
 		public static $name = 'FunnelKit Cart';
 

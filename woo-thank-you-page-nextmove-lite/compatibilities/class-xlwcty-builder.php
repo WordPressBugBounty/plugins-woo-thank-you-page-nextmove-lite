@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+#[AllowDynamicProperties]
 class XLWCTY_remove_builder {
 	private static $ins = null;
 	private $post_type = 'xlwcty_thankyou';

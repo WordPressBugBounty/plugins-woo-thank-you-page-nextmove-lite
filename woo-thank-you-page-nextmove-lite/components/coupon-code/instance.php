@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+#[AllowDynamicProperties]
 class XLWCTY_Coupon_Code extends xlwcty_component {
 
 	private static $instance = null;

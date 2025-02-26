@@ -3,6 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+#[AllowDynamicProperties]
 class XLWCTY_Upsell {
 
 	protected static $instance = null;
@@ -55,7 +56,7 @@ class XLWCTY_Upsell {
 		add_action( 'admin_notices', array( $this, 'xl_upsells_notice_html_nextmove' ), 10 );
 		add_action( 'admin_notices', array( $this, 'xl_upsells_notice_html_autonami' ), 10 );
 
-//		add_action( 'admin_notices', array( $this, 'xl_upsells_notice_js' ), 20 );
+		add_action( 'admin_notices', array( $this, 'xl_upsells_notice_js' ), 20 );
 	}
 
 	/**
@@ -123,13 +124,11 @@ class XLWCTY_Upsell {
 	public function notice_enqueue_scripts() {
 		wp_enqueue_style( 'xlwcty-notices-css', plugin_dir_url( $this->plugin_path ) . 'admin/assets/css/xlwcty-xl-notice.css', array(), XLWCTY_VERSION );
 		wp_enqueue_script( 'wp-util' );
-		if ( true === $this->notice_displayed ) {
-			wp_enqueue_script( 'xlwcty-notices.js', $this->get_admin_url() . '/assets/js/xlwcty-notices.min.js', XLWCTY_VERSION );
-			$xlwcty_notice_nonce = wp_create_nonce( 'xlwcty_notice_nonce' );
-			wp_localize_script( 'xlwcty-notices.js', 'xlwcty_notice_vars', array(
-				'nonce' => $xlwcty_notice_nonce,
-			) );
-		}
+		wp_enqueue_script( 'xlwcty-notices.js', $this->get_admin_url() . '/assets/js/xlwcty-notices.min.js', XLWCTY_VERSION );
+		$xlwcty_notice_nonce = wp_create_nonce( 'xlwcty_notice_nonce' );
+		wp_localize_script( 'xlwcty-notices.js', 'xlwcty_notice_vars', array(
+			'nonce' => $xlwcty_notice_nonce,
+		) );
 	}
 
 	/**
@@ -524,13 +523,53 @@ class XLWCTY_Upsell {
 	 * Upsell notice js
 	 * common per plugin
 	 */
-//	public function xl_upsells_notice_js() {
-//		if ( true === $this->notice_displayed ) {
-//			ob_start();
-//
-//			echo ob_get_clean();
-//		}
-//	}
+	public function xl_upsells_notice_js() {
+		if ( true === $this->notice_displayed ) {
+			ob_start();
+			?>
+            <script type="text/javascript">
+                (function ($) {
+                    var noticeWrap = $('#xl_notice_type_3');
+                    var pluginShortSlug = noticeWrap.attr("data-plugin");
+                    var pluginSlug = noticeWrap.attr("data-plugin-slug");
+                    $('body').on('click', '.xl-notice-dismiss', function (e) {
+                        e.preventDefault();
+                        var $this = $(this);
+                        var xlDisplayedMode = $this.attr("data-mode");
+                        if (xlDisplayedMode == 'dismiss') {
+                            xlDisplayedCount = '100';
+                        } else if (xlDisplayedMode == 'later') {
+                            xlDisplayedCount = '+1';
+                        }
+                        noticeWrap = $this.parents('#xl_notice_type_3');
+                        pluginShortSlug = noticeWrap.attr("data-plugin");
+                        pluginSlug = noticeWrap.attr("data-plugin-slug");
+                        wp.ajax.send('finale_upsells_dismiss', {
+                            data: {
+                                plugin: pluginShortSlug,
+                                notice_displayed_count: xlDisplayedCount,
+                            },
+                        });
+                        $this.closest('.updated').slideUp('fast', function () {
+                            $this.remove();
+                        });
+                    });
+                    $(document).on('wp-plugin-install-success', function (e, args) {
+                        if (args.slug == pluginSlug) {
+                            wp.ajax.send('finale_upsells_dismiss', {
+                                data: {
+                                    plugin: pluginShortSlug,
+                                    notice_displayed_count: '100',
+                                },
+                            });
+                        }
+                    });
+                })(jQuery);
+            </script>
+			<?php
+			echo ob_get_clean();
+		}
+	}
 
 	protected function external_template( $notice_slug, $plugin_name, $plugin_url, $heading, $sub_heading, $image ) {
 		?>

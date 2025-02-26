@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+#[AllowDynamicProperties]
 class XLWCTY_Content_Order_Acknowledge extends XLWCTY_Component {
 
 	private static $instance = null;

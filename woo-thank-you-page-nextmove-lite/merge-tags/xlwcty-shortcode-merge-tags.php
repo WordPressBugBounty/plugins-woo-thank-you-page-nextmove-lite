@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+#[AllowDynamicProperties]
 class XLWCTY_ShortCode_Merge_Tags {
 
 	public static $threshold_to_date = 30;

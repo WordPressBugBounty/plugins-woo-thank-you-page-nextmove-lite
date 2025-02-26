@@ -22,154 +22,12 @@ foreach ( $reasons as $reason ) {
 	$incr ++;
 }
 ?>
-<style>
-    .xl-modal {
-        position: fixed;
-        overflow: auto;
-        height: 100%;
-        width: 100%;
-        top: 0;
-        z-index: 100000;
-        display: none;
-        background: rgba(0, 0, 0, 0.6)
-    }
-
-    a.button.button-secondary.button-skip.allow-deactivate {
-        float:left;
-    }
-
-    .xl-modal .xl-modal-dialog {
-        background: transparent;
-        position: absolute;
-        left: 50%;
-        margin-left: -298px;
-        padding-bottom: 30px;
-        top: -100%;
-        z-index: 100001;
-        width: 596px
-    }
-
-    .xl-modal li.reason.has_html .reason_html {
-        display: none;
-        border: 1px solid #ddd;
-        padding: 4px 6px;
-        margin: 6px 0 0 20px;
-    }
-
-    .xl-modal li.reason.has_html.li-active .reason_html {
-        display: block;
-    }
-
-    @media (max-width: 650px) {
-        .xl-modal .xl-modal-dialog {
-            margin-left: -50%;
-            box-sizing: border-box;
-            padding-left: 10px;
-            padding-right: 10px;
-            width: 100%
-        }
-
-        .xl-modal .xl-modal-dialog .xl-modal-panel > h3 > strong {
-            font-size: 1.3em
-        }
-
-        .xl-modal .xl-modal-dialog li.reason {
-            margin-bottom: 10px
-        }
-
-        .xl-modal .xl-modal-dialog li.reason .reason-input {
-            margin-left: 29px
-        }
-
-        .xl-modal .xl-modal-dialog li.reason label {
-            display: table
-        }
-
-        .xl-modal .xl-modal-dialog li.reason label > span {
-            display: table-cell;
-            font-size: 1.3em
-        }
-    }
-
-    .xl-modal.active {
-        display: block
-    }
-
-    .xl-modal.active:before {
-        display: block
-    }
-
-    .xl-modal.active .xl-modal-dialog {
-        top: 10%
-    }
-
-    .xl-modal .xl-modal-body, .xl-modal .xl-modal-footer {
-        border: 0;
-        background: #fefefe;
-        padding: 20px
-    }
-
-    .xl-modal .xl-modal-body {
-        border-bottom: 0
-    }
-
-    .xl-modal .xl-modal-body h2 {
-        font-size: 20px
-    }
-
-    .xl-modal .xl-modal-body > div {
-        margin-top: 10px
-    }
-
-    .xl-modal .xl-modal-body > div h2 {
-        font-weight: bold;
-        font-size: 20px;
-        margin-top: 0
-    }
-
-    .xl-modal .xl-modal-footer {
-        border-top: #eeeeee solid 1px;
-        text-align: right
-    }
-
-    .xl-modal .xl-modal-footer > .button {
-        margin: 0 7px
-    }
-
-    .xl-modal .xl-modal-footer > .button:first-child {
-        margin: 0
-    }
-
-    .xl-modal .xl-modal-panel:not(.active) {
-        display: none
-    }
-
-    .xl-modal .reason-input {
-        margin: 3px 0 3px 22px
-    }
-
-    .xl-modal .reason-input input, .xl-modal .reason-input textarea {
-        width: 100%
-    }
-
-    body.has-xl-modal {
-        overflow: hidden
-    }
-
-    #the-list .deactivate > .xl-slug {
-        display: none
-    }
-
-    .xl-modal li.reason-hide {
-        display: none;
-    }
-
-</style>
 <script type="text/javascript">
     var currentPluginName = "";
     var XLCustomReasons = {};
     var XLDefaultReason = {};
     var XLallLicences = '<?php echo wp_json_encode( $licenses, JSON_UNESCAPED_SLASHES ); ?>';
+    var xl_nonce = '<?php echo wp_create_nonce( 'xl_uninstall_reason_nonce' ); ?>';
     (function ($) {
 		<?php
 		foreach($VARS['reasons'] as $plugin_key => $plugin_reasons) {
@@ -247,10 +105,10 @@ foreach ( $reasons as $reason ) {
                 return false;
             });
             $modal.on('click', '.button', function (evt) {
-                evt.preventDefault();
+                evt.preventDefault(); // Prevent the default action for all button clicks
 
                 if ($(this).hasClass('disabled')) {
-                    return;
+                    return; // If the button is disabled, do nothing
                 }
 
                 var _parent = $(this).parents('.xl-modal:first');
@@ -258,20 +116,17 @@ foreach ( $reasons as $reason ) {
 
                 if (_this.hasClass('allow-deactivate')) {
 
-                    // Skip ajax call
-                    if (_this.hasClass('button-skip')){
-                        // Do not show the dialog box, deactivate the plugin.
+                    // Skip AJAX call and directly deactivate if this is the skip button
+                    if (_this.hasClass('button-skip')) {
                         window.location.href = $deactivateLinks[currentPluginName];
                         return;
                     }
 
                     var $radio = $('input[type="radio"]:checked');
+                    var $selected_reason = $radio.parents('li:first');
+                    var $input = $selected_reason.find('textarea, input[type="text"]');
 
-
-                    var $selected_reason = $radio.parents('li:first'),
-                        $input = $selected_reason.find('textarea, input[type="text"]');
-
-
+                    // Make the AJAX call
                     $.ajax({
                         url: ajaxurl,
                         method: 'POST',
@@ -280,24 +135,42 @@ foreach ( $reasons as $reason ) {
                             'reason_id': (0 !== $radio.length) ? $radio.val() : '',
                             'reason_info': (0 !== $input.length) ? $input.val().trim() : '',
                             'plugin_basename': currentPluginName,
-                            'licenses': XLallLicences
+                            'licenses': XLallLicences,
+                            '_wpnonce': xl_nonce // Pass the nonce here
                         },
                         beforeSend: function () {
                             _parent.find('.button').addClass('disabled');
                             _parent.find('.button-secondary').text('Processing...');
                         },
-                        complete: function () {
-                            // Do not show the dialog box, deactivate the plugin.
-                            window.location.href = $deactivateLinks[currentPluginName];
+                        success: function (response) {
+                            if (response.success) {
+                                // If successful, proceed with deactivation
+                                window.location.href = $deactivateLinks[currentPluginName];
+                            } else {
+                                // Display error message and prevent deactivation
+                                $modal.find('.xl-modal-body').prepend(
+                                    '<div class="error-message" style="color: red; margin-bottom: 10px;">' + response.data + '</div>'
+                                );
+                                _parent.find('.button').removeClass('disabled');
+                                _parent.find('.button-secondary').text('Submit');
+                            }
+                        },
+                        error: function () {
+                            // Display generic error message if AJAX call fails
+                            $modal.find('.xl-modal-body').prepend(
+                                '<div class="error-message" style="color: red; margin-bottom: 10px;">An error occurred. Please try again later.</div>'
+                            );
+                            _parent.find('.button').removeClass('disabled');
+                            _parent.find('.button-secondary').text('Submit');
                         }
                     });
                 } else if (_this.hasClass('button-deactivate')) {
-                    // Change the Deactivate button's text and show the reasons panel.
+                    // Show the reasons panel without allowing deactivation immediately
                     _parent.find('.button-deactivate').addClass('allow-deactivate');
-
                     showPanel('reasons');
                 }
             });
+
 
             $modal.on('click', 'input[type="radio"]', function () {
                 var _parent = $(this).parents('li:first');
