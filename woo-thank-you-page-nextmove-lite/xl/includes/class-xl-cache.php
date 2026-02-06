@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package XLCore
  */
 if ( ! class_exists( 'XL_Cache' ) ) {
+	#[AllowDynamicProperties]
 	class XL_Cache {
 
 		protected static $instance;

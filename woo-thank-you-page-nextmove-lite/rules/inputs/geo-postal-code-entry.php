@@ -4,6 +4,20 @@ defined( 'ABSPATH' ) || exit;
 #[AllowDynamicProperties]
 class xlwcty_Input_Geo_Postal_Code_Entry {
 
+	/**
+	 * Input type.
+	 *
+	 * @var string
+	 */
+	public $type;
+
+	/**
+	 * Default field values.
+	 *
+	 * @var array
+	 */
+	public $defaults;
+
 	public function __construct() {
 		// vars
 		$this->type = 'Geo_Postal_Code_Entry';

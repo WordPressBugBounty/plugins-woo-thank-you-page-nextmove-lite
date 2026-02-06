@@ -169,7 +169,7 @@ class XL_deactivate {
 			wp_send_json_error( 'You do not have sufficient permissions to perform this action.' );
 			exit();
 		}
-		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'xl_uninstall_reason_nonce' ) ) {
+		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'xl_uninstall_reason_nonce' ) ) {
 			wp_send_json_error( 'Security error.' );
 			exit;
 		}
@@ -179,10 +179,10 @@ class XL_deactivate {
 			exit();
 		}
 
-		$reason_info = isset( $_REQUEST['reason_info'] ) ? trim( stripslashes( $_REQUEST['reason_info'] ) ) : '';
+		$reason_info = isset( $_REQUEST['reason_info'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['reason_info'] ) ) : '';
 
 		$reason = array(
-			'id'   => $_POST['reason_id'],
+			'id'   => sanitize_text_field( wp_unslash( $_POST['reason_id'] ) ),
 			'info' => substr( $reason_info, 0, 128 ),
 		);
 
@@ -192,27 +192,27 @@ class XL_deactivate {
 		if ( $licenses && count( $licenses ) > 0 ) {
 			foreach ( $licenses as $key => $license ) {
 
-				if ( $key == $_POST['plugin_basename'] ) {
+				if ( $key == sanitize_text_field( wp_unslash( $_POST['plugin_basename'] ) ) ) {
 					$version = $license['Version'];
 				}
 			}
 		}
 
 		$deactivations = array(
-			$_POST['plugin_basename'] . '(' . $version . ')' => $reason,
+			sanitize_text_field( wp_unslash( $_POST['plugin_basename'] ) ) . '(' . $version . ')' => $reason,
 		);
 
-		$license_info = isset( $_REQUEST['licenses'] ) ? json_decode( stripslashes( $_REQUEST['licenses'] ) ) : '';
+		$license_info = isset( $_REQUEST['licenses'] ) ? json_decode( wp_unslash( $_REQUEST['licenses'] ) ) : '';
 
 		$licenses_info_pass = array();
 
 		if ( $license_info && is_object( $license_info ) ) {
 
-			if ( property_exists( $license_info, sha1( $_POST['plugin_basename'] ) ) ) {
-				$basename           = sha1( $_POST['plugin_basename'] );
+			if ( property_exists( $license_info, sha1( sanitize_text_field( wp_unslash( $_POST['plugin_basename'] ) ) ) ) ) {
+				$basename           = sha1( sanitize_text_field( wp_unslash( $_POST['plugin_basename'] ) ) );
 				$licenses_info_pass = $license_info->$basename;
-			} elseif ( property_exists( $license_info, ( $_POST['plugin_basename'] ) ) ) {
-				$basename           = $_POST['plugin_basename'];
+			} elseif ( property_exists( $license_info, sanitize_text_field( wp_unslash( $_POST['plugin_basename'] ) ) ) ) {
+				$basename           = sanitize_text_field( wp_unslash( $_POST['plugin_basename'] ) );
 				$licenses_info_pass = $license_info->$basename;
 			}
 		}

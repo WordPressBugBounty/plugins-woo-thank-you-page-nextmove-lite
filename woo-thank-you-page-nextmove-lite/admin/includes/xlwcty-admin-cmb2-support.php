@@ -166,10 +166,20 @@ class XLWCTY_Admin_CMB2_Support {
 	}
 
 	public static function get_orders_cmb2( $field = null, $is_pre_data = false ) {
-		$data     = array();
-		$pre_data = array();
-		$args     = array(
-			'status' => XLWCTY_Core()->data->get_option( 'allowed_order_statuses' ),
+		$data             = array();
+		$pre_data         = array();
+		$allowed_statuses = array( 'wc-completed' );
+		if ( function_exists( 'XLWCTY_Core' ) ) {
+			$core = XLWCTY_Core();
+			if ( is_object( $core ) && isset( $core->data ) && is_object( $core->data ) ) {
+				$opt = $core->data->get_option( 'allowed_order_statuses' );
+				if ( ! empty( $opt ) && is_array( $opt ) ) {
+					$allowed_statuses = $opt;
+				}
+			}
+		}
+		$args = array(
+			'status' => $allowed_statuses,
 			'limit'  => 10,
 		);
 

@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+#[AllowDynamicProperties]
 class xlwcty_Input_Term_Select extends xlwcty_Input_Text {
 
 	public function __construct() {

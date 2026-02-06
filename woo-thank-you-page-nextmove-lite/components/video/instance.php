@@ -5,13 +5,13 @@ defined( 'ABSPATH' ) || exit;
 class XLWCTY_Video extends XLWCTY_Component {
 
 	private static $instance = null;
-	public $is_disable = true;
-	public $viewpath = '';
-	public $source = '';
-	public $height = '';
-	public $width = '';
-	public $is_multiple = true;
-	public $component_limit = 1;
+	public $is_disable       = true;
+	public $viewpath         = '';
+	public $source           = '';
+	public $height           = '';
+	public $width            = '';
+	public $is_multiple      = true;
+	public $component_limit  = 1;
 
 	public function __construct( $order = false ) {
 		parent::__construct();
@@ -22,7 +22,7 @@ class XLWCTY_Video extends XLWCTY_Component {
 
 	public static function get_instance() {
 		if ( self::$instance == null ) {
-			self::$instance = new self;
+			self::$instance = new self();
 		}
 
 		return self::$instance;
@@ -85,7 +85,7 @@ class XLWCTY_Video extends XLWCTY_Component {
 			}
 			if ( $this->data->btn_bg_color != '' ) {
 				$style['.xlwcty_wrap .xlwcty_videoBox.xlwcty_videoBox_1 .xlwcty_btn']['background'] = $this->data->btn_bg_color;
-				$rgba                                                                               = XLWCTY_Common::hex2rgb( $this->data->btn_bg_color, true );
+				$rgba = XLWCTY_Common::hex2rgb( $this->data->btn_bg_color, true );
 				if ( $rgba != '' ) {
 					$style['.xlwcty_wrap .xlwcty_videoBox.xlwcty_videoBox_1 .xlwcty_btn:hover']['background'] = "rgba({$rgba},0.70)";
 				}
@@ -99,7 +99,6 @@ class XLWCTY_Video extends XLWCTY_Component {
 			return true;
 		}
 	}
-
 }
 
 return XLWCTY_Video::get_instance();

@@ -767,7 +767,8 @@ function xlwcty_manage_radio_active($) {
                 minTermLength: 3,
                 afterTypeDelay: 500,
                 data: {
-                    'action': 'get_product_cmb2'
+                    'action': 'get_product_cmb2',
+                    cmb2_nonce: nonce
                 },
                 url: ajaxurl,
                 dataType: 'json'
@@ -807,7 +808,8 @@ function xlwcty_manage_radio_active($) {
                 minTermLength: 3,
                 afterTypeDelay: 500,
                 data: {
-                    'action': 'xlwcty_get_orders_cmb2'
+                    'action': 'xlwcty_get_orders_cmb2',
+                    cmb2_nonce: nonce
                 },
                 url: ajaxurl,
                 dataType: 'json'
@@ -997,11 +999,21 @@ function xlwcty_manage_radio_active($) {
 
     if ($('.xlwcty_status_support_text').length > 0) {
         $('.xlwcty_status_support_text').parents(".xlwcty_side_content").removeClass("xlwcty_side_yellow");
-        $.post(ajaxurl, {action: 'xlwcty_quick_view'}, function (result) {
+        $.post(ajaxurl, {
+            action: 'xlwcty_quick_view',
+            security: xlwctyParams.ajax_nonce
+        }, function (result) {
             var elem = $(".xlwcty-quick-view-ajaxwrap");
             var _temp = wp.template('xlwcty-quick-view-template');
 
-            if (result.status == "success") {
+            if (result.success === false) {
+                // Handle error response (security check failed or permission denied)
+                $('.xlwcty_status_support_text').parents(".xlwcty_side_content").addClass("xlwcty_side_yellow");
+                $('.xlwcty_status_support_text').parents(".xlwcty_side_content").find("h3.xlwcty_first_elem").html("NextMove Summary");
+                if (result.data && result.data.message) {
+                    $('.xlwcty_status_support_text').html(result.data.message);
+                }
+            } else if (result.status == "success") {
                 elem.html(_temp({"html": result.html}));
                 $('.xlwcty_status_support_text').html(result.after_text);
                 if (result.nextmove_state == 'failed') {
@@ -1009,6 +1021,11 @@ function xlwcty_manage_radio_active($) {
                     $('.xlwcty_status_support_text').parents(".xlwcty_side_content").find("h3.xlwcty_first_elem").html("NextMove Alert");
                 }
             }
+        }).fail(function(xhr, status, error) {
+            // Handle AJAX failure
+            $('.xlwcty_status_support_text').parents(".xlwcty_side_content").addClass("xlwcty_side_yellow");
+            $('.xlwcty_status_support_text').parents(".xlwcty_side_content").find("h3.xlwcty_first_elem").html("NextMove Summary");
+            $('.xlwcty_status_support_text').html("An error occurred. Please try again.");
         });
     }
 

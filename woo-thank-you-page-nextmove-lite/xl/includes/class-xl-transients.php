@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package XLCore
  */
 if ( ! class_exists( 'XL_Transient' ) ) {
+	#[AllowDynamicProperties]
 	class XL_Transient {
 
 		protected static $instance;
@@ -155,8 +156,7 @@ if ( ! class_exists( 'XL_Transient' ) ) {
 
 			/** removing db transient */
 			$option_name = "_xlcore_transient_{$plugin_short_name}";
-			$query       = $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE `option_name` LIKE %s", '%' . $option_name . '%' );
-			$wpdb->query( $query );
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE `option_name` LIKE %s", '%' . $wpdb->esc_like( $option_name ) . '%' ) );
 
 			/** removing files if file api exist */
 			$file_writing = $this->is_file_saving_enabled();
@@ -176,8 +176,7 @@ if ( ! class_exists( 'XL_Transient' ) ) {
 			global $wpdb;
 
 			/** removing db transient */
-			$query = $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE `option_name` LIKE %s", '%_xlcore_transient_%' );
-			$wpdb->query( $query );
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE `option_name` LIKE %s", '%' . $wpdb->esc_like( '_xlcore_transient_' ) . '%' ) );
 
 			/** removing files if file api exist */
 			$file_writing = $this->is_file_saving_enabled();

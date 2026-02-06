@@ -20,17 +20,17 @@
 			if ( ! empty( $licenses->plugins_list ) ) {
 				?>
                 <li class="plugin-install-featured <?php echo ( isset( $model->current_tab ) && $model->current_tab == 'licenses' ) ? 'current' : ''; ?>">
-                    <a href="<?php echo admin_url( 'admin.php?page=' . $_GET['page'] . '&tab=licenses' ); ?>"><?php _e( 'Licenses', 'xlplugins' ); ?></a>
+                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=' . ( isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '' ) . '&tab=licenses' ) ); ?>"><?php _e( 'Licenses', 'xlplugins' ); ?></a>
                 </li>
 			<?php } ?>
             <li class="plugin-install-popular <?php echo ( isset( $model->current_tab ) && $model->current_tab == 'support' ) ? 'current' : ''; ?>">
-                <a href="<?php echo admin_url( 'admin.php?page=' . $_GET['page'] . '&tab=support' ); ?>"
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=' . ( isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '' ) . '&tab=support' ) ); ?>"
                    class=""><?php _e( 'Support', 'xlplugins' ); ?></a>
             </li>
 			<?php if ( isset( $model->additional_tabs ) && is_array( $model->additional_tabs ) && count( $model->additional_tabs ) > 0 ): ?>
 				<?php foreach ( $model->additional_tabs as $tab ): ?>
                     <li class="<?php echo ( isset( $model->current_tab ) && $model->current_tab == $tab['slug'] ) ? "current" : "" ?>">
-                        <a href="<?php echo admin_url( 'admin.php?page=' . $_GET['page'] . '&tab=' . $tab['slug'] ) ?>"><?php echo $tab['label']; ?></a>
+                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=' . ( isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '' ) . '&tab=' . esc_attr( $tab['slug'] ) ) ); ?>"><?php echo esc_html( $tab['label'] ); ?></a>
                     </li>
 				<?php endforeach; ?>
 			<?php endif; ?>

@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 $config             = array();
 $config['slug']     = '_xlwcty_image';
 $config['title']    = 'Image Text';
-$config['instance'] = require( __DIR__ . '/instance.php' );
+$config['instance'] = require __DIR__ . '/instance.php';
 $config['fields']   = array(
 	'id'                     => $config['slug'] . '_1',
 	'position'               => 35,

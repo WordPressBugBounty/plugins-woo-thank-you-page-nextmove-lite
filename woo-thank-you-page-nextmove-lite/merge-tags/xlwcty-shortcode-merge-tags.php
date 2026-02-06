@@ -19,7 +19,6 @@ class XLWCTY_ShortCode_Merge_Tags {
 	 */
 	public static function maybe_parse_merge_tags( $content = '', $helper_data = false ) {
 		$get_all = self::get_all_tags();
-		//iterating over all the merge tags
 		if ( $get_all && is_array( $get_all ) && count( $get_all ) > 0 ) {
 			foreach ( $get_all as $tag ) {
 				$matches = array();
@@ -33,7 +32,7 @@ class XLWCTY_ShortCode_Merge_Tags {
 				if ( $matches && is_array( $matches ) && count( $matches ) > 0 ) {
 
 					if ( ! isset( $matches[0] ) ) {
-						return;
+						return '';
 					}
 
 					//iterate over the found matches
@@ -352,7 +351,10 @@ class XLWCTY_ShortCode_Merge_Tags {
 			return __return_empty_string();
 		}
 
-		return sprintf( '%s%s', '<span class="xlwcty_order_meta_label">' . $atts['label'] . '</span>', $get_key_value );
+		$label = wp_kses_post( $atts['label'] );
+		$value = wp_kses_post( $get_key_value );
+
+		return sprintf( '%s%s', '<span class="xlwcty_order_meta_label">' . $label . '</span>', $value );
 	}
 
 

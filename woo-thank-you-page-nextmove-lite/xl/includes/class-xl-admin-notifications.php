@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package XLCore
  * @author XLPlugins
  */
+#[AllowDynamicProperties]
 class XL_admin_notifications {
 
 	public static $all_notifications;
@@ -60,7 +61,7 @@ class XL_admin_notifications {
 	/**
 	 * Remove a notice from being displayed
 	 *
-	 * @param  string $name
+	 * @param string $name
 	 */
 	public static function remove_notice( $name ) {
 		$has_notice_removed = get_option( 'xl_admin_notices' );

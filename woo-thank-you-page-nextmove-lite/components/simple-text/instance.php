@@ -5,10 +5,10 @@ defined( 'ABSPATH' ) || exit;
 class XLWCTY_Simple_text extends XLWCTY_Component {
 
 	private static $instance = null;
-	public $viewpath = '';
-	public $is_disable = true;
-	public $is_multiple = true;
-	public $component_limit = 1;
+	public $viewpath         = '';
+	public $is_disable       = true;
+	public $is_multiple      = true;
+	public $component_limit  = 1;
 
 	public function __construct( $order = false ) {
 		parent::__construct();
@@ -19,7 +19,7 @@ class XLWCTY_Simple_text extends XLWCTY_Component {
 
 	public static function get_instance() {
 		if ( self::$instance == null ) {
-			self::$instance = new self;
+			self::$instance = new self();
 		}
 
 		return self::$instance;
@@ -78,7 +78,6 @@ class XLWCTY_Simple_text extends XLWCTY_Component {
 			return true;
 		}
 	}
-
 }
 
 return XLWCTY_Simple_text::get_instance();

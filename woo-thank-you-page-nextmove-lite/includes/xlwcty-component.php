@@ -149,7 +149,10 @@ abstract class XLWCTY_Component {
 	public function get_view() {
 		$order_data = $this->get_view_data();
 		if ( isset( $order_data['order_id'] ) && 0 === $order_data['order_id'] ) {
-			return;
+			// In preview mode, allow rendering even without order
+			if ( ! XLWCTY_Core()->public->is_preview ) {
+				return;
+			}
 		}
 		extract( $order_data );
 		if ( file_exists( $this->viewpath ) ) {
@@ -176,8 +179,17 @@ abstract class XLWCTY_Component {
 			return array(
 				'campaign_data' => $this->instance_campaign_data,
 				'order_data'    => $order,
+				'order_id'      => XLWCTY_Compatibility::get_order_id( $order ),
 			);
 		} else {
+			// In preview mode, return empty data structure
+			if ( XLWCTY_Core()->public->is_preview ) {
+				return array(
+					'campaign_data' => $this->instance_campaign_data,
+					'order_data'    => null,
+					'order_id'      => 0,
+				);
+			}
 			return array(
 				'order_id' => 0,
 			);

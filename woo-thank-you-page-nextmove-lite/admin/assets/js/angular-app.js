@@ -415,7 +415,8 @@
                     minTermLength: 3,
                     afterTypeDelay: 500,
                     data: {
-                        'action': 'xlwcty_get_orders_cmb2'
+                        'action': 'xlwcty_get_orders_cmb2',
+                        cmb2_nonce: (typeof cmb2_vars !== 'undefined') ? cmb2_vars.nonce : ''
                     },
                     url: ajaxurl,
                     dataType: 'json'

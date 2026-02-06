@@ -2,8 +2,8 @@
 Contributors: xlplugins, amans2k
 Tags: WooCommerce, WooCommerce Thank You, WooCommerce Thank You Page, Custom Thank You Page, Woo Thank You Page
 Requires at least: 5.0
-Tested up to: 6.7.2
-Stable tag: 2.20.0
+Tested up to: 6.9
+Stable tag: 2.23.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -228,6 +228,33 @@ Yes, you can easily create Thank You Pages in your language. We are also compati
 8. Help/Troubleshoot
 
 == Changelog ==
+= 2.23.0 (2025-12-31) =
+* Compatible upto WordPress 6.9
+* Compatible upto WooCommerce 10.4.3
+* Security: Sanitized REQUEST_URI inputs to prevent potential ReDoS attacks. (fix/160)
+* Security: Added nonce verification to AJAX handlers for product search, order search, and quick view functionality. (fix/170)
+* Security: Added input sanitization with sanitize_text_field and wp_unslash to AJAX handlers. (fix/170)
+* Security: Removed dead code hooks for xlwcty_close_sticky_bar. (fix/170)
+* New: WPML compatibility for multilingual thank you pages. (fix/160)
+* Improved: Dynamic WPML language detection supporting all active languages. (fix/160)
+* Improved: Translation caching for better performance with WPML. (fix/160)
+* Improved: HTML component now supports embedding third-party forms (Gravity Forms, WPForms) and scripts. (fix/175)
+* Fixed: Order statuses reverted to original defaults. (fix/160)
+* Fixed: Plugin activation error caused by missing class xlwcty_Admin during WP-CLI installation. (fix/162)
+* Fixed: Rules not saving correctly in the page builder. (fix/172)
+* Fixed: Deprecated dynamic property warnings in PHP 8.2+ for rule input classes. (fix/172)
+
+
+= 2.22.0 (2025-11-12) =
+* Compatible upto WordPress 6.8.3
+* Compatible upto WooCommerce 10.3.4
+* Security Enhancements: Updated code for vulnerability fix (fix/153)
+
+= 2.21.0 (2025-10-14) =
+* Compatible upto WordPress 6.8.3
+* Compatible upto WooCommerce 10.2.2
+* Security Enhancements: Updated code for vulnerability fix (fix/146)
+
 
 = 2.20.0 (2025-02-26) =
 * Compatible upto WordPress 6.7.2

@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package XLCore
  *
  */
+#[AllowDynamicProperties]
 class XL_optIn_Manager {
 
 	public static $optIn_state;

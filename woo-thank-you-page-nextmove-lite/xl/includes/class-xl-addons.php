@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package XLCore
  * @author XLPlugins
  */
+#[AllowDynamicProperties]
 class XL_addons {
 
 	public static $installed_addons = array();

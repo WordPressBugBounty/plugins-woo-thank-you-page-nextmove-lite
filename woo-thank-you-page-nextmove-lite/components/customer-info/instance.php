@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) || exit;
 class XLWCTY_Customer_Information extends XLWCTY_Component {
 
 	private static $instance = null;
-	public $viewpath = '';
+	public $viewpath         = '';
 
 	public function __construct( $order = false ) {
 		parent::__construct();
@@ -17,7 +17,7 @@ class XLWCTY_Customer_Information extends XLWCTY_Component {
 
 	public static function get_instance() {
 		if ( null === self::$instance ) {
-			self::$instance = new self;
+			self::$instance = new self();
 		}
 
 		return self::$instance;
@@ -88,7 +88,7 @@ class XLWCTY_Customer_Information extends XLWCTY_Component {
 
 		/** checking if not array */
 		if ( ! is_array( $billing_address ) ) {
-			$billing_address = [];
+			$billing_address = array();
 		}
 
 		return $billing_address;
@@ -107,12 +107,11 @@ class XLWCTY_Customer_Information extends XLWCTY_Component {
 
 		/** checking if not array */
 		if ( ! is_array( $shipping_address ) ) {
-			$shipping_address = [];
+			$shipping_address = array();
 		}
 
 		return $shipping_address;
 	}
-
 }
 
 return XLWCTY_Customer_Information::get_instance();

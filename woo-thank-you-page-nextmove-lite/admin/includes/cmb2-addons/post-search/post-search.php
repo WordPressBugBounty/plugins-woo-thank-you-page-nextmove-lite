@@ -2,14 +2,14 @@
 defined( 'ABSPATH' ) || exit;
 
 /*
-  Plugin Name: CMB2 Field Type: Post Search Ajax
-  Plugin URI: https://github.com/alexis-magina/cmb2-field-post-search-ajax
-  GitHub Plugin URI: https://github.com/alexis-magina/cmb2-field-post-search-ajax
-  Description: CMB2 field type to attach posts to each others.
-  Version: 1.1.5
-  Author: Magina
-  Author URI: http://magina.fr/
-  License: GPLv2+
+	Plugin Name: CMB2 Field Type: Post Search Ajax
+	Plugin URI: https://github.com/alexis-magina/cmb2-field-post-search-ajax
+	GitHub Plugin URI: https://github.com/alexis-magina/cmb2-field-post-search-ajax
+	Description: CMB2 field type to attach posts to each others.
+	Version: 1.1.5
+	Author: Magina
+	Author URI: http://magina.fr/
+	License: GPLv2+
  */
 
 /**
@@ -76,25 +76,25 @@ if ( ! class_exists( 'MAG_CMB2_Field_Post_Search_Ajax' ) ) {
 					$field_value = ( $value ? get_the_title( $value ) : '' );
 				}
 				echo $field_type->input( array(
-					'type'  => 'hidden',
-					'name'  => $field_name . '_results',
-					'value' => $value,
-					'desc'  => false
-				) );
+						'type'  => 'hidden',
+						'name'  => $field_name . '_results',
+						'value' => $value,
+						'desc'  => false,
+					) );
 			}
 
 			echo $field_type->input( array(
-				'type'           => 'text',
-				'name'           => $field_name,
-				'id'             => $field_name,
-				'class'          => 'cmb-post-search-ajax',
-				'value'          => $field_value,
-				'desc'           => false,
-				'data-limit'     => $field->args( 'limit' ) ? $field->args( 'limit' ) : '1',
-				'data-sortable'  => $field->args( 'sortable' ) ? $field->args( 'sortable' ) : '0',
-				'data-object'    => $field->args( 'object_type' ) ? $field->args( 'object_type' ) : 'post',
-				'data-queryargs' => $field->args( 'query_args' ) ? htmlspecialchars( json_encode( $field->args( 'query_args' ) ), ENT_QUOTES, 'UTF-8' ) : ''
-			) );
+					'type'           => 'text',
+					'name'           => $field_name,
+					'id'             => $field_name,
+					'class'          => 'cmb-post-search-ajax',
+					'value'          => $field_value,
+					'desc'           => false,
+					'data-limit'     => $field->args( 'limit' ) ? $field->args( 'limit' ) : '1',
+					'data-sortable'  => $field->args( 'sortable' ) ? $field->args( 'sortable' ) : '0',
+					'data-object'    => $field->args( 'object_type' ) ? $field->args( 'object_type' ) : 'post',
+					'data-queryargs' => $field->args( 'query_args' ) ? htmlspecialchars( json_encode( $field->args( 'query_args' ) ), ENT_QUOTES, 'UTF-8' ) : '',
+				) );
 
 			echo '<img src="' . admin_url( 'images/spinner.gif' ) . '" class="cmb-post-search-ajax-spinner" />';
 
@@ -127,7 +127,7 @@ if ( ! class_exists( 'MAG_CMB2_Field_Post_Search_Ajax' ) ) {
 			/**
 			 * Set the variable cmb2_fpsa_dir
 			 */
-			$cmb2_fpsa_dir = trailingslashit( dirname( __FILE__ ) );
+			$cmb2_fpsa_dir = trailingslashit( __DIR__ );
 
 			/**
 			 * Use CMB2_Utils to gather the url from cmb2_fpsa_dir
@@ -150,9 +150,9 @@ if ( ! class_exists( 'MAG_CMB2_Field_Post_Search_Ajax' ) ) {
 			wp_register_script( 'jquery-autocomplete', self::url( 'js/jquery.autocomplete.min.js' ), array( 'jquery' ), self::VERSION );
 			wp_register_script( 'mag-post-search-ajax', self::url( 'js/mag-post-search-ajax.js' ), array( 'jquery', 'jquery-autocomplete', 'jquery-ui-sortable' ), self::VERSION );
 			wp_localize_script( 'mag-post-search-ajax', 'psa', array(
-				'ajaxurl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'mag_cmb_post_search_ajax_get_results' )
-			) );
+					'ajaxurl' => admin_url( 'admin-ajax.php' ),
+					'nonce'   => wp_create_nonce( 'mag_cmb_post_search_ajax_get_results' ),
+				) );
 			wp_enqueue_script( 'mag-post-search-ajax' );
 			wp_enqueue_style( 'mag-post-search-ajax', self::url( 'css/mag-post-search-ajax.css' ), array(), self::VERSION );
 		}
@@ -161,15 +161,23 @@ if ( ! class_exists( 'MAG_CMB2_Field_Post_Search_Ajax' ) ) {
 		 * Ajax request : get results
 		 */
 		public function cmb_post_search_ajax_get_results() {
-			$nonce = $_POST['psacheck'];
+			$nonce = isset( $_POST['psacheck'] ) ? sanitize_text_field( wp_unslash( $_POST['psacheck'] ) ) : '';
 			if ( ! wp_verify_nonce( $nonce, 'mag_cmb_post_search_ajax_get_results' ) ) {
 				die( json_encode( array( 'error' => __( 'Error : Unauthorized action' ) ) ) );
 			} else {
-				$args      = json_decode( stripslashes( htmlspecialchars_decode( $_POST['query_args'] ) ), true );
-				$args['s'] = $_POST['query'];
-				$datas     = array();
-				if ( $_POST['object'] == 'user' ) {
-					$args['search'] = '*' . esc_attr( $_POST['query'] ) . '*';
+				$raw_args = isset( $_POST['query_args'] ) ? wp_unslash( $_POST['query_args'] ) : '';
+				$args     = json_decode( stripslashes( htmlspecialchars_decode( $raw_args ) ), true );
+				if ( ! is_array( $args ) ) {
+					$args = array();
+				}
+				// Whitelist allowed query arguments to prevent injection
+				$allowed_args = array( 'post_type', 'post_status', 'posts_per_page', 'paged', 's', 'meta_query', 'tax_query', 'search' );
+				$args         = array_intersect_key( $args, array_flip( $allowed_args ) );
+				$args['s']    = isset( $_POST['query'] ) ? sanitize_text_field( wp_unslash( $_POST['query'] ) ) : '';
+				$datas        = array();
+				$object       = isset( $_POST['object'] ) ? sanitize_text_field( wp_unslash( $_POST['object'] ) ) : '';
+				if ( $object == 'user' ) {
+					$args['search'] = '*' . esc_attr( $args['s'] ) . '*';
 					$users          = new WP_User_Query( $args );
 					$results        = $users->get_results();
 					if ( ! empty( $results ) ) {
@@ -177,22 +185,23 @@ if ( ! class_exists( 'MAG_CMB2_Field_Post_Search_Ajax' ) ) {
 							$user_info = get_userdata( $result->ID );
 							// Define filter "mag_cmb_post_search_ajax_result" to allow customize ajax results.
 							$datas[] = apply_filters( 'mag_cmb_post_search_ajax_result', array(
-								'value' => $user_info->display_name,
-								'data'  => $result->ID,
-								'guid'  => get_edit_user_link( $result->ID )
-							) );
+									'value' => $user_info->display_name,
+									'data'  => $result->ID,
+									'guid'  => get_edit_user_link( $result->ID ),
+								) );
 						}
 					}
 				} else {
 					$results = new WP_Query( $args );
 					if ( $results->have_posts() ) :
-						while ( $results->have_posts() ) : $results->the_post();
+						while ( $results->have_posts() ) :
+							$results->the_post();
 							// Define filter "mag_cmb_post_search_ajax_result" to allow customize ajax results.
 							$datas[] = apply_filters( 'mag_cmb_post_search_ajax_result', array(
-								'value' => get_the_title(),
-								'data'  => get_the_ID(),
-								'guid'  => get_edit_post_link()
-							) );
+									'value' => get_the_title(),
+									'data'  => get_the_ID(),
+									'guid'  => get_edit_post_link(),
+								) );
 						endwhile;
 					endif;
 				}
@@ -200,7 +209,6 @@ if ( ! class_exists( 'MAG_CMB2_Field_Post_Search_Ajax' ) ) {
 				die( json_encode( $datas ) );
 			}
 		}
-
 	}
 
 }

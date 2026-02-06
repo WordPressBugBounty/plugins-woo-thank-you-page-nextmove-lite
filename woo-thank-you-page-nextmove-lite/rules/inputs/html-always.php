@@ -3,6 +3,21 @@ defined( 'ABSPATH' ) || exit;
 
 #[AllowDynamicProperties]
 class xlwcty_Input_Html_Always {
+
+	/**
+	 * Input type.
+	 *
+	 * @var string
+	 */
+	public $type;
+
+	/**
+	 * Default field values.
+	 *
+	 * @var array
+	 */
+	public $defaults;
+
 	public function __construct() {
 		// vars
 		$this->type = 'Html_Always';

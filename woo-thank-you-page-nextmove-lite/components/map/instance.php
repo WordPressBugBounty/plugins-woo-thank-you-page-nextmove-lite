@@ -5,9 +5,9 @@ defined( 'ABSPATH' ) || exit;
 class XLWCTY_Shipping_Billing_Based_Map extends XLWCTY_Component {
 
 	private static $instance = null;
-	public $viewpath = '';
-	public $map_add = '';
-	public $is_disable = false;
+	public $viewpath         = '';
+	public $map_add          = '';
+	public $is_disable       = false;
 
 	public function __construct( $order = false ) {
 		parent::__construct();
@@ -18,7 +18,7 @@ class XLWCTY_Shipping_Billing_Based_Map extends XLWCTY_Component {
 
 	public static function get_instance() {
 		if ( self::$instance == null ) {
-			self::$instance = new self;
+			self::$instance = new self();
 		}
 
 		return self::$instance;
@@ -151,7 +151,6 @@ class XLWCTY_Shipping_Billing_Based_Map extends XLWCTY_Component {
 			parent::push_css( $slug, $style );
 		}
 	}
-
 }
 
 return XLWCTY_Shipping_Billing_Based_Map::get_instance();

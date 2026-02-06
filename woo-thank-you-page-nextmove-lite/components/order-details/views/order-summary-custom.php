@@ -2,10 +2,11 @@
 defined( 'ABSPATH' ) || exit;
 
 $show_purchase_note = $order_data->has_status( apply_filters( 'woocommerce_purchase_note_order_statuses', array( 'completed', 'processing' ) ) ); ?>
-    <div class="xlwcty_Box xlwcty_order_details_2_col">
+	<div class="xlwcty_Box xlwcty_order_details_2_col">
 		<?php
-		echo $this->data->heading ? '<div class="xlwcty_title">' . XLWCTY_Common::maype_parse_merge_tags( $this->data->heading ) . '</div>' : __( 'Order details', 'woocommerce' );
-		echo $heading_desc;
+		$heading_parsed = $this->data->heading ? XLWCTY_Common::maype_parse_merge_tags( $this->data->heading ) : '';
+		echo $heading_parsed ? '<div class="xlwcty_title">' . wp_kses_post( $heading_parsed ) . '</div>' : '<div class="xlwcty_title">' . esc_html( __( 'Order details', 'woocommerce' ) ) . '</div>';
+		echo wp_kses_post( $heading_desc );
 		foreach ( $order_data->get_items() as $item_id => $item ) {
 			if ( ! apply_filters( 'woocommerce_order_item_visible', true, $item ) ) {
 				continue;
@@ -22,12 +23,12 @@ $show_purchase_note = $order_data->has_status( apply_filters( 'woocommerce_purch
 				$image_enable = true;
 			}
 			?>
-            <div class="xlwcty_pro_list <?php echo ( false === $image_enable ) ? 'xlwcty_without_img' : ''; ?> xlwcty_clearfix">
-                <div class="xlwcty_leftDiv xlwcty_clearfix">
+			<div class="xlwcty_pro_list <?php echo ( false === $image_enable ) ? 'xlwcty_without_img' : ''; ?> xlwcty_clearfix">
+				<div class="xlwcty_leftDiv xlwcty_clearfix">
 					<?php
 					if ( $image_enable ) {
 						?>
-                        <div class="xlwcty_p_img">
+						<div class="xlwcty_p_img">
 							<?php
 							$thumbnail = ( $product ) ? $product->get_image( 'shop_thumbnail' ) : '';
 							if ( ! $product_permalink ) {
@@ -36,12 +37,12 @@ $show_purchase_note = $order_data->has_status( apply_filters( 'woocommerce_purch
 								printf( '<a href="%s">%s</a>', esc_url( $product_permalink ), $thumbnail );
 							}
 							?>
-                            <span class="xlwcty_qty"><?php echo XLWCTY_Compatibility::get_qty_from_item( $order_data, $item ); ?></span>
-                        </div>
+							<span class="xlwcty_qty"><?php echo XLWCTY_Compatibility::get_qty_from_item( $order_data, $item ); ?></span>
+						</div>
 						<?php
 					}
 					?>
-                    <div class="xlwcty_p_name">
+					<div class="xlwcty_p_name">
 						<?php
 						$product_permalink = apply_filters( 'woocommerce_order_item_permalink', $is_visible ? $product->get_permalink( $item ) : '', $item, $order_data );
 						if ( $image_enable ) {
@@ -61,21 +62,21 @@ $show_purchase_note = $order_data->has_status( apply_filters( 'woocommerce_purch
 						do_action( 'woocommerce_order_item_meta_end', $item_id, $item, $order_data, false );
 						echo '</div>';
 						?>
-                    </div>
-                </div>
-                <div class="xlwcty_rightDiv"><?php echo $order_data->get_formatted_line_subtotal( $item ); ?></div>
-            </div>
+					</div>
+				</div>
+				<div class="xlwcty_rightDiv"><?php echo $order_data->get_formatted_line_subtotal( $item ); ?></div>
+			</div>
 			<?php if ( $show_purchase_note && $purchase_note ) : ?>
-                <div class="xlwcty_leftDiv xlwcty_clearfix">
-                    <div class="xlwcty_p_name"><?php echo wpautop( do_shortcode( wp_kses_post( $purchase_note ) ) ); ?></div>
-                </div>
-			<?php
+				<div class="xlwcty_leftDiv xlwcty_clearfix">
+					<div class="xlwcty_p_name"><?php echo wpautop( do_shortcode( wp_kses_post( $purchase_note ) ) ); ?></div>
+				</div>
+				<?php
 			endif;
 		}
 		do_action( 'woocommerce_order_items_table', $order_data );
 		?>
-        <table>
-            <tfoot>
+		<table>
+			<tfoot>
 			<?php
 			$item_total = $order_data->get_order_item_totals();
 			if ( isset( $item_total['order_total'] ) ) {
@@ -85,19 +86,19 @@ $show_purchase_note = $order_data->has_status( apply_filters( 'woocommerce_purch
 			}
 			foreach ( $item_total as $key => $total ) {
 				?>
-                <tr>
-                    <th scope="row"><?php echo $total['label']; ?></th>
-                    <td><?php echo $total['value']; ?></td>
-                </tr>
+				<tr>
+					<th scope="row"><?php echo wp_kses_post( $total['label'] ); ?></th>
+					<td><?php echo wp_kses_post( $total['value'] ); ?></td>
+				</tr>
 				<?php
 			}
 			?>
-            </tfoot>
-        </table>
+			</tfoot>
+		</table>
 		<?php
 		do_action( 'woocommerce_before_order_items_below_desc', $order_data );
 
-		echo $after_desc ? $after_desc : '';
+		echo $after_desc ? wp_kses_post( $after_desc ) : '';
 
 		do_action( 'woocommerce_after_order_items_below_desc', $order_data );
 
@@ -110,6 +111,6 @@ $show_purchase_note = $order_data->has_status( apply_filters( 'woocommerce_purch
 			}
 		}
 		?>
-    </div>
+	</div>
 <?php
 do_action( 'xlwcty_woocommerce_order_details_after_order_table', $order_data );

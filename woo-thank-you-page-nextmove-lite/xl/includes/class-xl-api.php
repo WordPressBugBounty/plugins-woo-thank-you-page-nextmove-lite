@@ -13,6 +13,7 @@ if ( ! class_exists( 'XL_API' ) ) :
 	/**
 	 * XL_License Class
 	 */
+	#[AllowDynamicProperties]
 	class XL_API {
 
 		public static $xl_api_url = 'https://xlplugins.com/';
@@ -33,23 +34,23 @@ if ( ! class_exists( 'XL_API' ) ) :
 			}
 
 			$api_params = self::get_api_args( array(
-					'edd_action' => 'get_xl_plugins',
-					'attrs'      => array(
-						'meta_query' => array(
-							array(
-								'key'     => 'is_visible_in_dashboard',
-								'value'   => 'yes',
-								'compare' => '=',
-							),
+				'edd_action' => 'get_xl_plugins',
+				'attrs'      => array(
+					'meta_query' => array(
+						array(
+							'key'     => 'is_visible_in_dashboard',
+							'value'   => 'yes',
+							'compare' => '=',
 						),
 					),
-				) );
+				),
+			) );
 
 			$request_args = self::get_request_args( array(
-					'timeout'   => 30,
-					'sslverify' => self::$is_ssl,
-					'body'      => urlencode_deep( $api_params ),
-				) );
+				'timeout'   => 30,
+				'sslverify' => self::$is_ssl,
+				'body'      => urlencode_deep( $api_params ),
+			) );
 
 			$request = wp_remote_post( self::get_api_url( self::$xl_api_url ), $request_args );
 
@@ -110,15 +111,15 @@ if ( ! class_exists( 'XL_API' ) ) :
 			}
 
 			$api_params = self::get_api_args( array(
-					'edd_action' => 'get_tracking_data',
-					'data'       => $data,
-				) );
+				'edd_action' => 'get_tracking_data',
+				'data'       => $data,
+			) );
 
 			$request_args = self::get_request_args( array(
-					'timeout'   => 30,
-					'sslverify' => self::$is_ssl,
-					'body'      => urlencode_deep( $api_params ),
-				) );
+				'timeout'   => 30,
+				'sslverify' => self::$is_ssl,
+				'body'      => urlencode_deep( $api_params ),
+			) );
 
 			$request = wp_remote_post( self::get_api_url( self::$xl_api_url ), $request_args );
 
@@ -132,15 +133,15 @@ if ( ! class_exists( 'XL_API' ) ) :
 			}
 
 			$api_params = self::get_api_args( array(
-					'edd_action' => 'submit_support_request',
-					'data'       => $data,
-				) );
+				'edd_action' => 'submit_support_request',
+				'data'       => $data,
+			) );
 
 			$request_args = self::get_request_args( array(
-					'timeout'   => 30,
-					'sslverify' => self::$is_ssl,
-					'body'      => urlencode_deep( $api_params ),
-				) );
+				'timeout'   => 30,
+				'sslverify' => self::$is_ssl,
+				'body'      => urlencode_deep( $api_params ),
+			) );
 
 			$request = wp_remote_post( self::get_api_url( self::$xl_api_url ), $request_args );
 
@@ -190,14 +191,14 @@ if ( ! class_exists( 'XL_API' ) ) :
 			);
 
 			$api_params = self::get_api_args( array(
-					'edd_action' => 'get_deactivation_data',
-					'data'       => $get_deactivation_data,
-				) );
+				'edd_action' => 'get_deactivation_data',
+				'data'       => $get_deactivation_data,
+			) );
 
 			$request_args = self::get_request_args( array(
-					'sslverify' => self::$is_ssl,
-					'body'      => urlencode_deep( $api_params ),
-				) );
+				'sslverify' => self::$is_ssl,
+				'body'      => urlencode_deep( $api_params ),
+			) );
 
 			$request = wp_remote_post( self::get_api_url( self::$xl_api_url ), $request_args );
 
@@ -221,15 +222,15 @@ if ( ! class_exists( 'XL_API' ) ) :
 			);
 
 			$api_params = self::get_api_args( array(
-					'edd_action' => 'get_deactivation_data_v2',
-					'data'       => $get_deactivation_data,
-					'licenses'   => $licenses,
-				) );
+				'edd_action' => 'get_deactivation_data_v2',
+				'data'       => $get_deactivation_data,
+				'licenses'   => $licenses,
+			) );
 
 			$request_args = self::get_request_args( array(
-					'sslverify' => self::$is_ssl,
-					'body'      => urlencode_deep( $api_params ),
-				) );
+				'sslverify' => self::$is_ssl,
+				'body'      => urlencode_deep( $api_params ),
+			) );
 
 			$request = wp_remote_post( self::get_api_url( self::$xl_api_url ), $request_args );
 
@@ -261,14 +262,14 @@ if ( ! class_exists( 'XL_API' ) ) :
 			}
 
 			$api_params   = self::get_api_args( array(
-					'edd_action' => 'xlapi_optin',
-					'data'       => $data,
-				) );
+				'edd_action' => 'xlapi_optin',
+				'data'       => $data,
+			) );
 			$request_args = self::get_request_args( array(
-					'timeout'   => 30,
-					'sslverify' => self::$is_ssl,
-					'body'      => urlencode_deep( $api_params ),
-				) );
+				'timeout'   => 30,
+				'sslverify' => self::$is_ssl,
+				'body'      => urlencode_deep( $api_params ),
+			) );
 			$request      = wp_remote_post( self::get_api_url( self::$xl_api_url ), $request_args );
 
 			return $request;

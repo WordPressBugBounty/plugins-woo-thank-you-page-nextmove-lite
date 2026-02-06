@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author XLPlugins
  * @package XLCore
  */
+#[AllowDynamicProperties]
 class XL_licenses {
 
 	public $plugins_list;

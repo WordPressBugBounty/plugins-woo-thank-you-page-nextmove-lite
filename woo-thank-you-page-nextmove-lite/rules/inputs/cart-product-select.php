@@ -3,6 +3,21 @@ defined( 'ABSPATH' ) || exit;
 
 #[AllowDynamicProperties]
 class xlwcty_Input_Cart_Product_Select {
+
+	/**
+	 * Input type.
+	 *
+	 * @var string
+	 */
+	public $type;
+
+	/**
+	 * Default field values.
+	 *
+	 * @var array
+	 */
+	public $defaults;
+
 	public function __construct() {
 		// vars
 		$this->type = 'Cart_Product_Select';

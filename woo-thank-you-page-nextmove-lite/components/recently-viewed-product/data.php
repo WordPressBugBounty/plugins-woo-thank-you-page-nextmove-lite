@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 $config             = array();
 $config['slug']     = '_xlwcty_recently_viewed_product';
 $config['title']    = 'Recently Viewed';
-$config['instance'] = require( __DIR__ . '/instance.php' );
+$config['instance'] = require __DIR__ . '/instance.php';
 $config['fields']   = array(
 	'id'                     => $config['slug'],
 	'position'               => 45,

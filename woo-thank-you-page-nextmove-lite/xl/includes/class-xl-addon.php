@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  * @author XLPlugins
  */
+#[AllowDynamicProperties]
 class XL_addon extends PW_Plugin_states {
 
 	/**

@@ -9,8 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author XLPlugins
  * @package XLCore
  */
+#[AllowDynamicProperties]
 class XL_process {
-	public  $in_update_messages;
+	public $in_update_messages;
+
 	/**
 	 * Initiate hooks
 	 */
@@ -24,25 +26,27 @@ class XL_process {
 	public function parse_request_and_process() {
 		//Initiating the license instance to handle submissions  (submission can redirect page two that can cause "header already sent" issue to be arised)
 		// Initiating this to over come that issue
-		if ( isset( $_GET['page'] ) && $_GET['page'] == XL_dashboard::get_expected_slug() && isset( $_GET['tab'] ) && $_GET['tab'] == 'licenses' ) {
+		if ( isset( $_GET['page'] ) && isset( $_GET['tab'] ) && sanitize_text_field( wp_unslash( $_GET['page'] ) ) === XL_dashboard::get_expected_slug() && sanitize_text_field( wp_unslash( $_GET['tab'] ) ) === 'licenses' ) {
 			XL_licenses::get_instance();
 		}
 
-		if ( isset( $_GET['page'] ) && $_GET['page'] == XL_dashboard::get_expected_slug() && isset( $_GET['tab'] ) && $_GET['tab'] == 'licenses' ) {
-			if ( isset( $_GET['ts'] ) && isset( $_GET['response'] ) && ( time() - $_GET['ts'] ) < 5 && $_GET['response'] == 1 ) {
+		if ( isset( $_GET['page'], $_GET['tab'] ) && sanitize_text_field( wp_unslash( $_GET['page'] ) ) === XL_dashboard::get_expected_slug() && sanitize_text_field( wp_unslash( $_GET['tab'] ) ) === 'licenses' ) {
+			$ts       = isset( $_GET['ts'] ) ? (int) sanitize_text_field( wp_unslash( $_GET['ts'] ) ) : 0;
+			$response = isset( $_GET['response'] ) ? (int) sanitize_text_field( wp_unslash( $_GET['response'] ) ) : 0;
+			if ( $ts && ( time() - $ts ) < 5 && 1 === $response ) {
 				XL_admin_notifications::add_notification( array(
-						'plugin_license_notif' => array(
-							'type'           => 'success',
-							'is_dismissable' => true,
-							'content'        => sprintf( __( '<p> Plugin successfully deactivated. </p>', 'xlplugins' ) ),
-						),
-					) );
+					'plugin_license_notif' => array(
+						'type'           => 'success',
+						'is_dismissable' => true,
+						'content'        => sprintf( __( '<p> Plugin successfully deactivated. </p>', 'xlplugins' ) ),
+					),
+				) );
 			}
 		}
 
 		//Handling Optin
 		if ( isset( $_GET['xl-optin-choice'] ) && isset( $_GET['_xl_optin_nonce'] ) ) {
-			if ( ! wp_verify_nonce( $_GET['_xl_optin_nonce'], 'xl_optin_nonce' ) ) {
+			if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_xl_optin_nonce'] ) ), 'xl_optin_nonce' ) ) {
 				wp_die( __( 'Action failed. Please refresh the page and retry.', 'xlplugins' ) );
 			}
 
@@ -50,11 +54,11 @@ class XL_process {
 				wp_die( __( 'Cheating huh?', 'xlplugins' ) );
 			}
 
-			$optin_choice = sanitize_text_field( $_GET['xl-optin-choice'] );
+			$optin_choice = sanitize_text_field( wp_unslash( $_GET['xl-optin-choice'] ) );
 			if ( $optin_choice == 'yes' ) {
 				XL_optIn_Manager::Allow_optin();
 				if ( isset( $_GET['ref'] ) ) {
-					XL_optIn_Manager::update_optIn_referer( filter_input( INPUT_GET, 'ref' ) );
+					XL_optIn_Manager::update_optIn_referer( sanitize_text_field( wp_unslash( $_GET['ref'] ) ) );
 				}
 			} else {
 				XL_optIn_Manager::block_optin();
@@ -113,8 +117,8 @@ class XL_process {
 		$current_version      = $args['Version'];
 		$this->upgrade_notice = $this->get_upgrade_notice( $response->new_version, $changelog_path, $current_version );
 
-		echo apply_filters( 'xl_in_plugin_update_message', $this->upgrade_notice ? '</br>' . wp_kses_post( $this->upgrade_notice ) : '', $args['plugin'] ); // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
-
+		$upgrade_message = apply_filters( 'xl_in_plugin_update_message', $this->upgrade_notice ? '</br>' . wp_kses_post( $this->upgrade_notice ) : '', $args['plugin'] ); // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+		echo $upgrade_message; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '<style>span.xl_plugin_upgrade_notice::before {
     content: ' . '"\f463";
     margin-right: 6px;
@@ -132,7 +136,7 @@ class XL_process {
 	/**
 	 * Get the upgrade notice from WordPress.org.
 	 *
-	 * @param  string $version WooCommerce new version.
+	 * @param string $version WooCommerce new version.
 	 *
 	 * @return string
 	 */
@@ -155,8 +159,8 @@ class XL_process {
 	/**
 	 * Parse update notice from readme file.
 	 *
-	 * @param  string $content WooCommerce readme file content.
-	 * @param  string $new_version WooCommerce new version.
+	 * @param string $content WooCommerce readme file content.
+	 * @param string $new_version WooCommerce new version.
 	 *
 	 * @return string
 	 */

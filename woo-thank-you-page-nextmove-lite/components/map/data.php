@@ -3,7 +3,7 @@ defined( 'ABSPATH' ) || exit;
 
 $config['slug']     = '_xlwcty_google_map';
 $config['title']    = __( 'Location Map', 'woo-thank-you-page-nextmove-lite' );
-$config['instance'] = require( __DIR__ . '/instance.php' );
+$config['instance'] = require __DIR__ . '/instance.php';
 $config['fields']   = array(
 	'id'                     => $config['slug'],
 	'position'               => 15,

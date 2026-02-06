@@ -11,6 +11,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  * Class XL_Updater_Licenses_Table
  * @package XLCore
  */
+#[AllowDynamicProperties]
 class XL_Updater_Licenses_Table extends WP_List_Table {
 
 	public $per_page = 100;
@@ -44,8 +45,8 @@ class XL_Updater_Licenses_Table extends WP_List_Table {
 
 	/**
 	 * Text to display if no items are present.
-	 * @since  1.0.0
 	 * @return  void
+	 * @since  1.0.0
 	 */
 	public function no_items() {
 		echo wpautop( __( 'No plugins available for activation.', 'xlplugins' ) );
@@ -56,11 +57,11 @@ class XL_Updater_Licenses_Table extends WP_List_Table {
 	/**
 	 * The content of each column.
 	 *
-	 * @param  array $item The current item in the list.
-	 * @param  string $column_name The key of the current column.
+	 * @param array $item The current item in the list.
+	 * @param string $column_name The key of the current column.
 	 *
-	 * @since  1.0.0
 	 * @return string              Output for the current column.
+	 * @since  1.0.0
 	 */
 	public function column_default( $item, $column_name ) {
 		switch ( $column_name ) {
@@ -78,10 +79,10 @@ class XL_Updater_Licenses_Table extends WP_List_Table {
 	/**
 	 * Content for the "product_name" column.
 	 *
-	 * @param  array $item The current item.
+	 * @param array $item The current item.
 	 *
-	 * @since  1.0.0
 	 * @return string       The content of this column.
+	 * @since  1.0.0
 	 */
 	public function column_plugin( $item ) {
 		return wpautop( '<strong>' . $item['plugin'] . '</strong>' );
@@ -92,10 +93,10 @@ class XL_Updater_Licenses_Table extends WP_List_Table {
 	/**
 	 * Content for the "product_version" column.
 	 *
-	 * @param  array $item The current item.
+	 * @param array $item The current item.
 	 *
-	 * @since  1.0.0
 	 * @return string       The content of this column.
+	 * @since  1.0.0
 	 */
 	public function column_product_version( $item ) {
 		if ( isset( $item['latest_version'], $item['product_version'] ) && version_compare( $item['product_version'], $item['latest_version'], '<' ) ) {
@@ -112,17 +113,20 @@ class XL_Updater_Licenses_Table extends WP_List_Table {
 	/**
 	 * Content for the "status" column.
 	 *
-	 * @param  array $item The current item.
+	 * @param array $item The current item.
 	 *
-	 * @since  1.0.0
 	 * @return string       The content of this column.
+	 * @since  1.0.0
 	 */
 	public function column_product_status( $item ) {
 
 		$response = '';
 
 		if ( 'active' == $item['product_status'] ) {
-			$deactivate_url = wp_nonce_url( add_query_arg( 'action', 'xl_deactivate-product', add_query_arg( 'filepath', $item['product_file_path'], add_query_arg( 'page', $_GET['page'], add_query_arg( 'tab', 'licenses' ), network_admin_url( 'admin.php' ) ) ) ), 'bulk-licenses' );
+			$page_param     = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+			$filepath_safe  = isset( $item['product_file_path'] ) ? sanitize_text_field( wp_unslash( $item['product_file_path'] ) ) : '';
+			$base_url       = add_query_arg( array( 'tab' => 'licenses', 'page' => $page_param ), network_admin_url( 'admin.php' ) );
+			$deactivate_url = wp_nonce_url( add_query_arg( array( 'action' => 'xl_deactivate-product', 'filepath' => $filepath_safe ), $base_url ), 'bulk-licenses' );
 
 			$key                   = $item['existing_key'];
 			$last_six              = substr( $key, - 6 );
@@ -187,8 +191,8 @@ Place your license key here', 'xlplugins' ) . '" />' . "\n";
 
 	/**
 	 * Retrieve an array of possible bulk actions.
-	 * @since  1.0.0
 	 * @return array
+	 * @since  1.0.0
 	 */
 	public function get_bulk_actions() {
 		$actions = array();
@@ -200,8 +204,8 @@ Place your license key here', 'xlplugins' ) . '" />' . "\n";
 
 	/**
 	 * Prepare an array of items to be listed.
-	 * @since  1.0.0
 	 * @return array Prepared items.
+	 * @since  1.0.0
 	 */
 	public function prepare_items() {
 		$columns               = $this->get_columns();

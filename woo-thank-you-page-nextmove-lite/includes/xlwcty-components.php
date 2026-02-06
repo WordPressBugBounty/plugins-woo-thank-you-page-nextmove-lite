@@ -12,7 +12,7 @@ class XLWCTY_Components {
 	public $view_data;
 
 	public function __construct() {
-		add_action( 'plugins_loaded', array( $this, 'load_components' ), 1 );
+		add_action( 'init', array( $this, 'load_components' ), 11 );
 		add_action( 'wp', array( $this, 'load_components_on_custom_thank_you_page_and_set_page' ), 0 );
 	}
 

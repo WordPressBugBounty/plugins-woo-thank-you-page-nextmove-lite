@@ -203,6 +203,10 @@ class xlwcty_Admin {
 	 * Checks and insert plugin options(data)  in wp_options
 	 */
 	public static function handle_activation() {
+		// Register post type first to avoid map_meta_cap warnings during wp_insert_post.
+		// Activation hook runs after 'init' has passed, so post type isn't registered yet.
+		XLWCTY_Common::register_wcthankyou_post_type();
+
 		$default_config = self::$default;
 		/**
 		 * Handle optIn option
@@ -842,6 +846,9 @@ class xlwcty_Admin {
 			wp_localize_script( 'xlwcty_admin-js', 'builder_page_url', array( admin_url( 'admin.php?page=xlwcty_builder' ) ) );
 			wp_localize_script( 'xlwcty_admin-js', 'xlwcty_site_url', array( site_url() ) );
 			wp_localize_script( 'xlwcty_admin-js', 'xlwcty_admin_permalink', array( admin_url( 'options-permalink.php' ) ) );
+			wp_localize_script( 'xlwcty_admin-js', 'xlwctyParams', array(
+				'ajax_nonce' => wp_create_nonce( 'xlwctyaction-admin' ),
+			) );
 			wp_localize_script( 'xlwcty_admin-js', 'xlwcty_nonces', array(
 				'xlwcty_get_pages_for_order' => wp_create_nonce( 'xlwcty_get_pages_for_order' ),
 			) );

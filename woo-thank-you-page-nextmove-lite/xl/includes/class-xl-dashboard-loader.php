@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author XLPlugins
  * @package XLCore
  */
+#[AllowDynamicProperties]
 class XL_dashboard {
 
 	public static $currentPage;
@@ -84,8 +85,8 @@ class XL_dashboard {
 	/**
 	 * Message displayed if license not activated. <br/>
 	 *
-	 * @param  array $plugin_data
-	 * @param  object $r
+	 * @param array $plugin_data
+	 * @param object $r
 	 *
 	 * @return void
 	 */
@@ -150,11 +151,11 @@ class XL_dashboard {
 
 		return (object) array_merge( (array) $get_list, (array) array(
 			'additional_tabs' => apply_filters( 'xl_additional_tabs', array(
-					array(
-						'slug'  => 'tools',
-						'label' => __( 'Tools', 'xlplugins' ),
-					),
-				) ),
+				array(
+					'slug'  => 'tools',
+					'label' => __( 'Tools', 'xlplugins' ),
+				),
+			) ),
 			'licenses'        => $License->get_data(),
 			'current_tab'     => self::$selected,
 		) );
@@ -175,11 +176,11 @@ class XL_dashboard {
 
 		return (object) array_merge( (array) $get_list, (array) array(
 			'additional_tabs' => apply_filters( 'xl_additional_tabs', array(
-					array(
-						'slug'  => 'tools',
-						'label' => __( 'Tools', 'xlplugins' ),
-					),
-				) ),
+				array(
+					'slug'  => 'tools',
+					'label' => __( 'Tools', 'xlplugins' ),
+				),
+			) ),
 
 			'current_tab' => self::$selected,
 		) );
@@ -205,11 +206,11 @@ class XL_dashboard {
 
 		return (object) array_merge( (array) $get_list, (array) array(
 			'additional_tabs' => apply_filters( 'xl_additional_tabs', array(
-					array(
-						'slug'  => 'tools',
-						'label' => __( 'Tools', 'xlplugins' ),
-					),
-				) ),
+				array(
+					'slug'  => 'tools',
+					'label' => __( 'Tools', 'xlplugins' ),
+				),
+			) ),
 			'installed'       => $get_installed,
 			'system_info'     => $object_support->prepare_system_information_report(),
 			'licenses'        => $License->get_data(),

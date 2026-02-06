@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: NextMove Lite - Thank You Page for WooCommerce 2.20.0\n"
+"Project-Id-Version: NextMove Lite - Thank You Page for WooCommerce 2.23.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woo-thank-you-page-nextmove-lite\n"
 "Last-Translator: XLPlugins <support@xlplugins.com>\n"
 "Language-Team: XLPlugins <support@xlplugins.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-02-26T08:09:30+00:00\n"
+"POT-Creation-Date: 2025-12-31T15:00:41+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: woo-thank-you-page-nextmove-lite\n"
@@ -65,7 +65,7 @@ msgid "Select Live button to go live. In <strong>Sandbox mode</strong>, only pre
 msgstr ""
 
 #: admin/includes/cmb2-settings-config.php:21
-#: includes/xlwcty-common.php:1704
+#: includes/xlwcty-common.php:1776
 msgid "Live"
 msgstr ""
 
@@ -74,7 +74,7 @@ msgid "Sandbox"
 msgstr ""
 
 #: admin/includes/cmb2-settings-config.php:24
-#: includes/xlwcty-common.php:595
+#: includes/xlwcty-common.php:610
 msgid "General"
 msgstr ""
 
@@ -450,12 +450,12 @@ msgid "No Page Available"
 msgstr ""
 
 #: admin/includes/xlwcty-post-table.php:86
-#: includes/xlwcty-common.php:537
+#: includes/xlwcty-common.php:552
 msgid "Deactivated"
 msgstr ""
 
 #: admin/includes/xlwcty-post-table.php:89
-#: includes/xlwcty-common.php:532
+#: includes/xlwcty-common.php:547
 msgid "Activated"
 msgstr ""
 
@@ -468,7 +468,7 @@ msgid "Title"
 msgstr ""
 
 #: admin/includes/xlwcty-post-table.php:232
-#: includes/xlwcty-common.php:741
+#: includes/xlwcty-common.php:792
 msgid "Components"
 msgstr ""
 
@@ -502,7 +502,7 @@ msgid "AND"
 msgstr ""
 
 #: admin/views/metabox-rules.php:35
-#: admin/xlwcty-admin.php:451
+#: admin/xlwcty-admin.php:455
 msgid "Rules"
 msgstr ""
 
@@ -515,7 +515,7 @@ msgid "Open this page when these conditions are matched:"
 msgstr ""
 
 #: admin/views/metabox-rules.php:55
-#: admin/xlwcty-admin.php:1172
+#: admin/xlwcty-admin.php:1179
 msgid "or"
 msgstr ""
 
@@ -543,446 +543,450 @@ msgstr ""
 msgid "PRO version"
 msgstr ""
 
-#: admin/xlwcty-admin.php:237
-#: admin/xlwcty-admin.php:261
-#: admin/xlwcty-admin.php:287
-#: admin/xlwcty-admin.php:351
-#: admin/xlwcty-admin.php:375
-#: admin/xlwcty-admin.php:401
+#: admin/xlwcty-admin.php:241
+#: admin/xlwcty-admin.php:265
+#: admin/xlwcty-admin.php:291
+#: admin/xlwcty-admin.php:355
+#: admin/xlwcty-admin.php:379
+#: admin/xlwcty-admin.php:405
 #: components/order-acknowledge/data.php:6
 msgid "Order Confirmation"
 msgstr ""
 
-#: admin/xlwcty-admin.php:242
-#: admin/xlwcty-admin.php:266
-#: admin/xlwcty-admin.php:292
-#: admin/xlwcty-admin.php:356
-#: admin/xlwcty-admin.php:380
-#: admin/xlwcty-admin.php:406
+#: admin/xlwcty-admin.php:246
+#: admin/xlwcty-admin.php:270
+#: admin/xlwcty-admin.php:296
+#: admin/xlwcty-admin.php:360
+#: admin/xlwcty-admin.php:384
+#: admin/xlwcty-admin.php:410
 #: components/customer-info/data.php:6
 msgid "Customer Details"
 msgstr ""
 
-#: admin/xlwcty-admin.php:247
-#: admin/xlwcty-admin.php:271
-#: admin/xlwcty-admin.php:297
-#: admin/xlwcty-admin.php:361
-#: admin/xlwcty-admin.php:385
-#: admin/xlwcty-admin.php:411
+#: admin/xlwcty-admin.php:251
+#: admin/xlwcty-admin.php:275
+#: admin/xlwcty-admin.php:301
+#: admin/xlwcty-admin.php:365
+#: admin/xlwcty-admin.php:389
+#: admin/xlwcty-admin.php:415
 msgid "Order Details"
 msgstr ""
 
-#: admin/xlwcty-admin.php:252
-#: admin/xlwcty-admin.php:276
-#: admin/xlwcty-admin.php:302
-#: admin/xlwcty-admin.php:366
-#: admin/xlwcty-admin.php:390
-#: admin/xlwcty-admin.php:416
+#: admin/xlwcty-admin.php:256
+#: admin/xlwcty-admin.php:280
+#: admin/xlwcty-admin.php:306
+#: admin/xlwcty-admin.php:370
+#: admin/xlwcty-admin.php:394
+#: admin/xlwcty-admin.php:420
 msgid "Additional Information"
 msgstr ""
 
-#: admin/xlwcty-admin.php:316
-#: admin/xlwcty-admin.php:317
+#: admin/xlwcty-admin.php:320
+#: admin/xlwcty-admin.php:321
 msgid "Thank You"
 msgstr ""
 
-#: admin/xlwcty-admin.php:459
+#: admin/xlwcty-admin.php:463
 msgid "Select Custom Page"
 msgstr ""
 
-#: admin/xlwcty-admin.php:467
+#: admin/xlwcty-admin.php:471
 msgid "Available Shortcodes"
 msgstr ""
 
-#: admin/xlwcty-admin.php:485
+#: admin/xlwcty-admin.php:489
 msgid "Redirect to Custom Page"
 msgstr ""
 
-#: admin/xlwcty-admin.php:487
+#: admin/xlwcty-admin.php:491
 msgid "Use current page"
 msgstr ""
 
-#: admin/xlwcty-admin.php:504
+#: admin/xlwcty-admin.php:508
 msgid "Choose a page above if you want to redirect buyer to a custom thank you page. This page will show once rules are validated."
 msgstr ""
 
-#: admin/xlwcty-admin.php:524
+#: admin/xlwcty-admin.php:528
 msgid "Component"
 msgstr ""
 
-#: admin/xlwcty-admin.php:525
+#: admin/xlwcty-admin.php:529
 msgid "Shortcode"
 msgstr ""
 
-#: admin/xlwcty-admin.php:531
+#: admin/xlwcty-admin.php:535
 msgid "All Components"
 msgstr ""
 
-#: admin/xlwcty-admin.php:532
+#: admin/xlwcty-admin.php:536
 msgid "This shortcode is used to display the whole thank you page layout according to the selected template"
 msgstr ""
 
-#: admin/xlwcty-admin.php:567
+#: admin/xlwcty-admin.php:571
 msgid "Congrats! You're on your way to creating a new Thank You Page. Follow these 4 simple steps:"
 msgstr ""
 
-#: admin/xlwcty-admin.php:570
+#: admin/xlwcty-admin.php:574
 msgid "Step 1"
 msgstr ""
 
-#: admin/xlwcty-admin.php:570
+#: admin/xlwcty-admin.php:574
 msgid "Enter the page title above to name your Thank you page."
 msgstr ""
 
-#: admin/xlwcty-admin.php:573
+#: admin/xlwcty-admin.php:577
 msgid "Step 2"
 msgstr ""
 
-#: admin/xlwcty-admin.php:573
+#: admin/xlwcty-admin.php:577
 msgid "Select the Rules below. The page will open when set rules were matched."
 msgstr ""
 
-#: admin/xlwcty-admin.php:576
+#: admin/xlwcty-admin.php:580
 msgid "Step 3"
 msgstr ""
 
-#: admin/xlwcty-admin.php:576
+#: admin/xlwcty-admin.php:580
 msgid "Input the page priority on the right sidebar."
 msgstr ""
 
-#: admin/xlwcty-admin.php:579
+#: admin/xlwcty-admin.php:583
 msgid "Step 4"
 msgstr ""
 
-#: admin/xlwcty-admin.php:579
+#: admin/xlwcty-admin.php:583
 msgid "Press the Publish button on the top right sidebar. You will be automatically redirected to a components UI."
 msgstr ""
 
-#: admin/xlwcty-admin.php:582
+#: admin/xlwcty-admin.php:586
 msgid "Step 5"
 msgstr ""
 
-#: admin/xlwcty-admin.php:582
+#: admin/xlwcty-admin.php:586
 msgid "Choose the components you'd like to display, edit and arrange them in order."
 msgstr ""
 
-#: admin/xlwcty-admin.php:585
+#: admin/xlwcty-admin.php:589
 msgid "Step 6"
 msgstr ""
 
-#: admin/xlwcty-admin.php:585
+#: admin/xlwcty-admin.php:589
 msgid "Hit Preview and you're all set to go live!"
 msgstr ""
 
-#: admin/xlwcty-admin.php:630
+#: admin/xlwcty-admin.php:634
 msgid "Thank You Pages"
 msgstr ""
 
-#: admin/xlwcty-admin.php:632
-#: includes/xlwcty-common.php:126
-#: includes/xlwcty-common.php:127
+#: admin/xlwcty-admin.php:636
+#: includes/xlwcty-common.php:124
+#: includes/xlwcty-common.php:125
 msgid "Add New"
 msgstr ""
 
-#: admin/xlwcty-admin.php:634
+#: admin/xlwcty-admin.php:638
 msgid "Settings"
 msgstr ""
 
-#: admin/xlwcty-admin.php:682
+#: admin/xlwcty-admin.php:686
 msgid "I was unable to set up Thank You Page?"
 msgstr ""
 
-#: admin/xlwcty-admin.php:682
+#: admin/xlwcty-admin.php:686
 msgid "Kindly visit our <a href=\"https://xlplugins.com/documentation/nextmove-woocommerce-thank-you-page/getting-started/\">documentation</a> to know more about how to setup thank you pages. "
 msgstr ""
 
-#: admin/xlwcty-admin.php:683
+#: admin/xlwcty-admin.php:687
 msgid "Thank You page is not coming on frontend?"
 msgstr ""
 
-#: admin/xlwcty-admin.php:683
+#: admin/xlwcty-admin.php:687
 msgid "Visit this step-by-step <a href=\"https://xlplugins.com/documentation/nextmove-woocommerce-thank-you-page/troubleshooting-guides/thank-you-page-didnt-show/\">documentation guide</a> to uncover the reasons for why Thank You Page may not be showing up.. "
 msgstr ""
 
-#: admin/xlwcty-admin.php:684
+#: admin/xlwcty-admin.php:688
 msgid "Who is Next Move ideal for?"
 msgstr ""
 
-#: admin/xlwcty-admin.php:684
+#: admin/xlwcty-admin.php:688
 msgid "Next Move is for WooCommerce store owners who want to generate repeat orders on autopilot. They understand the real potential of Thank You pages in the funnel but never had the right tools to exploit it."
 msgstr ""
 
-#: admin/xlwcty-admin.php:685
+#: admin/xlwcty-admin.php:689
 msgid "Does NextMove Modify existing Thank You page or creates a new Thank You page?"
 msgstr ""
 
-#: admin/xlwcty-admin.php:685
+#: admin/xlwcty-admin.php:689
 msgid "NextMove generates a new thank you page and adds components as defined by you."
 msgstr ""
 
-#: admin/xlwcty-admin.php:686
+#: admin/xlwcty-admin.php:690
 msgid "What is referred to as a component?"
 msgstr ""
 
-#: admin/xlwcty-admin.php:686
+#: admin/xlwcty-admin.php:690
 msgid "Each section on the WooCommerce Thank You page such as Order Confirmation, Items, Billing Information, Text, Image, HTML, Videos etc are referred to as a component."
 msgstr ""
 
-#: admin/xlwcty-admin.php:687
+#: admin/xlwcty-admin.php:691
 msgid "What kind of components can I add to my Thank You Pages?"
 msgstr ""
 
-#: admin/xlwcty-admin.php:687
+#: admin/xlwcty-admin.php:691
 msgid "There are 17 different components or what we call the building blocks in Thank You pages. See the pricing table to refer. You can choose and add whatever components you want on your Thank You Pages. It's as zippy and hassle-free as it sounds!"
 msgstr ""
 
-#: admin/xlwcty-admin.php:688
+#: admin/xlwcty-admin.php:692
 msgid "Can I customize the components to match my site's themes?"
 msgstr ""
 
-#: admin/xlwcty-admin.php:688
+#: admin/xlwcty-admin.php:692
 msgid "Yes, all the components of Next Move can be customized. Match the skin colors to your store's theme, add borders, change the font size and more. Nothing is rigid here."
 msgstr ""
 
-#: admin/xlwcty-admin.php:689
+#: admin/xlwcty-admin.php:693
 msgid "Can I turn off individual components?"
 msgstr ""
 
-#: admin/xlwcty-admin.php:689
+#: admin/xlwcty-admin.php:693
 msgid "Absolutely! You can turn off different components based your choice and requirements."
 msgstr ""
 
-#: admin/xlwcty-admin.php:690
+#: admin/xlwcty-admin.php:694
 msgid "Can I set up multiple Thank You Pages based on product or categories?"
 msgstr ""
 
-#: admin/xlwcty-admin.php:690
+#: admin/xlwcty-admin.php:694
 msgid "Yes, You can set up as many Thank you pages as you like. You can dive deep and show Thank you pages to customers based on their order value, items purchased, payment gateways, shipping methods used, country of visitor and other parameters. Sky is the limit. Quite literally."
 msgstr ""
 
-#: admin/xlwcty-admin.php:691
+#: admin/xlwcty-admin.php:695
 msgid "What is Rule Builder?"
 msgstr ""
 
-#: admin/xlwcty-admin.php:691
+#: admin/xlwcty-admin.php:695
 msgid "Rule builder allows you set up different rules and only when conditions are met a particular thank you page is shown.<br/>Say you want to show specific thank you page based on different items purchased. You can set up the rule to show different pages when rules are met."
 msgstr ""
 
-#: admin/xlwcty-admin.php:692
+#: admin/xlwcty-admin.php:696
 msgid "Do I need to make an order every time to preview the page?"
 msgstr ""
 
-#: admin/xlwcty-admin.php:692
+#: admin/xlwcty-admin.php:696
 msgid "No, We have the feature to choose the preview order and look at how Thank You page would look. Once you are satisfied with the look, you can switch it."
 msgstr ""
 
-#: admin/xlwcty-admin.php:693
+#: admin/xlwcty-admin.php:697
 msgid "Can I build Thank You page in sandbox mode until I finalized the page?"
 msgstr ""
 
-#: admin/xlwcty-admin.php:693
+#: admin/xlwcty-admin.php:697
 msgid "Yes, There is a global setting in which you can choose to switch NextMove Mode to sandbox mode while building pages. Don't forget to switch to Live mode when done :)"
 msgstr ""
 
-#: admin/xlwcty-admin.php:694
+#: admin/xlwcty-admin.php:698
 msgid "I run my website in a different language. Can I change the text?"
 msgstr ""
 
-#: admin/xlwcty-admin.php:694
+#: admin/xlwcty-admin.php:698
 msgid "Yes, you can easily create Thank You Pages in your language. We are also compatible with WPML."
 msgstr ""
 
-#: admin/xlwcty-admin.php:698
-#: admin/xlwcty-admin.php:1224
+#: admin/xlwcty-admin.php:702
+#: admin/xlwcty-admin.php:1231
 msgid "Back to <a href=\""
 msgstr ""
 
-#: admin/xlwcty-admin.php:710
+#: admin/xlwcty-admin.php:714
 msgid "Troubleshoot Your Page"
 msgstr ""
 
-#: admin/xlwcty-admin.php:718
+#: admin/xlwcty-admin.php:722
 msgid "FAQs"
 msgstr ""
 
-#: admin/xlwcty-admin.php:816
 #: admin/xlwcty-admin.php:820
-#: admin/xlwcty-admin.php:829
+#: admin/xlwcty-admin.php:824
+#: admin/xlwcty-admin.php:833
 msgid "Oops!"
 msgstr ""
 
-#: admin/xlwcty-admin.php:817
-#: admin/xlwcty-admin.php:830
+#: admin/xlwcty-admin.php:821
+#: admin/xlwcty-admin.php:834
 msgid "We do not have any orders to generate preview."
 msgstr ""
 
-#: admin/xlwcty-admin.php:821
+#: admin/xlwcty-admin.php:825
 msgid "Please chose at least one component."
 msgstr ""
 
-#: admin/xlwcty-admin.php:824
+#: admin/xlwcty-admin.php:828
 msgid "Changes have been made!"
 msgstr ""
 
-#: admin/xlwcty-admin.php:825
+#: admin/xlwcty-admin.php:829
 msgid "You need to save changes before generating preview."
 msgstr ""
 
-#: admin/xlwcty-admin.php:826
+#: admin/xlwcty-admin.php:830
 msgid "Yes, Save It!"
 msgstr ""
 
-#: admin/xlwcty-admin.php:833
+#: admin/xlwcty-admin.php:837
 msgid "Saving Your Data"
 msgstr ""
 
-#: admin/xlwcty-admin.php:837
+#: admin/xlwcty-admin.php:841
 msgid "Warning"
 msgstr ""
 
-#: admin/xlwcty-admin.php:838
+#: admin/xlwcty-admin.php:842
 msgid "You would need to reset permalinks to generate Preview. Go to Admin -> Settings -> Permalinks and Reset. "
 msgstr ""
 
-#: admin/xlwcty-admin.php:857
+#: admin/xlwcty-admin.php:864
 msgid "Upgrade To PRO &nbsp;<i class=\"dashicons dashicons-arrow-right-alt\"></i>"
 msgstr ""
 
-#: admin/xlwcty-admin.php:873
+#: admin/xlwcty-admin.php:880
 msgid "Recently Viewed is a PRO Feature"
 msgstr ""
 
-#: admin/xlwcty-admin.php:877
+#: admin/xlwcty-admin.php:884
 msgid "Related Products is a PRO Feature"
 msgstr ""
 
-#: admin/xlwcty-admin.php:881
+#: admin/xlwcty-admin.php:888
 msgid "Specific Products is a PRO Feature"
 msgstr ""
 
-#: admin/xlwcty-admin.php:885
+#: admin/xlwcty-admin.php:892
 msgid "Cross Sell Products is a PRO Feature"
 msgstr ""
 
-#: admin/xlwcty-admin.php:889
+#: admin/xlwcty-admin.php:896
 msgid "UpSell Products is a PRO Feature"
 msgstr ""
 
-#: admin/xlwcty-admin.php:893
+#: admin/xlwcty-admin.php:900
 msgid "Coupons is a PRO Feature"
 msgstr ""
 
-#: admin/xlwcty-admin.php:897
+#: admin/xlwcty-admin.php:904
 msgid "Smart Bribe is a PRO Feature "
 msgstr ""
 
-#: admin/xlwcty-admin.php:901
+#: admin/xlwcty-admin.php:908
 msgid "Social Share is a PRO Feature"
 msgstr ""
 
-#: admin/xlwcty-admin.php:905
+#: admin/xlwcty-admin.php:912
 msgid "Join Us is a PRO Feature"
 msgstr ""
 
-#: admin/xlwcty-admin.php:909
+#: admin/xlwcty-admin.php:916
 msgid "Birth Date is a PRO Feature"
 msgstr ""
 
-#: admin/xlwcty-admin.php:1102
+#: admin/xlwcty-admin.php:1109
 msgid "Go Pro"
 msgstr ""
 
-#: admin/xlwcty-admin.php:1118
+#: admin/xlwcty-admin.php:1125
 msgid "NextMove Lite: XLPlugins"
 msgstr ""
 
-#: admin/xlwcty-admin.php:1173
+#: admin/xlwcty-admin.php:1180
 msgid "Open this page when these conditions are matched"
 msgstr ""
 
-#: admin/xlwcty-admin.php:1174
+#: admin/xlwcty-admin.php:1181
 msgid "Remove"
 msgstr ""
 
-#: admin/xlwcty-admin.php:1234
+#: admin/xlwcty-admin.php:1241
 msgid "Thankyou Pages updated."
 msgstr ""
 
-#: admin/xlwcty-admin.php:1235
+#: admin/xlwcty-admin.php:1242
 msgid "Custom field updated."
 msgstr ""
 
-#: admin/xlwcty-admin.php:1236
+#: admin/xlwcty-admin.php:1243
 msgid "Custom field deleted."
 msgstr ""
 
-#: admin/xlwcty-admin.php:1237
-#: admin/xlwcty-admin.php:1239
-#: admin/xlwcty-admin.php:1241
 #: admin/xlwcty-admin.php:1244
+#: admin/xlwcty-admin.php:1246
+#: admin/xlwcty-admin.php:1248
+#: admin/xlwcty-admin.php:1251
 msgid "Thankyou Pages updated. "
 msgstr ""
 
-#: admin/xlwcty-admin.php:1238
+#: admin/xlwcty-admin.php:1245
 msgid "Trigger restored to revision from %s"
 msgstr ""
 
-#: admin/xlwcty-admin.php:1240
+#: admin/xlwcty-admin.php:1247
 msgid "Trigger saved. "
 msgstr ""
 
-#: admin/xlwcty-admin.php:1242
+#: admin/xlwcty-admin.php:1249
 msgid "Trigger scheduled for: <strong>%1$s</strong>."
 msgstr ""
 
-#: admin/xlwcty-admin.php:1243
+#: admin/xlwcty-admin.php:1250
 msgid "Trigger draft updated."
 msgstr ""
 
-#: admin/xlwcty-admin.php:1271
+#: admin/xlwcty-admin.php:1278
 msgid "Unable to Activate"
 msgstr ""
 
-#: admin/xlwcty-admin.php:1299
+#: admin/xlwcty-admin.php:1306
 msgid "Unable to Deactivate"
 msgstr ""
 
-#: admin/xlwcty-admin.php:1395
-#: includes/xlwcty-common.php:124
-#: includes/xlwcty-common.php:125
+#: admin/xlwcty-admin.php:1402
+#: includes/xlwcty-common.php:122
+#: includes/xlwcty-common.php:123
 msgid "Thank You Page"
 msgstr ""
 
-#: admin/xlwcty-admin.php:1486
+#: admin/xlwcty-admin.php:1493
 msgid "Docs"
 msgstr ""
 
-#: admin/xlwcty-admin.php:1487
+#: admin/xlwcty-admin.php:1494
 msgid "Support"
 msgstr ""
 
-#: admin/xlwcty-admin.php:1507
+#: admin/xlwcty-admin.php:1514
 msgid "<span>XL</span> Manage Components"
 msgstr ""
 
-#: admin/xlwcty-admin.php:1515
+#: admin/xlwcty-admin.php:1522
 msgid "Thank You Page Builder"
 msgstr ""
 
-#: admin/xlwcty-admin.php:1740
+#: admin/xlwcty-admin.php:1747
 msgid "Your preview will open in new window automatically.<br/>If it doesn't click on Preview button again or allow Pop-ups for your domain."
 msgstr ""
 
-#: admin/xlwcty-admin.php:1944
+#: admin/xlwcty-admin.php:1951
 msgid "Check Settings"
 msgstr ""
 
-#: admin/xlwcty-admin.php:2026
+#: admin/xlwcty-admin.php:2033
 msgid "Dismiss"
 msgstr ""
 
-#: admin/xlwcty-admin.php:2069
+#: admin/xlwcty-admin.php:2076
 msgid "Action failed. Please refresh the page and retry."
+msgstr ""
+
+#: compatibilities/class-xlwcty-wpml.php:300
+msgid "(With WPML, you may also need to go to WPML → Settings → Post Types and ensure \"Thank You Page\" is set to translatable, then flush permalinks)"
 msgstr ""
 
 #: components/additional-information/data.php:16
@@ -993,7 +997,7 @@ msgstr ""
 #: components/order-acknowledge/data.php:16
 #: components/order-details/data.php:15
 #: components/simple-text/data.php:16
-#: components/video/data.php:17
+#: components/video/data.php:19
 msgid "Enable"
 msgstr ""
 
@@ -1009,8 +1013,8 @@ msgstr ""
 #: components/order-details/data.php:20
 #: components/order-details/data.php:128
 #: components/simple-text/data.php:21
-#: components/video/data.php:22
-#: components/video/data.php:146
+#: components/video/data.php:24
+#: components/video/data.php:148
 msgid "Yes"
 msgstr ""
 
@@ -1026,8 +1030,8 @@ msgstr ""
 #: components/order-details/data.php:21
 #: components/order-details/data.php:129
 #: components/simple-text/data.php:22
-#: components/video/data.php:23
-#: components/video/data.php:147
+#: components/video/data.php:25
+#: components/video/data.php:149
 msgid "No"
 msgstr ""
 
@@ -1038,7 +1042,7 @@ msgstr ""
 #: components/map/data.php:391
 #: components/order-details/data.php:164
 #: components/simple-text/data.php:99
-#: components/video/data.php:226
+#: components/video/data.php:228
 msgid "Border"
 msgstr ""
 
@@ -1049,7 +1053,7 @@ msgstr ""
 #: components/map/data.php:397
 #: components/order-details/data.php:170
 #: components/simple-text/data.php:105
-#: components/video/data.php:232
+#: components/video/data.php:234
 msgid "Dotted"
 msgstr ""
 
@@ -1060,7 +1064,7 @@ msgstr ""
 #: components/map/data.php:398
 #: components/order-details/data.php:171
 #: components/simple-text/data.php:106
-#: components/video/data.php:233
+#: components/video/data.php:235
 msgid "Dashed"
 msgstr ""
 
@@ -1071,7 +1075,7 @@ msgstr ""
 #: components/map/data.php:399
 #: components/order-details/data.php:172
 #: components/simple-text/data.php:107
-#: components/video/data.php:234
+#: components/video/data.php:236
 msgid "Solid"
 msgstr ""
 
@@ -1082,7 +1086,7 @@ msgstr ""
 #: components/map/data.php:400
 #: components/order-details/data.php:173
 #: components/simple-text/data.php:108
-#: components/video/data.php:235
+#: components/video/data.php:237
 msgid "Double"
 msgstr ""
 
@@ -1094,7 +1098,7 @@ msgstr ""
 #: components/order-acknowledge/data.php:38
 #: components/order-details/data.php:174
 #: components/simple-text/data.php:109
-#: components/video/data.php:236
+#: components/video/data.php:238
 msgid "None"
 msgstr ""
 
@@ -1105,7 +1109,7 @@ msgstr ""
 #: components/map/data.php:409
 #: components/order-details/data.php:182
 #: components/simple-text/data.php:117
-#: components/video/data.php:244
+#: components/video/data.php:246
 msgid "Border Width"
 msgstr ""
 
@@ -1116,7 +1120,7 @@ msgstr ""
 #: components/map/data.php:423
 #: components/order-details/data.php:196
 #: components/simple-text/data.php:131
-#: components/video/data.php:258
+#: components/video/data.php:260
 msgid "Border Color"
 msgstr ""
 
@@ -1139,7 +1143,7 @@ msgstr ""
 #: components/order-acknowledge/data.php:110
 #: components/order-details/data.php:30
 #: components/simple-text/data.php:32
-#: components/video/data.php:33
+#: components/video/data.php:35
 msgid "Heading"
 msgstr ""
 
@@ -1156,7 +1160,7 @@ msgstr ""
 #: components/map/data.php:348
 #: components/order-details/data.php:55
 #: components/simple-text/data.php:57
-#: components/video/data.php:58
+#: components/video/data.php:60
 msgid "Heading alignment"
 msgstr ""
 
@@ -1173,8 +1177,8 @@ msgstr ""
 #: components/order-details/data.php:154
 #: components/simple-text/data.php:63
 #: components/simple-text/data.php:88
-#: components/video/data.php:64
-#: components/video/data.php:91
+#: components/video/data.php:66
+#: components/video/data.php:93
 msgid "Left"
 msgstr ""
 
@@ -1191,8 +1195,8 @@ msgstr ""
 #: components/order-details/data.php:155
 #: components/simple-text/data.php:64
 #: components/simple-text/data.php:89
-#: components/video/data.php:65
-#: components/video/data.php:92
+#: components/video/data.php:67
+#: components/video/data.php:94
 msgid "Center"
 msgstr ""
 
@@ -1209,8 +1213,8 @@ msgstr ""
 #: components/order-details/data.php:156
 #: components/simple-text/data.php:65
 #: components/simple-text/data.php:90
-#: components/video/data.php:66
-#: components/video/data.php:93
+#: components/video/data.php:68
+#: components/video/data.php:95
 msgid "Right"
 msgstr ""
 
@@ -1218,7 +1222,7 @@ msgstr ""
 #: components/image-content/data.php:72
 #: components/map/data.php:364
 #: components/order-details/data.php:71
-#: components/video/data.php:74
+#: components/video/data.php:76
 msgid "Description"
 msgstr ""
 
@@ -1228,7 +1232,7 @@ msgstr ""
 #: components/map/data.php:375
 #: components/order-details/data.php:82
 #: components/order-details/data.php:148
-#: components/video/data.php:85
+#: components/video/data.php:87
 msgid "Description alignment"
 msgstr ""
 
@@ -1242,7 +1246,7 @@ msgid "Billing Address"
 msgstr ""
 
 #: components/customer-info/data.php:134
-#: includes/xlwcty-common.php:1326
+#: includes/xlwcty-common.php:1377
 msgid "Two Column"
 msgstr ""
 
@@ -1260,7 +1264,7 @@ msgstr ""
 #: components/map/data.php:434
 #: components/order-details/data.php:207
 #: components/simple-text/data.php:142
-#: components/video/data.php:269
+#: components/video/data.php:271
 msgid "Background"
 msgstr ""
 
@@ -1270,7 +1274,7 @@ msgstr ""
 #: components/map/data.php:435
 #: components/order-details/data.php:208
 #: components/simple-text/data.php:143
-#: components/video/data.php:270
+#: components/video/data.php:272
 msgid "Component background color"
 msgstr ""
 
@@ -1296,14 +1300,14 @@ msgid "Customer Information"
 msgstr ""
 
 #: components/customer-info/views/view.php:7
-#: components/html/views/view.php:15
+#: components/html/views/view.php:21
 #: components/image-content/views/2c.php:10
-#: components/image-content/views/full.php:40
+#: components/image-content/views/full.php:51
 #: components/image-content/views/left-image.php:20
 #: components/image-content/views/right-image.php:19
 #: components/map/views/view.php:12
-#: components/simple-text/views/view.php:15
-#: components/video/views/view.php:90
+#: components/simple-text/views/view.php:17
+#: components/video/views/view.php:129
 msgid "Data not set"
 msgstr ""
 
@@ -1324,7 +1328,7 @@ msgstr ""
 #: components/html/data.php:42
 #: components/image-content/data.php:42
 #: components/order-details/data.php:41
-#: components/video/data.php:44
+#: components/video/data.php:46
 msgid "Heading font size"
 msgstr ""
 
@@ -1365,42 +1369,42 @@ msgid "Right Image link "
 msgstr ""
 
 #: components/image-content/data.php:252
-#: components/video/data.php:142
+#: components/video/data.php:144
 msgid "Show Button"
 msgstr ""
 
 #: components/image-content/data.php:266
-#: components/video/data.php:156
+#: components/video/data.php:158
 msgid "Button Text"
 msgstr ""
 
 #: components/image-content/data.php:279
-#: components/video/data.php:169
+#: components/video/data.php:171
 msgid "Button Link"
 msgstr ""
 
 #: components/image-content/data.php:280
-#: components/video/data.php:170
+#: components/video/data.php:172
 msgid "Use "
 msgstr ""
 
 #: components/image-content/data.php:280
-#: components/video/data.php:170
+#: components/video/data.php:172
 msgid "for dynamic links."
 msgstr ""
 
 #: components/image-content/data.php:294
-#: components/video/data.php:184
+#: components/video/data.php:186
 msgid "Button Font Size"
 msgstr ""
 
 #: components/image-content/data.php:310
-#: components/video/data.php:200
+#: components/video/data.php:202
 msgid "Button Text Color"
 msgstr ""
 
 #: components/image-content/data.php:323
-#: components/video/data.php:213
+#: components/video/data.php:215
 msgid "Button Background Color"
 msgstr ""
 
@@ -2130,6 +2134,10 @@ msgstr ""
 msgid "Pin Yellow Solid 16"
 msgstr ""
 
+#: components/map/views/view.php:32
+msgid "Google Map API Key is missing."
+msgstr ""
+
 #: components/order-acknowledge/data.php:31
 msgid "Icon"
 msgstr ""
@@ -2212,7 +2220,7 @@ msgid "Sub Heading Color"
 msgstr ""
 
 #: components/order-acknowledge/data.php:189
-#: includes/xlwcty-common.php:598
+#: includes/xlwcty-common.php:613
 msgid "Order"
 msgstr ""
 
@@ -2240,6 +2248,32 @@ msgstr ""
 msgid "Order details"
 msgstr ""
 
+#: components/order-details/views/related-subscriptions.php:17
+msgid "Related Subscriptions"
+msgstr ""
+
+#: components/order-details/views/related-subscriptions.php:21
+msgid "Subscription"
+msgstr ""
+
+#: components/order-details/views/related-subscriptions.php:22
+msgid "Next Payment"
+msgstr ""
+
+#: components/order-details/views/related-subscriptions.php:23
+msgid "Total"
+msgstr ""
+
+#: components/order-details/views/related-subscriptions.php:24
+msgid "Action"
+msgstr ""
+
+#: components/order-details/views/related-subscriptions.php:46
+#: includes/xlwcty-common.php:129
+#: includes/xlwcty-common.php:130
+msgid "View"
+msgstr ""
+
 #: components/simple-text/data.php:73
 msgid "Text"
 msgstr ""
@@ -2248,294 +2282,297 @@ msgstr ""
 msgid "Text Alignment"
 msgstr ""
 
-#: components/video/data.php:101
+#: components/video/data.php:103
 msgid "Video Source"
 msgstr ""
 
-#: components/video/data.php:105
-#: components/video/data.php:115
+#: components/video/data.php:107
+#: components/video/data.php:117
 msgid "Video URL"
 msgstr ""
 
-#: components/video/data.php:106
-#: components/video/data.php:128
+#: components/video/data.php:108
+#: components/video/data.php:130
 msgid "Embed Code"
 msgstr ""
 
-#: components/video/data.php:118
+#: components/video/data.php:120
 msgid "For Youtube & Vimeo only"
 msgstr ""
 
-#: components/video/data.php:118
+#: components/video/data.php:120
 msgid "Supported parameters for Youtube video - autoplay=1 , showinfo=0 , rel=0 & controls=0"
 msgstr ""
 
-#: components/video/data.php:118
+#: components/video/data.php:120
 msgid "Supported parameters for Vimeo video - autoplay=1 & loop=1"
 msgstr ""
 
-#: components/video/data.php:131
+#: components/video/data.php:133
 msgid "Embed source of video"
 msgstr ""
 
-#: includes/xlwcty-common.php:128
-#: includes/xlwcty-common.php:129
+#: includes/xlwcty-common.php:126
+#: includes/xlwcty-common.php:127
 msgid "Edit"
 msgstr ""
 
-#: includes/xlwcty-common.php:130
+#: includes/xlwcty-common.php:128
 msgid "New"
 msgstr ""
 
 #: includes/xlwcty-common.php:131
-#: includes/xlwcty-common.php:132
-msgid "View"
-msgstr ""
-
-#: includes/xlwcty-common.php:133
 msgid "Search"
 msgstr ""
 
-#: includes/xlwcty-common.php:134
+#: includes/xlwcty-common.php:132
 msgid "No Thank You Page"
 msgstr ""
 
-#: includes/xlwcty-common.php:135
+#: includes/xlwcty-common.php:133
 msgid "No Thank You Page found in trash"
 msgstr ""
 
-#: includes/xlwcty-common.php:136
+#: includes/xlwcty-common.php:134
 msgid "Parent"
 msgstr ""
 
-#: includes/xlwcty-common.php:360
+#: includes/xlwcty-common.php:358
 msgid "Choose a Coupon"
 msgstr ""
 
-#: includes/xlwcty-common.php:447
+#: includes/xlwcty-common.php:462
 msgid "Choose a Product"
 msgstr ""
 
-#: includes/xlwcty-common.php:596
+#: includes/xlwcty-common.php:611
 msgid "Always"
 msgstr ""
 
-#: includes/xlwcty-common.php:599
+#: includes/xlwcty-common.php:614
 #: merge-tags/xlwcty-dynamic-merge-tags.php:109
 msgid "Order Total"
 msgstr ""
 
-#: includes/xlwcty-common.php:600
+#: includes/xlwcty-common.php:615
 msgid "Order Item(s)"
 msgstr ""
 
-#: includes/xlwcty-common.php:601
+#: includes/xlwcty-common.php:616
 msgid "Order Category(s)"
 msgstr ""
 
-#: includes/xlwcty-common.php:602
+#: includes/xlwcty-common.php:617
 msgid "Order Item Count"
 msgstr ""
 
-#: includes/xlwcty-common.php:603
+#: includes/xlwcty-common.php:618
 msgid "Order Item Type"
 msgstr ""
 
-#: includes/xlwcty-common.php:604
+#: includes/xlwcty-common.php:619
 msgid "Order Coupons"
 msgstr ""
 
-#: includes/xlwcty-common.php:605
+#: includes/xlwcty-common.php:620
 msgid "Order Payment Gateway"
 msgstr ""
 
-#: includes/xlwcty-common.php:606
+#: includes/xlwcty-common.php:621
 msgid "Order Shipping Method"
 msgstr ""
 
-#: includes/xlwcty-common.php:607
+#: includes/xlwcty-common.php:622
 msgid "Is First Order"
 msgstr ""
 
-#: includes/xlwcty-common.php:608
+#: includes/xlwcty-common.php:623
 msgid "Is Order Renewal"
 msgstr ""
 
-#: includes/xlwcty-common.php:609
+#: includes/xlwcty-common.php:624
 msgid "Is Order Upgrade"
 msgstr ""
 
-#: includes/xlwcty-common.php:610
+#: includes/xlwcty-common.php:625
 msgid "Is Order Downgrade"
 msgstr ""
 
-#: includes/xlwcty-common.php:612
-#: includes/xlwcty-common.php:613
+#: includes/xlwcty-common.php:627
+#: includes/xlwcty-common.php:628
 msgid "Customer"
 msgstr ""
 
-#: includes/xlwcty-common.php:614
+#: includes/xlwcty-common.php:629
 msgid "Customer User Role"
 msgstr ""
 
-#: includes/xlwcty-common.php:615
+#: includes/xlwcty-common.php:630
 msgid "Customer Order Count"
 msgstr ""
 
-#: includes/xlwcty-common.php:616
+#: includes/xlwcty-common.php:631
 msgid "Customer Total Spent"
 msgstr ""
 
-#: includes/xlwcty-common.php:618
+#: includes/xlwcty-common.php:633
 msgid "Guest"
 msgstr ""
 
-#: includes/xlwcty-common.php:619
+#: includes/xlwcty-common.php:634
 msgid "Is Customer Guest"
 msgstr ""
 
-#: includes/xlwcty-common.php:620
+#: includes/xlwcty-common.php:635
 msgid "Guest Order Count"
 msgstr ""
 
-#: includes/xlwcty-common.php:621
+#: includes/xlwcty-common.php:636
 msgid "Guest Total Spent"
 msgstr ""
 
-#: includes/xlwcty-common.php:623
+#: includes/xlwcty-common.php:638
 msgid "Geography"
 msgstr ""
 
-#: includes/xlwcty-common.php:624
+#: includes/xlwcty-common.php:639
 #: merge-tags/xlwcty-dynamic-merge-tags.php:133
 msgid "Order Shipping Country"
 msgstr ""
 
-#: includes/xlwcty-common.php:625
+#: includes/xlwcty-common.php:640
 #: merge-tags/xlwcty-dynamic-merge-tags.php:129
 msgid "Order Billing Country"
 msgstr ""
 
-#: includes/xlwcty-common.php:627
+#: includes/xlwcty-common.php:642
 msgid "Date/Time"
 msgstr ""
 
-#: includes/xlwcty-common.php:628
+#: includes/xlwcty-common.php:643
 msgid "Day"
 msgstr ""
 
-#: includes/xlwcty-common.php:629
+#: includes/xlwcty-common.php:644
 msgid "Date"
 msgstr ""
 
-#: includes/xlwcty-common.php:630
+#: includes/xlwcty-common.php:645
 msgid "Time"
 msgstr ""
 
-#: includes/xlwcty-common.php:747
+#: includes/xlwcty-common.php:798
 msgid "Edit/ Rules"
 msgstr ""
 
-#: includes/xlwcty-common.php:753
-#: includes/xlwcty-common.php:759
+#: includes/xlwcty-common.php:804
+#: includes/xlwcty-common.php:810
 msgid "Activate"
 msgstr ""
 
-#: includes/xlwcty-common.php:767
+#: includes/xlwcty-common.php:818
 msgid "Deactivate"
 msgstr ""
 
-#: includes/xlwcty-common.php:775
+#: includes/xlwcty-common.php:826
 msgid "Duplicate"
 msgstr ""
 
-#: includes/xlwcty-common.php:781
+#: includes/xlwcty-common.php:832
 msgid "Delete Permanently"
 msgstr ""
 
-#: includes/xlwcty-common.php:827
+#: includes/xlwcty-common.php:878
 msgid "Disabled"
 msgstr ""
 
-#: includes/xlwcty-common.php:832
+#: includes/xlwcty-common.php:883
 msgid "Disabled <span class=\"count\">(%s)</span>"
 msgid_plural "Disabled <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/xlwcty-common.php:1321
+#: includes/xlwcty-common.php:1372
 msgid "One Column"
 msgstr ""
 
-#: includes/xlwcty-common.php:1418
+#: includes/xlwcty-common.php:1469
 msgid "Unauthorized access. "
 msgstr ""
 
-#: includes/xlwcty-common.php:1467
+#: includes/xlwcty-common.php:1518
 msgid "No Thank You Page found. Create one or check rules for the existing page to see if Rules set for the page match selected order."
 msgstr ""
 
-#: includes/xlwcty-common.php:1590
+#: includes/xlwcty-common.php:1641
 msgid "Unable to Duplicate"
 msgstr ""
 
-#: includes/xlwcty-common.php:1700
+#: includes/xlwcty-common.php:1657
+msgid "You do not have permission to perform this action."
+msgstr ""
+
+#: includes/xlwcty-common.php:1664
+msgid "Security check failed. Please refresh the page and try again."
+msgstr ""
+
+#: includes/xlwcty-common.php:1772
 msgid "Something is wrong with settings. Thank You page won't appear until all points turn green."
 msgstr ""
 
-#: includes/xlwcty-common.php:1705
+#: includes/xlwcty-common.php:1777
 msgid "NextMove mode is Sandbox. Click here to change it to"
 msgstr ""
 
-#: includes/xlwcty-common.php:1709
+#: includes/xlwcty-common.php:1781
 msgid "Reset"
 msgstr ""
 
-#: includes/xlwcty-common.php:1710
+#: includes/xlwcty-common.php:1782
 msgid "Permalink needs reset. Click here to"
 msgstr ""
 
-#: includes/xlwcty-common.php:1710
+#: includes/xlwcty-common.php:1782
 msgid " it."
 msgstr ""
 
-#: includes/xlwcty-common.php:1714
+#: includes/xlwcty-common.php:1786
 msgid "There are no Active Thank You pages. Create a New page or Activate an existing one."
 msgstr ""
 
-#: includes/xlwcty-common.php:1718
+#: includes/xlwcty-common.php:1790
 msgid "There are no Active WooCommerce Orders with selected order statuses"
 msgstr ""
 
-#: includes/xlwcty-common.php:1718
+#: includes/xlwcty-common.php:1790
 msgid "Kindly create an order to see the preview."
 msgstr ""
 
-#: includes/xlwcty-common.php:1721
+#: includes/xlwcty-common.php:1793
 msgid "If still unable to set up the Thank You page, create a"
 msgstr ""
 
-#: includes/xlwcty-common.php:1726
+#: includes/xlwcty-common.php:1798
 msgid "Looks Good! <a target=\"_blank\" href=\"%s\">See Order Preview</a>"
 msgstr ""
 
-#: includes/xlwcty-public.php:280
+#: includes/xlwcty-public.php:364
 msgid "Unable to process the request."
 msgstr ""
 
-#: includes/xlwcty-public.php:281
+#: includes/xlwcty-public.php:365
 msgid "Google Map API quota limit reached."
 msgstr ""
 
-#: includes/xlwcty-public.php:282
+#: includes/xlwcty-public.php:366
 msgid "This API project is not authorized to use this API. Please ensure that this API is activated in the APIs Console."
 msgstr ""
 
-#: includes/xlwcty-public.php:416
+#: includes/xlwcty-public.php:863
 msgid "We are unable to show preview for this thank you page."
 msgstr ""
 
-#: includes/xlwcty-public.php:496
+#: includes/xlwcty-public.php:1161
 msgid "Unable to process your request."
 msgstr ""
 
@@ -2719,11 +2756,11 @@ msgstr ""
 msgid "License Key"
 msgstr ""
 
-#: merge-tags/xlwcty-shortcode-merge-tags.php:292
+#: merge-tags/xlwcty-shortcode-merge-tags.php:291
 msgid "tomorrow"
 msgstr ""
 
-#: merge-tags/xlwcty-shortcode-merge-tags.php:308
+#: merge-tags/xlwcty-shortcode-merge-tags.php:307
 msgid "today"
 msgstr ""
 
@@ -2743,45 +2780,45 @@ msgstr ""
 msgid "Shop Admin Email"
 msgstr ""
 
-#: rules/inputs/cart-category-select.php:31
-#: rules/inputs/cart-product-select.php:28
+#: rules/inputs/cart-category-select.php:46
+#: rules/inputs/cart-product-select.php:43
 msgid "Quantity"
 msgstr ""
 
-#: rules/inputs/cart-category-select.php:32
+#: rules/inputs/cart-category-select.php:47
 msgid "Categories"
 msgstr ""
 
-#: rules/inputs/cart-category-select.php:39
-#: rules/inputs/chosen-select.php:31
+#: rules/inputs/cart-category-select.php:54
+#: rules/inputs/chosen-select.php:45
 msgid "Search..."
 msgstr ""
 
-#: rules/inputs/cart-product-select.php:29
+#: rules/inputs/cart-product-select.php:44
 msgid "Products"
 msgstr ""
 
-#: rules/inputs/geo-postal-code-entry.php:30
+#: rules/inputs/geo-postal-code-entry.php:44
 msgid "Distance ( km )"
 msgstr ""
 
-#: rules/inputs/geo-postal-code-entry.php:31
+#: rules/inputs/geo-postal-code-entry.php:45
 msgid "Zip/Postalcode ( One per line )"
 msgstr ""
 
-#: rules/inputs/html-always.php:19
+#: rules/inputs/html-always.php:34
 msgid "Trigger will always display for all shoppers on your site. This will override any other rule you define."
 msgstr ""
 
-#: rules/inputs/html-rule-is-first-order.php:18
+#: rules/inputs/html-rule-is-first-order.php:34
 msgid "This Page will show on very first order for the customer."
 msgstr ""
 
-#: rules/inputs/html-rule-is-guest.php:18
+#: rules/inputs/html-rule-is-guest.php:34
 msgid "This Page will show on guest orders."
 msgstr ""
 
-#: rules/inputs/html-rule-is-renewal.php:18
+#: rules/inputs/html-rule-is-renewal.php:34
 msgid "This Page will show on orders that are renewals."
 msgstr ""
 

@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 $config             = array();
 $config['slug']     = '_xlwcty_customer_information';
 $config['title']    = __( 'Customer Details', 'woo-thank-you-page-nextmove-lite' );
-$config['instance'] = require( __DIR__ . '/instance.php' );
+$config['instance'] = require __DIR__ . '/instance.php';
 $config['fields']   = array(
 	'id'                     => $config['slug'],
 	'xlwcty_accordion_title' => $config['title'],
@@ -246,7 +246,7 @@ $config['fields']   = array(
 		),
 	),
 );
-$config['default']  = array(
+$config['default'] = array(
 	'heading'              => __( 'Customer Information', 'woo-thank-you-page-nextmove-lite' ),
 	'heading_font_size'    => '20',
 	'heading_alignment'    => 'left',

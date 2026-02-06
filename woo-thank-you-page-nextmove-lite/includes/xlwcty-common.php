@@ -43,8 +43,6 @@ class XLWCTY_Common {
 		add_action( 'wp', array( __CLASS__, 'xlwcty_contain_current_query' ), 1 );
 
 		// ajax
-		add_action( 'wp_ajax_xlwcty_close_sticky_bar', array( __CLASS__, 'xlwcty_close_sticky_bar' ) );
-		add_action( 'wp_ajax_nopriv_xlwcty_close_sticky_bar', array( __CLASS__, 'xlwcty_close_sticky_bar' ) );
 		add_action( 'wp_ajax_get_coupons_cmb2', array( __CLASS__, 'get_coupons_cmb2' ) );
 		add_action( 'wp_ajax_nopriv_get_coupons_cmb2', array( __CLASS__, 'get_coupons_cmb2' ) );
 		add_action( 'wp_ajax_get_product_cmb2', array( __CLASS__, 'get_product_cmb2' ) );
@@ -296,7 +294,7 @@ class XLWCTY_Common {
 	}
 
 	public static function get_coupons_cmb2() {
-		$nonce = isset( $_POST['cmb2_nonce'] ) ? $_POST['cmb2_nonce'] : '';
+		$nonce = isset( $_POST['cmb2_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['cmb2_nonce'] ) ) : '';
 		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'cmb2_nonce' ) ) {
 			wp_send_json( array(
 				'status'  => 'error',
@@ -311,7 +309,7 @@ class XLWCTY_Common {
 				'post_type'     => 'shop_coupon',
 				'post_per_page' => 2,
 				'paged'         => 1,
-				's'             => $_POST['term'],
+				's'             => sanitize_text_field( wp_unslash( $_POST['term'] ) ),
 			);
 			$args['meta_query'] = array(
 				array(
@@ -378,14 +376,22 @@ class XLWCTY_Common {
 	}
 
 	public static function get_product_cmb2() {
-		//        check_ajax_referer();
+		$nonce = isset( $_POST['cmb2_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['cmb2_nonce'] ) ) : '';
+		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'cmb2_nonce' ) ) {
+			wp_send_json( array(
+				'status'  => 'error',
+				'message' => 'Invalid nonce',
+			) );
+			exit;
+		}
+
 		$array = array();
 		if ( isset( $_POST['term'] ) && $_POST['term'] !== '' ) {
 			$args  = array(
 				'post_type'     => 'product',
 				'post_per_page' => 20,
 				'paged'         => 1,
-				's'             => $_POST['term'],
+				's'             => sanitize_text_field( wp_unslash( $_POST['term'] ) ),
 			);
 			$posts = get_posts( $args );
 			if ( $posts && is_array( $posts ) && count( $posts ) > 0 ) {
@@ -402,11 +408,20 @@ class XLWCTY_Common {
 	}
 
 	public static function xlwcty_get_orders_cmb2() {
+		$nonce = isset( $_POST['cmb2_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['cmb2_nonce'] ) ) : '';
+		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'cmb2_nonce' ) ) {
+			wp_send_json( array(
+				'status'  => 'error',
+				'message' => 'Invalid nonce',
+			) );
+			exit;
+		}
+
 		global $wpdb;
 		$array = array();
 		if ( isset( $_POST['term'] ) && $_POST['term'] !== '' ) {
 			$order_statuses = XLWCTY_Core()->data->get_option( 'allowed_order_statuses' );
-			$term           = sanitize_text_field( $_POST['term'] ); // Make sure to sanitize user input
+			$term           = sanitize_text_field( wp_unslash( $_POST['term'] ) );
 
 			$query = $wpdb->prepare( "SELECT * FROM $wpdb->posts WHERE `ID` LIKE %s AND `post_status` IN (" . implode( ',', array_fill( 0, count( $order_statuses ), '%s' ) ) . ") LIMIT 0,10", '%' . $wpdb->esc_like( $term ) . '%', ...$order_statuses );
 
@@ -646,6 +661,30 @@ class XLWCTY_Common {
 	}
 
 	/**
+	 * Recursively sanitize rules array structure.
+	 *
+	 * @param array $rules Rules array to sanitize.
+	 *
+	 * @return array Sanitized rules array.
+	 */
+	private static function sanitize_rules_array( $rules ) {
+		if ( ! is_array( $rules ) ) {
+			return sanitize_text_field( $rules );
+		}
+
+		if ( empty( $rules ) ) {
+			return array();
+		}
+
+		$sanitized = array();
+		foreach ( $rules as $key => $value ) {
+			$sanitized[ sanitize_key( $key ) ] = is_array( $value ) ? self::sanitize_rules_array( $value ) : sanitize_text_field( wp_unslash( $value ) );
+		}
+
+		return $sanitized;
+	}
+
+	/**
 	 * Saves the data for the xlwcty post type.
 	 *
 	 * @param int $post_id Post ID
@@ -669,6 +708,11 @@ class XLWCTY_Common {
 			return;
 		}
 
+		// Check user capabilities.
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+
 		$key = 'xlwcty_instances';
 		if ( defined( 'ICL_LANGUAGE_CODE' ) && ICL_LANGUAGE_CODE !== '' ) {
 			$key .= '_' . ICL_LANGUAGE_CODE;
@@ -681,18 +725,25 @@ class XLWCTY_Common {
 				'location' => $location[0],
 				'hook'     => $location[1],
 			);
-			if ( $settings['hook'] == 'custom' ) {
-				$settings['custom_hook']     = $_POST['xlwcty_settings_location_custom_hook'];
-				$settings['custom_priority'] = $_POST['xlwcty_settings_location_custom_priority'];
+			if ( $settings['hook'] === 'custom' ) {
+				$settings['custom_hook']     = isset( $_POST['xlwcty_settings_location_custom_hook'] ) ? sanitize_text_field( wp_unslash( $_POST['xlwcty_settings_location_custom_hook'] ) ) : '';
+				$settings['custom_priority'] = isset( $_POST['xlwcty_settings_location_custom_priority'] ) ? absint( $_POST['xlwcty_settings_location_custom_priority'] ) : 10;
 			} else {
 				$settings['custom_hook']     = '';
 				$settings['custom_priority'] = '';
 			}
-			$settings['type'] = $_POST['xlwcty_settings_type'];
+			$settings['type'] = isset( $_POST['xlwcty_settings_type'] ) ? sanitize_text_field( wp_unslash( $_POST['xlwcty_settings_type'] ) ) : '';
 			update_post_meta( $post_id, '_xlwcty_settings', $settings );
 		}
 		if ( isset( $_POST['xlwcty_rule'] ) ) {
-			update_post_meta( $post_id, 'xlwcty_rule', $_POST['xlwcty_rule'] );
+			$rules = $_POST['xlwcty_rule'];
+			if ( is_array( $rules ) ) {
+				// Recursively sanitize nested array structure.
+				$rules = self::sanitize_rules_array( $rules );
+			} else {
+				$rules = sanitize_text_field( $rules );
+			}
+			update_post_meta( $post_id, 'xlwcty_rule', $rules );
 		}
 	}
 
@@ -1602,6 +1653,19 @@ class XLWCTY_Common {
 	 * - Prepares a response with status indicators and possible solutions.
 	 */
 	public static function handle_quick_view() {
+		if ( ! is_user_logged_in() || ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'message' => __( 'You do not have permission to perform this action.', 'woo-thank-you-page-nextmove-lite' ) ) );
+
+			return;
+		}
+
+		// Verify nonce for CSRF protection.
+		if ( ! isset( $_POST['security'] ) || ! check_ajax_referer( 'xlwctyaction-admin', 'security', false ) ) {
+			wp_send_json_error( array( 'message' => __( 'Security check failed. Please refresh the page and try again.', 'woo-thank-you-page-nextmove-lite' ) ) );
+
+			return;
+		}
+
 		// Initialize states
 		$permalink_state         = false;
 		$available_thankyou_page = false;
@@ -1646,13 +1710,21 @@ class XLWCTY_Common {
 			$get_link_check = get_permalink( $get_posts_check[0] );
 			$get_link_check = self::parse_url_for_ssl( $get_link_check );
 
-			$remote = wp_remote_get( add_query_arg( array( 'permalink_check' => 'yes' ), $get_link_check ), array( 'sslverify' => false ) );
+			$remote = wp_remote_get( add_query_arg( array( 'permalink_check' => 'yes' ), $get_link_check ), array( 
+				'sslverify' => false,
+				'timeout' => 5,
+			) );
 
 			$response_code = wp_remote_retrieve_response_code( $remote );
 
 			// If no errors and the response code is valid, set permalink state
 			if ( is_wp_error( $remote ) ) {
-				$permalink_state = true; // Assume state is OK if request fails
+				// For WPML sites, permalink check might fail due to language requirements
+				// Check if permalink can be generated instead
+				$test_permalink = get_permalink( $get_page_id );
+				if ( $test_permalink && ! is_wp_error( $test_permalink ) ) {
+					$permalink_state = true; // Assume state is OK if permalink can be generated
+				}
 			} elseif ( $response_code !== 404 ) {
 				$permalink_state = true;
 			}

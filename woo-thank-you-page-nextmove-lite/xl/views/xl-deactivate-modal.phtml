@@ -7,7 +7,7 @@ $slug     = $VARS['slug'];
 $licenses = apply_filters( 'xl_plugins_license_needed', array() );
 
 $confirmation_message      = '';
-$reasons                   = $VARS['reasons']['default'];
+$reasons                   = isset( $VARS['reasons']['default'] ) ? $VARS['reasons']['default'] : array();
 $reasons_list_items_html   = '';
 $plugin_customized_reasons = array();
 
@@ -17,7 +17,7 @@ foreach ( $reasons as $reason ) {
 
 	$list_item_classes       = 'reason' . ( ! empty( $reason['input_type'] ) ? ' has-input' : '' ) . ( ( isset( $reason['html'] ) && ( ! empty( $reason['html'] ) ) ) ? ' has_html' : '' );
 	$reason_html             = ( isset( $reason['html'] ) && ( ! empty( $reason['html'] ) ) ) ? '<div class="reason_html">' . $reason['html'] . '</div>' : '';
-	$reasons_list_items_html .= '<li class="' . $list_item_classes . '" data-input-type="' . $reason['input_type'] . '" data-input-placeholder="' . $reason['input_placeholder'] . '"><label><span><input type="radio" name="selected-reason" value="' . $reason['id'] . '"/></span><span>' . $reason['text'] . '</span></label>' . $reason_html . '</li>';
+	$reasons_list_items_html .= '<li class="' . esc_attr( $list_item_classes ) . '" data-input-type="' . esc_attr( $reason['input_type'] ) . '" data-input-placeholder="' . $reason['input_placeholder'] . '"><label><span><input type="radio" name="selected-reason" value="' . $reason['id'] . '"/></span><span>' . $reason['text'] . '</span></label>' . wp_kses_post( $reason_html ) . '</li>';
 
 	$incr ++;
 }
@@ -33,7 +33,7 @@ foreach ( $reasons as $reason ) {
 		foreach($VARS['reasons'] as $plugin_key => $plugin_reasons) {
 		$threshold = apply_filters( 'xl_uninstall_reason_threshold_' . $plugin_key, 2 );
 		?>
-        XLDefaultReason['<?php echo $plugin_key; ?>'] = '<?php echo apply_filters( 'xl_default_reason_' . $plugin_key, '' ); ?>'
+        XLDefaultReason['<?php echo esc_js( $plugin_key ); ?>'] = '<?php echo esc_js( apply_filters( 'xl_default_reason_' . $plugin_key, '' ) ); ?>'
 		<?php
 		if ( $plugin_key == "default" ) {
 			continue;
@@ -44,7 +44,7 @@ foreach ( $reasons as $reason ) {
 			$reason_html       = ( isset( $reason['html'] ) && ( ! empty( $reason['html'] ) ) ) ? '<div class="reason_html">' . $reason['html'] . '</div>' : '';
 			$threshold         = apply_filters( 'xl_uninstall_reason_threshold_' . $plugin_key, 2 );
 			if ( $key < $threshold ) {
-				$reasons_list_items_html_custom .= '<li class="' . $list_item_classes . '" data-input-type="' . $reason['input_type'] . '" data-input-placeholder="' . $reason['input_placeholder'] . '"><label><span><input type="radio" name="selected-reason" value="' . $reason['id'] . '"/></span><span>' . $reason['text'] . '</span></label>' . $reason_html . '</li>';
+				$reasons_list_items_html_custom .= '<li class="' . esc_attr( $list_item_classes ) . '" data-input-type="' . $reason['input_type'] . '" data-input-placeholder="' . $reason['input_placeholder'] . '"><label><span><input type="radio" name="selected-reason" value="' . $reason['id'] . '"/></span><span>' . $reason['text'] . '</span></label>' . $reason_html . '</li>';
 
 			} else {
 				if ( $key == $threshold ) {
@@ -52,7 +52,7 @@ foreach ( $reasons as $reason ) {
   <a href="javascript:void(0)">I have more specific reason</a>
 </li>';
 				}
-				$reasons_list_items_html_custom .= '<li class="' . $list_item_classes . ' reason-hide" data-input-type="' . $reason['input_type'] . '" data-input-placeholder="' . $reason['input_placeholder'] . '"><label><span><input type="radio" name="selected-reason" value="' . $reason['id'] . '"/></span><span>' . $reason['text'] . '</span></label>' . $reason_html . '</li>';
+				$reasons_list_items_html_custom .= '<li class="' . esc_attr( $list_item_classes ) . ' reason-hide" data-input-type="' . esc_attr( $reason['input_type'] ) . '" data-input-placeholder="' . esc_attr( $reason['input_placeholder'] ) . '"><label><span><input type="radio" name="selected-reason" value="' . wp_kses_post( [ 'id' ] ) . '"/></span><span>' . esc_attr( $reason['text'] ) . '</span></label>' . wp_kses_post( $reason_html ) . '</li>';
 
 			}
 		}

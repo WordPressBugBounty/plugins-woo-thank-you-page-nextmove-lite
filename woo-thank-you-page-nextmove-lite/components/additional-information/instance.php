@@ -5,8 +5,8 @@ defined( 'ABSPATH' ) || exit;
 class XLWCTY_Additional_Information extends XLWCTY_Component {
 
 	private static $instance = null;
-	public $viewpath = '';
-	public $is_disable = true;
+	public $viewpath         = '';
+	public $is_disable       = true;
 
 	public function __construct( $order = false ) {
 		parent::__construct();
@@ -17,7 +17,7 @@ class XLWCTY_Additional_Information extends XLWCTY_Component {
 
 	public static function get_instance() {
 		if ( null === self::$instance ) {
-			self::$instance = new self;
+			self::$instance = new self();
 		}
 
 		return self::$instance;
@@ -52,7 +52,6 @@ class XLWCTY_Additional_Information extends XLWCTY_Component {
 			parent::push_css( $slug, $style );
 		}
 	}
-
 }
 
 return XLWCTY_Additional_Information::get_instance();

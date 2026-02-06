@@ -12,6 +12,7 @@ if ( ! class_exists( 'PW_Plugin_states' ) ) :
 	/**
 	 * PW_Plugin_states Class
 	 */
+	#[AllowDynamicProperties]
 	class PW_Plugin_states {
 
 		public $pluginbasename;

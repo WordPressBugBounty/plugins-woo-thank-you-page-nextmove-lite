@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 $config             = array();
 $config['slug']     = '_xlwcty_additional_info';
 $config['title']    = 'Additional Information';
-$config['instance'] = require( __DIR__ . '/instance.php' );
+$config['instance'] = require __DIR__ . '/instance.php';
 $config['fields']   = array(
 	'id'                        => $config['slug'],
 	'position'                  => 16,
@@ -89,7 +89,7 @@ $config['fields']   = array(
 
 	),
 );
-$config['default']  = array(
+$config['default'] = array(
 	'border_style'       => 'solid',
 	'border_width'       => '1',
 	'border_color'       => '#d9d9d9',

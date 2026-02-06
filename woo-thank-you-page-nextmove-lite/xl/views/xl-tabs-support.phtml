@@ -18,16 +18,16 @@
 			if ( ! empty( $licenses->plugins_list ) ) {
 				?>
                 <li class="plugin-install-featured <?php echo ( isset( $model->current_tab ) && $model->current_tab == 'licenses' ) ? 'current' : ''; ?>">
-                    <a href="<?php echo admin_url( 'admin.php?page=' . $_GET['page'] . '&tab=licenses' ); ?>"><?php _e( 'Licenses', 'xlplugins' ); ?></a>
+                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=' . ( isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '' ) . '&tab=licenses' ) ); ?>"><?php _e( 'Licenses', 'xlplugins' ); ?></a>
                 </li>
 			<?php } ?>
             <li class="plugin-install-popular <?php echo ( isset( $model->current_tab ) && $model->current_tab == 'support' ) ? 'current' : ''; ?>">
-                <a href="<?php echo admin_url( 'admin.php?page=' . $_GET['page'] . '&tab=support' ); ?>"
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=' . ( isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '' ) . '&tab=support' ) ); ?>"
                    class=""><?php _e( 'Support', 'xlplugins' ); ?></a></li>
 			<?php if ( isset( $model->additional_tabs ) && is_array( $model->additional_tabs ) && count( $model->additional_tabs ) > 0 ): ?>
 				<?php foreach ( $model->additional_tabs as $tab ): ?>
                     <li class="<?php echo ( isset( $model->current_tab ) && $model->current_tab == $tab['slug'] ) ? "current" : "" ?>">
-                        <a href="<?php echo admin_url( 'admin.php?page=' . $_GET['page'] . '&tab=' . $tab['slug'] ) ?>"><?php echo $tab['label']; ?></a>
+                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=' . ( isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '' ) . '&tab=' . esc_attr( $tab['slug'] ) ) ) ?>"><?php echo esc_html( $tab['label'] ); ?></a>
                     </li>
 				<?php endforeach; ?>
 			<?php endif; ?>
@@ -56,9 +56,9 @@
 					'utm_medium'   => 'support-tab',
 					'utm_term'     => 'contact',
 				), 'https://xlplugins.com/contact/' );
-				echo __( '<p>Do you need support? We are happy to help :)</p><p> Please go through extensive documentation', 'xlplugins' ) . ' <a target="_blank" href="' . $doc_link . '">https://xlplugins.com/documentation/</a>.</p>';
-				echo __( '<p>If you are unable to find the answers, feel free to', 'xlplugins' ) . ' <a target="_blank" href="' . $support_link . '">Raise the Ticket</a>.</p>';
-				echo __( '<p>For any pre-sales questions, please fill out the', 'xlplugins' ) . ' <a target="_blank" href="' . $contact_link . '">Contact Form</a>.</p>';
+				echo __( '<p>Do you need support? We are happy to help :)</p><p> Please go through extensive documentation', 'xlplugins' ) . ' <a target="_blank" href="' . esc_url( $doc_link ) . '">https://xlplugins.com/documentation/</a>.</p>';
+				echo __( '<p>If you are unable to find the answers, feel free to', 'xlplugins' ) . ' <a target="_blank" href="' . esc_url( $support_link ) . '">Raise the Ticket</a>.</p>';
+				echo __( '<p>For any pre-sales questions, please fill out the', 'xlplugins' ) . ' <a target="_blank" href="' . esc_url( $contact_link ) . '">Contact Form</a>.</p>';
 				?>
             </div>
 			<?php do_action( 'xl_support_after_content' ); ?>
@@ -67,5 +67,5 @@
         <div class="xl-area-right"> <?php do_action( 'xl_support_right_area' ); ?> </div>
 		<?php } else { ?>
             <div
-                    class="xl_cannot_connect"> <?php echo apply_filters( 'xl_no_data_support', __( 'Could not connect to server.', 'xlplugins' ) ); ?></div><?php } ?>
+                class="xl_cannot_connect"> <?php echo wp_kses_post( apply_filters( 'xl_no_data_support', __( 'Could not connect to server.', 'xlplugins' ) ) ); ?></div><?php } ?>
     </div>

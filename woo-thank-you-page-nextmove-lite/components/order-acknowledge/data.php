@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 $config             = array();
 $config['slug']     = '_xlwcty_order';
 $config['title']    = __( 'Order Confirmation', 'woo-thank-you-page-nextmove-lite' );
-$config['instance'] = require( __DIR__ . '/instance.php' );
+$config['instance'] = require __DIR__ . '/instance.php';
 $config['fields']   = array(
 	'id'                     => $config['slug'],
 	'xlwcty_accordion_head'  => 'Order',

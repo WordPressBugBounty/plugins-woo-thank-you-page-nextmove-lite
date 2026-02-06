@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author XLPlugins
  * @package XLCore
  */
+#[AllowDynamicProperties]
 class XL_Support {
 
 	protected static $instance;
@@ -218,17 +219,34 @@ class XL_Support {
 	}
 
 	public function fetch_tools_data() {
+		// Verify nonce for CSRF protection.
+		if ( ! isset( $_POST['security'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['security'] ) ), 'xl_fetch_tools_nonce' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'finale-woocommerce-sales-countdown-timer-discount' ) ), 403 );
+		}
+
+		// Verify user has appropriate capability.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => __( 'You do not have permission to perform this action.', 'finale-woocommerce-sales-countdown-timer-discount' ) ), 403 );
+		}
+
 		if ( isset( $_POST['plugins'] ) && $_POST['plugins'] != '' ) {
-			$plugins = explode( '/', $_POST['plugins'] );
-			do_action( 'xl_fetch_tools_data', end( $plugins ), $_POST );
+			$plugins = explode( '/', sanitize_text_field( wp_unslash( $_POST['plugins'] ) ) );
+			do_action( 'xl_fetch_tools_data', end( $plugins ), wp_unslash( $_POST ) );
 		}
 		exit;
 	}
 
 	public function js_script() {
+		// Only output on admin pages where this is needed.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$nonce = wp_create_nonce( 'xl_fetch_tools_nonce' );
 		?>
         <script>
             (function ($) {
+                var xlToolsNonce = '<?php echo esc_js( $nonce ); ?>';
 
                 function xl_core() {
                     console.log("xlcore script included");
@@ -244,7 +262,8 @@ class XL_Support {
                                 url: 'admin-ajax.php',
                                 data: {
                                     action: 'xl_fetch_tools_data',
-                                    plugins: plugin
+                                    plugins: plugin,
+                                    security: xlToolsNonce
                                 },
                                 success: function (resp) {
                                     if (resp != "") {
@@ -270,7 +289,7 @@ class XL_Support {
 	}
 
 	public function tools_right_area() {
-		if ( isset( $_GET['xl_transient'] ) && ( 'clear' == $_GET['xl_transient'] ) ) {
+		if ( isset( $_GET['xl_transient'] ) && ( 'clear' === sanitize_text_field( wp_unslash( $_GET['xl_transient'] ) ) ) ) {
 			$xl_transient_obj = XL_Transient::get_instance();
 			$xl_transient_obj->delete_force_transients();
 
@@ -284,7 +303,7 @@ class XL_Support {
 			<?php
 			echo ob_get_clean();
 		}
-		if ( isset( $_GET['xl_tracking'] ) && ( 'reset' == $_GET['xl_tracking'] ) ) {
+		if ( isset( $_GET['xl_tracking'] ) && ( 'reset' === sanitize_text_field( wp_unslash( $_GET['xl_tracking'] ) ) ) ) {
 			delete_option( 'xlp_is_opted' );
 
 			if ( wp_next_scheduled( 'xl_new_maybe_track_usage_scheduled' ) ) {

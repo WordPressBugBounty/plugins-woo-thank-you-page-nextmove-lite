@@ -42,6 +42,9 @@ class XLWCTY_Data {
 		}
 		$this->load_order( $order_id );
 
+		// Trigger WPML language switching if needed.
+		do_action( 'xlwcty_before_setup_thankyou_post', $order_id );
+
 		$args = array(
 			'post_type'        => XLWCTY_Common::get_thank_you_page_post_type_slug(),
 			'post_status'      => 'publish',
@@ -58,16 +61,24 @@ class XLWCTY_Data {
 
 		$key = 'xlwcty_instances';
 
-		// handling for WPML
+		// handling for WPML.
+		$current_lang = '';
 		if ( defined( 'ICL_LANGUAGE_CODE' ) && ICL_LANGUAGE_CODE !== '' ) {
-			$key .= '_' . ICL_LANGUAGE_CODE;
+			$current_lang = ICL_LANGUAGE_CODE;
+			$key .= '_' . $current_lang;
+		} elseif ( defined( 'ICL_SITEPRESS_VERSION' ) && class_exists( 'XLWCTY_WPML' ) ) {
+			$wpml_compat = XLWCTY_WPML::get_instance();
+			$current_lang = $wpml_compat->get_current_language();
+			if ( $current_lang ) {
+				$key .= '_' . $current_lang;
+			}
 		}
 
 		$contents = array();
 		do_action( 'xlwcty_before_query', $order_id );
 
 		/**
-		 * Setting xl cache and transient for NextMove pages query
+		 * Setting xl cache and transient for NextMove pages query.
 		 */
 		$cache_data = $xl_cache_obj->get_cache( $key, 'nextmove' );
 		if ( false !== $cache_data ) {
@@ -92,10 +103,36 @@ class XLWCTY_Data {
 		$contents = apply_filters( 'xlwcty_before_rules_validation', $contents, $order_id, $this, $skip_rules );
 
 		if ( is_array( $contents ) && count( $contents ) > 0 ) {
+			// If WPML is active and we have an order, prioritize pages in order's language
+			if ( defined( 'ICL_SITEPRESS_VERSION' ) && class_exists( 'XLWCTY_WPML' ) && $this->order instanceof WC_Order ) {
+				$wpml_compat = XLWCTY_WPML::get_instance();
+				$order_lang = $wpml_compat->get_order_language( $this->order );
+				
+				// Reorder pages: put pages in order's language first
+				$pages_in_order_lang = array();
+				$other_pages = array();
+				
+				foreach ( $contents as $content_single ) {
+					$content_id = ( $content_single instanceof WP_Post && is_object( $content_single ) ) ? $content_single->ID : $content_single;
+					$page_lang = $wpml_compat->get_post_language( $content_id );
+					
+					if ( $page_lang === $order_lang ) {
+						$pages_in_order_lang[] = $content_single;
+					} else {
+						$other_pages[] = $content_single;
+					}
+				}
+				
+				// Reorder: pages in order's language first
+				if ( ! empty( $pages_in_order_lang ) ) {
+					$contents = array_merge( $pages_in_order_lang, $other_pages );
+				}
+			}
+			
 			foreach ( $contents as $content_single ) {
 
 				/**
-				 * post instance extra checking added as some plugins may modify wp_query args on pre_get_posts filter hook
+				 * post instance extra checking added as some plugins may modify wp_query args on pre_get_posts filter hook.
 				 */
 				$content_id = ( $content_single instanceof WP_Post && is_object( $content_single ) ) ? $content_single->ID : $content_single;
 
@@ -105,8 +142,62 @@ class XLWCTY_Data {
 						$content_id = $custom_pages[ $content_id ];
 					}
 
+					// Get translated page ID if WPML is active.
+					if ( defined( 'ICL_SITEPRESS_VERSION' ) && class_exists( 'XLWCTY_WPML' ) && $this->order instanceof WC_Order ) {
+						$wpml_compat = XLWCTY_WPML::get_instance();
+						$order_lang = $wpml_compat->get_order_language( $this->order );
+						$original_content_id = $content_id;
+						
+						// Check if current page is already in order's language
+						$page_lang = $wpml_compat->get_post_language( $content_id );
+						if ( $page_lang !== $order_lang ) {
+							// Get translation for order's language
+							$content_id = $wpml_compat->get_translated_page_id( $content_id, $order_lang );
+						}
+
+						// Verify the page exists and is accessible
+						$page_post = get_post( $content_id );
+						if ( ! $page_post || $page_post->post_status !== 'publish' ) {
+							// Try to get default language version
+							$default_lang = $wpml_compat->get_default_language();
+							if ( $default_lang ) {
+								$default_id = apply_filters( 'wpml_object_id', $original_content_id, XLWCTY_Common::get_thank_you_page_post_type_slug(), true, $default_lang );
+								$default_post = get_post( $default_id );
+								if ( $default_post && $default_post->post_status === 'publish' ) {
+									$content_id = $default_id;
+								}
+							}
+						}
+					}
+
 					$this->page_id   = $content_id;
-					$this->page_link = get_permalink( $content_id );
+					
+					// Get translated page ID first, then generate permalink
+					$final_page_id = $content_id;
+					if ( defined( 'ICL_SITEPRESS_VERSION' ) && class_exists( 'XLWCTY_WPML' ) && $this->order instanceof WC_Order ) {
+						$wpml_compat = XLWCTY_WPML::get_instance();
+						$order_lang = $wpml_compat->get_order_language( $this->order );
+						$current_lang = $wpml_compat->get_current_language();
+						
+						// Get translated page ID for order's language (already done above, but ensure we use it)
+						// $content_id is already translated above, but let's verify
+						$final_page_id = $wpml_compat->get_translated_page_id( $content_id, $order_lang );
+						
+						// Switch to order's language to get correct permalink
+						global $sitepress;
+						if ( $sitepress instanceof SitePress ) {
+							$sitepress->switch_lang( $order_lang, true );
+							$permalink = get_permalink( $final_page_id );
+							$sitepress->switch_lang( $current_lang, true );
+						} else {
+							$permalink = get_permalink( $final_page_id );
+						}
+					} else {
+						$permalink = get_permalink( $content_id );
+					}
+					
+					$this->page_id = $final_page_id; // Update to translated version
+					$this->page_link = $permalink;
 
 					break;
 				}
@@ -165,7 +256,7 @@ class XLWCTY_Data {
 		$cache_key  = 'xlwcty_thankyou_meta_' . $this->page_id;
 
 		/**
-		 * Setting xl cache and transient for NextMove page meta
+		 * Setting xl cache and transient for NextMove page meta.
 		 */
 		$cache_data = $xl_cache_obj->get_cache( $cache_key, 'nextmove' );
 		if ( false !== $cache_data ) {
@@ -283,6 +374,7 @@ class XLWCTY_Data {
 		if ( $post instanceof WP_Post && XLWCTY_Common::get_thank_you_page_post_type_slug() === $post->post_type ) {
 			$this->page_id = $post->ID;
 		}
+		// If post is not set, page_id from setup_thankyou_post is preserved
 	}
 
 	public function get_layout() {
