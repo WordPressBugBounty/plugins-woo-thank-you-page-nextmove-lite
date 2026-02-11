@@ -16,7 +16,7 @@
  * Tested up to: 6.9
  * Requires PHP: 7.4
  * WC requires at least: 4.4
- * WC tested up to: 10.4.3
+ * WC tested up to: 10.5.0
  *
  * NextMove Lite - Thank You Page for WooCommerce is free software.
  * You can redistribute it and/or modify it under the terms of the GNU General Public License as published by
