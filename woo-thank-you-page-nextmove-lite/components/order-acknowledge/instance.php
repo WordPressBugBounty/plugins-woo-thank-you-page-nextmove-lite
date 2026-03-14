@@ -5,19 +5,19 @@ defined( 'ABSPATH' ) || exit;
 class XLWCTY_Content_Order_Acknowledge extends XLWCTY_Component {
 
 	private static $instance = null;
-	public $is_disable       = false;
-	public $viewpath         = '';
-	public $source           = '';
-	public $height           = '';
-	public $width            = '';
-	public $heading1         = '';
-	public $heading1_color   = '';
-	public $heading1_font    = '';
-	public $heading2         = '';
-	public $heading2_color   = '';
-	public $heading2_font    = '';
-	public $icon_type        = '';
-	public $icon_html        = '';
+	public $is_disable = false;
+	public $viewpath = '';
+	public $source = '';
+	public $height = '';
+	public $width = '';
+	public $heading1 = '';
+	public $heading1_color = '';
+	public $heading1_font = '';
+	public $heading2 = '';
+	public $heading2_color = '';
+	public $heading2_font = '';
+	public $icon_type = '';
+	public $icon_html = '';
 
 	public function __construct( $order = false ) {
 		parent::__construct();

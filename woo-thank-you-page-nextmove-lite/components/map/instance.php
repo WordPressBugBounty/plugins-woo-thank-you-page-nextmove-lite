@@ -5,9 +5,9 @@ defined( 'ABSPATH' ) || exit;
 class XLWCTY_Shipping_Billing_Based_Map extends XLWCTY_Component {
 
 	private static $instance = null;
-	public $viewpath         = '';
-	public $map_add          = '';
-	public $is_disable       = false;
+	public $viewpath = '';
+	public $map_add = '';
+	public $is_disable = false;
 
 	public function __construct( $order = false ) {
 		parent::__construct();

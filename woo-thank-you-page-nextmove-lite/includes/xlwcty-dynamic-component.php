@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 
 #[AllowDynamicProperties]
 final class Xlwcty_Dynamic_Component {

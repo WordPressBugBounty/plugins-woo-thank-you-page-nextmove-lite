@@ -190,6 +190,7 @@ abstract class XLWCTY_Component {
 					'order_id'      => 0,
 				);
 			}
+
 			return array(
 				'order_id' => 0,
 			);

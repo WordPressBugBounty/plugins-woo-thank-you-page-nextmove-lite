@@ -1,6 +1,13 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+// Security: Check if order_data exists before proceeding
+if ( empty( $order_data ) || ! is_object( $order_data ) || ! method_exists( $order_data, 'has_status' ) ) {
+	XLWCTY_Core()->public->add_header_logs( sprintf( '%s - %s', $this->get_component_property( 'title' ), __( 'Order data not available', 'woo-thank-you-page-nextmove-lite' ) ) );
+
+	return false;
+}
+
 XLWCTY_Core()->public->add_header_logs( sprintf( '%s - %s', $this->get_component_property( 'title' ), __( 'On', 'woo-thank-you-page-nextmove-lite' ) ) );
 
 $heading_desc = '';

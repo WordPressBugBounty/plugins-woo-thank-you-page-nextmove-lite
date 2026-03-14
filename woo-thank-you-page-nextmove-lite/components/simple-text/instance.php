@@ -5,10 +5,10 @@ defined( 'ABSPATH' ) || exit;
 class XLWCTY_Simple_text extends XLWCTY_Component {
 
 	private static $instance = null;
-	public $viewpath         = '';
-	public $is_disable       = true;
-	public $is_multiple      = true;
-	public $component_limit  = 1;
+	public $viewpath = '';
+	public $is_disable = true;
+	public $is_multiple = true;
+	public $component_limit = 1;
 
 	public function __construct( $order = false ) {
 		parent::__construct();

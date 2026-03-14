@@ -5,10 +5,10 @@ defined( 'ABSPATH' ) || exit;
 class XLWCTY_Related_Products extends XLWCTY_Component {
 
 	private static $instance = null;
-	public $viewpath         = '';
-	public $related_product  = array();
-	public $is_disable       = true;
-	public $grid_type        = '2c';
+	public $viewpath = '';
+	public $related_product = array();
+	public $is_disable = true;
+	public $grid_type = '2c';
 
 	public function __construct( $order = false ) {
 		parent::__construct();

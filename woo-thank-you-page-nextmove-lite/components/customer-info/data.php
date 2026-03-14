@@ -246,7 +246,7 @@ $config['fields']   = array(
 		),
 	),
 );
-$config['default'] = array(
+$config['default']  = array(
 	'heading'              => __( 'Customer Information', 'woo-thank-you-page-nextmove-lite' ),
 	'heading_font_size'    => '20',
 	'heading_alignment'    => 'left',

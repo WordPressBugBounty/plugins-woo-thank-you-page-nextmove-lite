@@ -129,6 +129,10 @@ if ( ! class_exists( 'XLWCTY_Compatibility' ) ) :
 		 * @return mixed
 		 */
 		public static function get_payment_gateway_from_order( $order ) {
+			if ( empty( $order ) || ! is_object( $order ) || ! method_exists( $order, 'get_payment_method' ) ) {
+				return '';
+			}
+
 			return $order->get_payment_method();
 		}
 
@@ -148,6 +152,10 @@ if ( ! class_exists( 'XLWCTY_Compatibility' ) ) :
 		 * @return mixed
 		 */
 		public static function get_shipping_country_from_order( $order ) {
+			if ( empty( $order ) || ! is_object( $order ) || ! method_exists( $order, 'get_shipping_country' ) ) {
+				return '';
+			}
+
 			return $order->get_shipping_country();
 		}
 
@@ -157,10 +165,18 @@ if ( ! class_exists( 'XLWCTY_Compatibility' ) ) :
 		 * @return mixed
 		 */
 		public static function get_billing_country_from_order( $order ) {
+			if ( empty( $order ) || ! is_object( $order ) || ! method_exists( $order, 'get_billing_country' ) ) {
+				return '';
+			}
+
 			return $order->get_billing_country();
 		}
 
 		public static function get_order_id( $order ) {
+			if ( empty( $order ) || ! is_object( $order ) || ! method_exists( $order, 'get_id' ) ) {
+				return 0;
+			}
+
 			return $order->get_id();
 		}
 
@@ -174,6 +190,10 @@ if ( ! class_exists( 'XLWCTY_Compatibility' ) ) :
 		 * @return mixed
 		 */
 		public static function get_order_billing_1( $order ) {
+			if ( empty( $order ) || ! is_object( $order ) || ! method_exists( $order, 'get_billing_address_1' ) ) {
+				return '';
+			}
+
 			return $order->get_billing_address_1();
 		}
 

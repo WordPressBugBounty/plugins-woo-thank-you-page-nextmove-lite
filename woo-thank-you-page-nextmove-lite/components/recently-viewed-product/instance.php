@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) || exit;
 class XLWCTY_Recently_Viewed_products extends XLWCTY_Component {
 
 	private static $instance = null;
-	public $is_disable       = true;
+	public $is_disable = true;
 
 	public function __construct( $order = false ) {
 

@@ -59,7 +59,7 @@ jQuery(function ($) {
     if (!(typeof pagenow !== "undefined" && pagenow === "xlwcty_thankyou")) {
         return;
     }
-    $('#xlwcty_settings_location').on('change',function () {
+    $('#xlwcty_settings_location').on('change', function () {
         if ($(this).val() == 'custom:custom') {
             $('.xlwcty-settings-custom').show();
         } else {
@@ -83,12 +83,12 @@ jQuery(function ($) {
 
         $("select.ajax_chosen_select_products").xlAjaxChosen({
             method: 'GET',
-            url: xlwctyParams.ajax_url,
+            url: (typeof xlwctyParams !== 'undefined' && xlwctyParams.ajax_url) ? xlwctyParams.ajax_url : (typeof ajaxurl !== 'undefined' ? ajaxurl : '/wp-admin/admin-ajax.php'),
             dataType: 'json',
             afterTypeDelay: 100,
             data: {
                 action: 'woocommerce_json_search_products_and_variations',
-                security: xlwctyParams.search_products_nonce
+                security: (typeof xlwctyParams !== 'undefined' && xlwctyParams.search_products_nonce) ? xlwctyParams.search_products_nonce : ''
             }
         }, function (data) {
 
@@ -183,16 +183,16 @@ jQuery(function ($) {
                 this.groupCount++;
                 var id = $(group).data('groupid');
                 var view = new xlwcty_Rule_Group(
-                        {
-                            el: group,
-                            model: new Backbone.Model(
-                                    {
-                                        groupId: id,
-                                        groupCount: this.groupCount,
-                                        headerText: this.groupCount > 1 ? xlwctyParams.text_or : xlwctyParams.text_apply_when,
-                                        removeText: xlwctyParams.remove_text
-                                    })
-                        });
+                    {
+                        el: group,
+                        model: new Backbone.Model(
+                            {
+                                groupId: id,
+                                groupCount: this.groupCount,
+                                headerText: this.groupCount > 1 ? xlwctyParams.text_or : xlwctyParams.text_apply_when,
+                                removeText: xlwctyParams.remove_text
+                            })
+                    });
 
                 this.views[id] = view;
                 view.bind('xlwcty:remove-rule-group', this.removeRuleGroup, this);
@@ -233,7 +233,7 @@ jQuery(function ($) {
         },
         removeRuleGroup: function (sender) {
 
-            delete(this.views[sender.model.get('groupId')]);
+            delete (this.views[sender.model.get('groupId')]);
             sender.remove();
         }
     });
@@ -253,13 +253,13 @@ jQuery(function ($) {
             _.each(rules, function (rule) {
                 var id = $(rule).data('ruleid');
                 var view = new xlwcty_Rule_Item(
-                        {
-                            el: rule,
-                            model: new Backbone.Model({
-                                groupId: this.model.get('groupId'),
-                                ruleId: id
-                            })
-                        });
+                    {
+                        el: rule,
+                        model: new Backbone.Model({
+                            groupId: this.model.get('groupId'),
+                            ruleId: id
+                        })
+                    });
 
                 view.delegateEvents();
 
@@ -310,7 +310,7 @@ jQuery(function ($) {
             if (countRules == 1) {
                 return;
             }
-            delete(this.views[ruleId]);
+            delete (this.views[ruleId]);
             sender.remove();
 
 

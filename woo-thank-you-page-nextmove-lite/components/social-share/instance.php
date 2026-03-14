@@ -5,8 +5,8 @@ defined( 'ABSPATH' ) || exit;
 class XLWCTY_Order_Share extends xlwcty_component {
 
 	private static $instance = null;
-	public $viewpath         = '';
-	public $is_disable       = true;
+	public $viewpath = '';
+	public $is_disable = true;
 
 
 	public function __construct( $order = false ) {

@@ -5,8 +5,8 @@ defined( 'ABSPATH' ) || exit;
 class XLWCTY_Coupon_Code extends xlwcty_component {
 
 	private static $instance = null;
-	public $is_disable       = true;
-	public $viewpath         = '';
+	public $is_disable = true;
+	public $viewpath = '';
 
 
 	public function __construct( $order = false ) {

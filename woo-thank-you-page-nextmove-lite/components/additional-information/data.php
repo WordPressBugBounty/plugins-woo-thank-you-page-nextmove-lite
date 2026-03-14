@@ -89,7 +89,7 @@ $config['fields']   = array(
 
 	),
 );
-$config['default'] = array(
+$config['default']  = array(
 	'border_style'       => 'solid',
 	'border_width'       => '1',
 	'border_color'       => '#d9d9d9',

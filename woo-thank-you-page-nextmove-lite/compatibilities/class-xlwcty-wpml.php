@@ -94,6 +94,7 @@ class XLWCTY_WPML {
 			if ( $url_lang ) {
 				return $url_lang;
 			}
+
 			return $this->get_current_language();
 		}
 
@@ -131,6 +132,7 @@ class XLWCTY_WPML {
 		}
 
 		$current_lang = $this->get_current_language();
+
 		return $current_lang;
 	}
 
@@ -189,6 +191,7 @@ class XLWCTY_WPML {
 					$sitepress->switch_lang( $url_lang, true );
 				}
 			}
+
 			return;
 		}
 
@@ -202,6 +205,7 @@ class XLWCTY_WPML {
 					$sitepress->switch_lang( $url_lang, true );
 				}
 			}
+
 			return;
 		}
 
@@ -329,6 +333,7 @@ class XLWCTY_WPML {
 					$sitepress->switch_lang( $url_lang, true );
 				}
 			}
+
 			return;
 		}
 
@@ -342,6 +347,7 @@ class XLWCTY_WPML {
 					$sitepress->switch_lang( $url_lang, true );
 				}
 			}
+
 			return;
 		}
 
@@ -380,8 +386,9 @@ class XLWCTY_WPML {
 	 * Get translated page ID
 	 * Falls back to default language if translation doesn't exist
 	 *
-	 * @param int         $page_id         The page ID to translate.
+	 * @param int $page_id The page ID to translate.
 	 * @param string|null $target_language Target language code.
+	 *
 	 * @return int Translated page ID or original page ID.
 	 */
 	public function get_translated_page_id( $page_id, $target_language = null ) {
@@ -456,6 +463,7 @@ class XLWCTY_WPML {
 			$translated_post = get_post( $translated_id );
 			if ( $translated_post && $translated_post->post_status === 'publish' ) {
 				self::$translation_cache[ $cache_key ] = $translated_id;
+
 				return $translated_id;
 			}
 		}
@@ -467,6 +475,7 @@ class XLWCTY_WPML {
 			$original_post = get_post( $page_id );
 			if ( $original_post && $original_post->post_status === 'publish' ) {
 				self::$translation_cache[ $cache_key ] = $page_id;
+
 				return $page_id;
 			}
 		}
@@ -487,6 +496,7 @@ class XLWCTY_WPML {
 				$default_post = get_post( $default_translated_id );
 				if ( $default_post && $default_post->post_status === 'publish' ) {
 					self::$translation_cache[ $cache_key ] = $default_translated_id;
+
 					return $default_translated_id;
 				}
 			}
@@ -494,6 +504,7 @@ class XLWCTY_WPML {
 
 		// Final fallback: return original page ID
 		self::$translation_cache[ $cache_key ] = $page_id;
+
 		return $page_id;
 	}
 
@@ -506,18 +517,18 @@ class XLWCTY_WPML {
 		if ( ! $sitepress ) {
 			return null;
 		}
-		
+
 		// Use WPML filter to get post language
 		$post_language = apply_filters( 'wpml_element_language_code', null, array(
-			'element_id' => $post_id,
+			'element_id'   => $post_id,
 			'element_type' => XLWCTY_Common::get_thank_you_page_post_type_slug(),
 		) );
-		
+
 		// Fallback to SitePress API if filter doesn't work
 		if ( ! $post_language && method_exists( $sitepress, 'get_language_for_element' ) ) {
 			$post_language = $sitepress->get_language_for_element( $post_id, 'post_' . XLWCTY_Common::get_thank_you_page_post_type_slug() );
 		}
-		
+
 		return $post_language ? $post_language : $this->get_default_language();
 	}
 

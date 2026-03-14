@@ -1,6 +1,13 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+// Security: Check if order_data exists before proceeding
+if ( empty( $order_data ) || ! is_object( $order_data ) || ! method_exists( $order_data, 'get_formatted_billing_address' ) ) {
+	XLWCTY_Core()->public->add_header_logs( sprintf( '%s - %s', $this->get_component_property( 'title' ), __( 'Order data not available', 'woo-thank-you-page-nextmove-lite' ) ) );
+
+	return false;
+}
+
 add_filter( 'woocommerce_order_formatted_billing_address', array( $this, 'xlwcty_format_billing_address' ), 11, 2 );
 add_filter( 'woocommerce_order_formatted_shipping_address', array( $this, 'xlwcty_format_shipping_address' ), 11, 2 );
 if ( 'yes' !== $this->data->show_billing && 'yes' !== $this->data->show_shipping ) {
@@ -40,11 +47,11 @@ if ( '2c' === $this->data->layout ) {
 	?>
 
 
-	<div class="xlwcty_Box xlwcty_customer_info">
+    <div class="xlwcty_Box xlwcty_customer_info">
 		<?php
 		$heading_parsed = $this->data->heading ? XLWCTY_Common::maype_parse_merge_tags( $this->data->heading ) : '';
 		echo $heading_parsed ? '<div class="xlwcty_title">' . wp_kses_post( $heading_parsed ) . '</div>' : '';
-        echo wp_kses_post( $heading_desc );
+		echo wp_kses_post( $heading_desc );
 		if ( ( 'yes' === $this->data->show_billing ) || ( 'yes' === $this->data->show_shipping ) ) {
 			echo '<div class="xlwcty_content xlwcty_clearfix">';
 
@@ -62,81 +69,89 @@ if ( '2c' === $this->data->layout ) {
 			echo '</div>';
 			echo '<div class="xlwcty_clear_15"></div>';
 			if ( 'yes' === $this->data->show_billing ) {
+				// Security: Double-check order_data exists before calling methods
+				if ( empty( $order_data ) || ! is_object( $order_data ) ) {
+					return false;
+				}
 				$billing_address     = $order_data->get_formatted_billing_address();
 				$billing_address_raw = $order_data->get_address();
 				$contact_name        = trim( $billing_address_raw['first_name'] . ' ' . $billing_address_raw['last_name'] );
-				$contact_name       .= ( $billing_address_raw['company'] ) ? '<br/>' . $billing_address_raw['company'] : '';
+				$contact_name        .= ( $billing_address_raw['company'] ) ? '<br/>' . $billing_address_raw['company'] : '';
 				if ( ! empty( $billing_address ) ) {
 					?>
-					<div class="xlwcty_2_colLeft">
-						<p class="xlwcty_BSpace"><strong><?php echo esc_html__( 'Billing address', 'woocommerce' ); ?></strong></p>
-						<div class="xlwcty_Dview">
-							<p>
+                    <div class="xlwcty_2_colLeft">
+                        <p class="xlwcty_BSpace"><strong><?php echo esc_html__( 'Billing address', 'woocommerce' ); ?></strong></p>
+                        <div class="xlwcty_Dview">
+                            <p>
 								<?php
 								echo $contact_name ? wp_kses_post( $contact_name ) . '<br/>' : '';
 								echo wp_kses_post( $billing_address );
 								?>
-							</p>
-						</div>
-						<div class="xlwcty_Mview">
-							<p>
+                            </p>
+                        </div>
+                        <div class="xlwcty_Mview">
+                            <p>
 								<?php
 								echo $contact_name ? wp_kses_post( $contact_name ) . '<br/>' : '';
 								echo wp_kses_post( $billing_address );
 								?>
-							</p>
-						</div>
-					</div>
+                            </p>
+                        </div>
+                    </div>
 					<?php
 				}
 			}
 			$billing_add_status = false;
 			if ( 'yes' === $this->data->show_shipping ) {
+				// Security: Double-check order_data exists before calling methods
+				if ( empty( $order_data ) || ! is_object( $order_data ) ) {
+					return false;
+				}
 				$shipping_address     = $order_data->get_formatted_shipping_address();
 				$shipping_address_raw = $order_data->get_address( 'shipping' );
 				$contact_name         = trim( $shipping_address_raw['first_name'] . ' ' . $shipping_address_raw['last_name'] );
-				$contact_name        .= ( $shipping_address_raw['company'] ) ? '<br/>' . $shipping_address_raw['company'] : '';
+				$contact_name         .= ( $shipping_address_raw['company'] ) ? '<br/>' . $shipping_address_raw['company'] : '';
 				if ( ! empty( $shipping_address ) ) {
 					$billing_add_status = true;
 					$extra_class        = ( true === $billing_add_status ) ? 'xlwcty_2_colRight' : 'xlwcty_2_colLeft';
 					?>
-					<div class="<?php echo esc_attr( $extra_class ); ?>">
-						<p class="xlwcty_BSpace"><strong><?php echo esc_html( __( 'Shipping address', 'woocommerce' ) ); ?></strong></p>
-						<div class="xlwcty_Dview">
-							<p>
+                    <div class="<?php echo esc_attr( $extra_class ); ?>">
+                        <p class="xlwcty_BSpace"><strong><?php echo esc_html( __( 'Shipping address', 'woocommerce' ) ); ?></strong></p>
+                        <div class="xlwcty_Dview">
+                            <p>
 								<?php
 								echo $contact_name ? wp_kses_post( $contact_name ) . '<br/>' : '';
 								echo wp_kses_post( $shipping_address );
 								?>
-							</p>
-						</div>
-						<div class="xlwcty_Mview">
-							<p>
+                            </p>
+                        </div>
+                        <div class="xlwcty_Mview">
+                            <p>
 								<?php
 								echo $contact_name ? wp_kses_post( $contact_name ) . '<br/>' : '';
 								echo wp_kses_post( $shipping_address );
 								?>
-							</p>
-						</div>
-					</div>
+                            </p>
+                        </div>
+                    </div>
 					<?php
 				}
 			}
 
 			echo '</div>';
 		}
-        echo wp_kses_post( $after_desc );
+		echo wp_kses_post( $after_desc );
 		?>
 
-	</div>
+    </div>
 	<?php
 } else {
 	?>
-	<div class="xlwcty_Box xlwcty_customer_info xlwcty_info_full_width">
+    <div class="xlwcty_Box xlwcty_customer_info xlwcty_info_full_width">
 		<?php
 		$heading_parsed = $this->data->heading ? XLWCTY_Common::maype_parse_merge_tags( $this->data->heading ) : '';
 		echo $heading_parsed ? '<div class="xlwcty_title">' . wp_kses_post( $heading_parsed ) . '</div>' : '';
-        echo wp_kses_post( $heading_desc );
+		echo wp_kses_post( $heading_desc );
 		if ( '' !== $billing_email ) {
 			echo '<div class="xlwcty_content xlwcty_clearfix">';
 			echo '<p class="xlwcty_BSpace"><strong>' . esc_html( __( 'Email', 'woocommerce' ) ) . '</strong></p>';
@@ -150,51 +165,59 @@ if ( '2c' === $this->data->layout ) {
 			echo '</div>';
 		}
 		if ( 'yes' === $this->data->show_billing ) {
+			// Security: Double-check order_data exists before calling methods
+			if ( empty( $order_data ) || ! is_object( $order_data ) ) {
+				return false;
+			}
 			$billing_address     = $order_data->get_formatted_billing_address();
 			$billing_address_raw = $order_data->get_address();
 			$contact_name        = trim( $billing_address_raw['first_name'] . ' ' . $billing_address_raw['last_name'] );
-			$contact_name       .= ( $billing_address_raw['company'] ) ? '<br/>' . $billing_address_raw['company'] : '';
+			$contact_name        .= ( $billing_address_raw['company'] ) ? '<br/>' . $billing_address_raw['company'] : '';
 
 			$contact_name = apply_filters( 'xlwcty_customer_info_contact_name', $contact_name, $billing_address_raw );
 
 			if ( ! empty( $billing_address ) ) {
 				?>
-				<div class="xlwcty_content xlwcty_clearfix">
-					<p class="xlwcty_BSpace"><strong><?php echo esc_html( __( 'Billing address', 'woocommerce' ) ); ?></strong></p>
-					<p>
+                <div class="xlwcty_content xlwcty_clearfix">
+                    <p class="xlwcty_BSpace"><strong><?php echo esc_html( __( 'Billing address', 'woocommerce' ) ); ?></strong></p>
+                    <p>
 						<?php
 						echo $contact_name ? wp_kses_post( $contact_name ) . '<br/>' : '';
 						echo wp_kses_post( $billing_address );
 						?>
-					</p>
-				</div>
+                    </p>
+                </div>
 				<?php
 			}
 		}
 		if ( 'yes' === $this->data->show_shipping ) {
+			// Security: Double-check order_data exists before calling methods
+			if ( empty( $order_data ) || ! is_object( $order_data ) ) {
+				return false;
+			}
 			$shipping_address     = $order_data->get_formatted_shipping_address();
 			$shipping_address_raw = $order_data->get_address( 'shipping' );
 			$contact_name         = trim( $shipping_address_raw['first_name'] . ' ' . $shipping_address_raw['last_name'] );
-			$contact_name        .= ( $shipping_address_raw['company'] ) ? '<br/>' . $shipping_address_raw['company'] : '';
+			$contact_name         .= ( $shipping_address_raw['company'] ) ? '<br/>' . $shipping_address_raw['company'] : '';
 			$contact_name         = apply_filters( 'xlwcty_customer_info_contact_name', $contact_name, $shipping_address_raw );
 
 			if ( ! empty( $shipping_address ) ) {
 				?>
-				<div class="xlwcty_content xlwcty_clearfix">
-					<p class="xlwcty_BSpace"><strong><?php echo esc_html( __( 'Shipping address', 'woocommerce' ) ); ?></strong></p>
-					<p>
+                <div class="xlwcty_content xlwcty_clearfix">
+                    <p class="xlwcty_BSpace"><strong><?php echo esc_html( __( 'Shipping address', 'woocommerce' ) ); ?></strong></p>
+                    <p>
 						<?php
 						echo $contact_name ? wp_kses_post( $contact_name ) . '<br/>' : '';
 						echo wp_kses_post( $shipping_address );
 						?>
-					</p>
-				</div>
+                    </p>
+                </div>
 				<?php
 			}
 		}
-        echo wp_kses_post( $after_desc );
+		echo wp_kses_post( $after_desc );
 		?>
-	</div>
+    </div>
 	<?php
 }
 remove_filter( 'woocommerce_order_formatted_billing_address', array( $this, 'xlwcty_format_billing_address' ), 11 );

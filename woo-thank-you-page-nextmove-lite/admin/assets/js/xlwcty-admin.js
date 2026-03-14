@@ -865,12 +865,12 @@ function xlwcty_manage_radio_active($) {
 
     $("select.ajax_chosen_select_products").xlAjaxChosen({
         method: 'GET',
-        url: xlwctyParams.ajax_url,
+        url: (typeof xlwctyParams !== 'undefined' && xlwctyParams.ajax_url) ? xlwctyParams.ajax_url : (typeof ajaxurl !== 'undefined' ? ajaxurl : '/wp-admin/admin-ajax.php'),
         dataType: 'json',
         afterTypeDelay: 100,
         data: {
             action: 'woocommerce_json_search_products',
-            security: xlwctyParams.search_products_nonce
+            security: (typeof xlwctyParams !== 'undefined' && xlwctyParams.search_products_nonce) ? xlwctyParams.search_products_nonce : ''
         }
     }, function (data) {
         var terms = {};
@@ -1021,7 +1021,7 @@ function xlwcty_manage_radio_active($) {
                     $('.xlwcty_status_support_text').parents(".xlwcty_side_content").find("h3.xlwcty_first_elem").html("NextMove Alert");
                 }
             }
-        }).fail(function(xhr, status, error) {
+        }).fail(function (xhr, status, error) {
             // Handle AJAX failure
             $('.xlwcty_status_support_text').parents(".xlwcty_side_content").addClass("xlwcty_side_yellow");
             $('.xlwcty_status_support_text').parents(".xlwcty_side_content").find("h3.xlwcty_first_elem").html("NextMove Summary");

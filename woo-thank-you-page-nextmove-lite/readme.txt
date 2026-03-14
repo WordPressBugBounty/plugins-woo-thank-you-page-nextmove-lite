@@ -2,8 +2,8 @@
 Contributors: xlplugins, amans2k
 Tags: WooCommerce, WooCommerce Thank You, WooCommerce Thank You Page, Custom Thank You Page, Woo Thank You Page
 Requires at least: 5.0
-Tested up to: 6.9
-Stable tag: 2.23.0
+Tested up to: 6.9.4
+Stable tag: 2.24.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -228,6 +228,21 @@ Yes, you can easily create Thank You Pages in your language. We are also compati
 8. Help/Troubleshoot
 
 == Changelog ==
+
+= 2.24.0 (2026-03-14) =
+* Compatible upto WordPress 6.9.4
+* Compatible upto WooCommerce 10.6.1
+* Security: Added capability checks for order search AJAX endpoint to prevent unauthorized access to sensitive order data. (fix/185)
+* Security: Added order key validation for unauthenticated AJAX requests to prevent unauthorized order access. (fix/180)
+* Security: Sanitized cookie data and escaped output in admin preview screen. (fix/180)
+* Improved: Added order data validation checks in component views to prevent errors when order data is unavailable. (fix/185)
+* Improved: Escaped output in admin FAQ section and pro unlock link for better security hygiene. (fix/180)
+* Improved: Circle icon display now uses flexbox for better alignment. (fix/180)
+* Fixed: Replicating the thank-you page multiple times. (fix/185)
+* Fixed: Rules engine order items search issue. (fix/182)
+* Fixed: wp_kses_post causing issues with style shortcodes and other HTML tags in the HTML component. (fix/175)
+
+
 = 2.23.0 (2025-12-31) =
 * Compatible upto WordPress 6.9
 * Compatible upto WooCommerce 10.4.3

@@ -5,8 +5,8 @@ defined( 'ABSPATH' ) || exit;
 class XLWCTY_Social_Sharing extends XLWCTY_Component {
 
 	private static $instance = null;
-	public $viewpath         = '';
-	public $is_disable       = true;
+	public $viewpath = '';
+	public $is_disable = true;
 
 	public function __construct( $order = false ) {
 		parent::__construct();

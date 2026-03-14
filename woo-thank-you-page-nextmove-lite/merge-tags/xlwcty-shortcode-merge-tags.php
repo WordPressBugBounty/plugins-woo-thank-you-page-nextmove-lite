@@ -43,7 +43,9 @@ class XLWCTY_ShortCode_Merge_Tags {
 
 						$extra_attributes = '';
 						if ( $helper_data !== false ) {
-							$extra_attributes = " helper_data='" . serialize( $helper_data ) . "'";
+							// Sanitize serialized data for use in HTML attribute
+							$serialized_data  = serialize( $helper_data );
+							$extra_attributes = " helper_data='" . esc_attr( $serialized_data ) . "'";
 						}
 						//replace the current tag with the square brackets [shortcode compatible]
 						$exact_match = str_replace( '{{' . $tag, '[xlwcty_' . $tag . $extra_attributes, $exact_match );
@@ -94,31 +96,79 @@ class XLWCTY_ShortCode_Merge_Tags {
 			'exclude_dates' => '',
 		), $shortcode_attrs );
 
+		// Sanitize format parameter - only allow valid date format characters
+		$atts['format'] = sanitize_text_field( $atts['format'] );
+		// Validate format contains only safe characters (date format chars, spaces, punctuation)
+		if ( ! preg_match( '/^[a-zA-Z0-9\s\-\/\\\:\.\,\;]+$/', $atts['format'] ) ) {
+			$atts['format'] = $default_f;
+		}
+
+		// Sanitize adjustment parameter
+		$atts['adjustment'] = sanitize_text_field( $atts['adjustment'] );
+		// Validate adjustment - only allow relative date formats like "+1 day", "-2 weeks", etc.
+		if ( $atts['adjustment'] !== '' && ! preg_match( '/^[\+\-]?\d+\s*(second|minute|hour|day|week|month|year)s?$/i', trim( $atts['adjustment'] ) ) ) {
+			$atts['adjustment'] = '';
+		}
+
+		// Sanitize cutoff parameter
+		$atts['cutoff'] = sanitize_text_field( $atts['cutoff'] );
+
 		$date_obj = new DateTime( 'now', new DateTimeZone( XLWCTY_Common::wc_timezone_string() ) );
 
 		/** cutoff functionality starts */
 		if ( $atts['cutoff'] !== '' ) {
 			$date_obj_cutoff = new DateTime();
-			$parsed_date     = date_parse( $atts['cutoff'] );
-			$date_defaults   = array(
-				'year'   => $date_obj_cutoff->format( 'Y' ),
-				'month'  => $date_obj_cutoff->format( 'm' ),
-				'day'    => $date_obj_cutoff->format( 'd' ),
-				'hour'   => $date_obj_cutoff->format( 'H' ),
-				'minute' => $date_obj_cutoff->format( 'i' ),
-				'second' => '00',
-			);
-			foreach ( $parsed_date as $attrs => &$date_elements ) {
-				if ( $date_elements === false && isset( $date_defaults[ $attrs ] ) ) {
-					$parsed_date[ $attrs ] = $date_defaults[ $attrs ];
+			// Validate cutoff before parsing
+			$parsed_date = date_parse( $atts['cutoff'] );
+			// Check if date_parse was successful
+			if ( $parsed_date === false || ( isset( $parsed_date['error_count'] ) && $parsed_date['error_count'] > 0 ) ) {
+				// Invalid date format, skip cutoff
+				$atts['cutoff'] = '';
+			} else {
+				$date_defaults = array(
+					'year'   => $date_obj_cutoff->format( 'Y' ),
+					'month'  => $date_obj_cutoff->format( 'm' ),
+					'day'    => $date_obj_cutoff->format( 'd' ),
+					'hour'   => $date_obj_cutoff->format( 'H' ),
+					'minute' => $date_obj_cutoff->format( 'i' ),
+					'second' => '00',
+				);
+				foreach ( $parsed_date as $attrs => &$date_elements ) {
+					if ( $date_elements === false && isset( $date_defaults[ $attrs ] ) ) {
+						$parsed_date[ $attrs ] = $date_defaults[ $attrs ];
+					}
 				}
-			}
-			$parsed_date = wp_parse_args( $parsed_date, $date_defaults );
-			$date_obj_cutoff->setTimezone( new DateTimeZone( XLWCTY_Common::wc_timezone_string() ) );
-			$date_obj_cutoff->setDate( $parsed_date['year'], $parsed_date['month'], $parsed_date['day'] );
-			$date_obj_cutoff->setTime( $parsed_date['hour'], $parsed_date['minute'], $parsed_date['second'] );
-			if ( $date_obj->getTimestamp() > $date_obj_cutoff->getTimestamp() ) {
-				$date_obj->modify( '+1 days' );
+				$parsed_date = wp_parse_args( $parsed_date, $date_defaults );
+				// Validate parsed date values
+				$parsed_date['year']   = absint( $parsed_date['year'] );
+				$parsed_date['month']  = absint( $parsed_date['month'] );
+				$parsed_date['day']    = absint( $parsed_date['day'] );
+				$parsed_date['hour']   = absint( $parsed_date['hour'] );
+				$parsed_date['minute'] = absint( $parsed_date['minute'] );
+				// Validate ranges
+				if ( $parsed_date['month'] < 1 || $parsed_date['month'] > 12 ) {
+					$parsed_date['month'] = $date_defaults['month'];
+				}
+				if ( $parsed_date['day'] < 1 || $parsed_date['day'] > 31 ) {
+					$parsed_date['day'] = $date_defaults['day'];
+				}
+				if ( $parsed_date['hour'] > 23 ) {
+					$parsed_date['hour'] = 23;
+				}
+				if ( $parsed_date['minute'] > 59 ) {
+					$parsed_date['minute'] = 59;
+				}
+				$date_obj_cutoff->setTimezone( new DateTimeZone( XLWCTY_Common::wc_timezone_string() ) );
+				try {
+					$date_obj_cutoff->setDate( $parsed_date['year'], $parsed_date['month'], $parsed_date['day'] );
+					$date_obj_cutoff->setTime( $parsed_date['hour'], $parsed_date['minute'], $parsed_date['second'] );
+					if ( $date_obj->getTimestamp() > $date_obj_cutoff->getTimestamp() ) {
+						$date_obj->modify( '+1 days' );
+					}
+				} catch ( Exception $e ) {
+					// Invalid date, skip cutoff
+					$atts['cutoff'] = '';
+				}
 			}
 		}
 
@@ -133,7 +183,11 @@ class XLWCTY_ShortCode_Merge_Tags {
 
 		/** Cut-Off functionality Ends */
 		if ( $atts['adjustment'] !== '' ) {
-			$date_obj->modify( trim( $atts['adjustment'] ) );
+			try {
+				$date_obj->modify( trim( $atts['adjustment'] ) );
+			} catch ( Exception $e ) {
+				// Invalid adjustment, ignore
+			}
 		}
 
 		/**
@@ -146,15 +200,20 @@ class XLWCTY_ShortCode_Merge_Tags {
 			$itr ++;
 		}
 
-		return date_i18n( $atts['format'], $date_obj->getTimestamp() );
+		// Escape output
+		return esc_html( date_i18n( $atts['format'], $date_obj->getTimestamp() ) );
 	}
 
 	protected static function is_not_excluded_date( $date, $exclusions ) {
+		// Sanitize exclusions input
+		$exclusions         = sanitize_text_field( $exclusions );
 		$exclusions         = str_replace( ' ', '', $exclusions );
 		$explode_exclusions = explode( ',', $exclusions );
+		// Sanitize each exclusion date
+		$explode_exclusions = array_map( 'sanitize_text_field', $explode_exclusions );
 		$explode_exclusions = apply_filters( 'xlwcty_merge_tags_date_exclude_dates', $explode_exclusions, $date );
 
-		if ( in_array( strtolower( $date->format( 'Y-m-d' ) ), $explode_exclusions ) ) {
+		if ( in_array( strtolower( $date->format( 'Y-m-d' ) ), $explode_exclusions, true ) ) {
 			return false;
 		}
 
@@ -162,10 +221,14 @@ class XLWCTY_ShortCode_Merge_Tags {
 	}
 
 	protected static function is_not_excluded_day( $date, $exclusions ) {
+		// Sanitize exclusions input
+		$exclusions         = sanitize_text_field( $exclusions );
 		$exclusions         = str_replace( ' ', '', $exclusions );
 		$explode_exclusions = explode( ',', $exclusions );
+		// Sanitize each exclusion day
+		$explode_exclusions = array_map( 'sanitize_text_field', $explode_exclusions );
 		$explode_exclusions = apply_filters( 'xlwcty_merge_tags_date_exclude_days', $explode_exclusions, $date );
-		if ( in_array( strtolower( $date->format( 'l' ) ), $explode_exclusions ) ) {
+		if ( in_array( strtolower( $date->format( 'l' ) ), $explode_exclusions, true ) ) {
 
 			return false;
 		}
@@ -181,35 +244,77 @@ class XLWCTY_ShortCode_Merge_Tags {
 			'exclude_days'  => '',
 			'exclude_dates' => '',
 		), $shortcode_attrs );
-		$date_obj  = new DateTime();
+
+		// Sanitize adjustment parameter
+		$atts['adjustment'] = sanitize_text_field( $atts['adjustment'] );
+		// Validate adjustment - only allow relative date formats
+		if ( $atts['adjustment'] !== '' && ! preg_match( '/^[\+\-]?\d+\s*(second|minute|hour|day|week|month|year)s?$/i', trim( $atts['adjustment'] ) ) ) {
+			$atts['adjustment'] = '';
+		}
+
+		// Sanitize cutoff parameter
+		$atts['cutoff'] = sanitize_text_field( $atts['cutoff'] );
+
+		$date_obj = new DateTime();
 		$date_obj->setTimezone( new DateTimeZone( XLWCTY_Common::wc_timezone_string() ) );
 
 		/** cutoff functionality starts */
 		if ( $atts['cutoff'] !== '' ) {
 			$date_obj_cutoff = new DateTime();
-			$parsed_date     = date_parse( $atts['cutoff'] );
-			$date_defaults   = array(
-				'year'   => $date_obj_cutoff->format( 'Y' ),
-				'month'  => $date_obj_cutoff->format( 'm' ),
-				'day'    => $date_obj_cutoff->format( 'd' ),
-				'hour'   => $date_obj_cutoff->format( 'H' ),
-				'minute' => $date_obj_cutoff->format( 'i' ),
-				'second' => '00',
-			);
-			foreach ( $parsed_date as $attrs => &$date_elements ) {
-				if ( $date_elements === false && isset( $date_defaults[ $attrs ] ) ) {
-					$parsed_date[ $attrs ] = $date_defaults[ $attrs ];
+			// Validate cutoff before parsing
+			$parsed_date = date_parse( $atts['cutoff'] );
+			// Check if date_parse was successful
+			if ( $parsed_date === false || ( isset( $parsed_date['error_count'] ) && $parsed_date['error_count'] > 0 ) ) {
+				// Invalid date format, skip cutoff
+				$atts['cutoff'] = '';
+			} else {
+				$date_defaults = array(
+					'year'   => $date_obj_cutoff->format( 'Y' ),
+					'month'  => $date_obj_cutoff->format( 'm' ),
+					'day'    => $date_obj_cutoff->format( 'd' ),
+					'hour'   => $date_obj_cutoff->format( 'H' ),
+					'minute' => $date_obj_cutoff->format( 'i' ),
+					'second' => '00',
+				);
+				foreach ( $parsed_date as $attrs => &$date_elements ) {
+					if ( $date_elements === false && isset( $date_defaults[ $attrs ] ) ) {
+						$parsed_date[ $attrs ] = $date_defaults[ $attrs ];
+					}
 				}
-			}
-			$parsed_date = wp_parse_args( $parsed_date, $date_defaults );
+				$parsed_date = wp_parse_args( $parsed_date, $date_defaults );
+				// Validate parsed date values
+				$parsed_date['year']   = absint( $parsed_date['year'] );
+				$parsed_date['month']  = absint( $parsed_date['month'] );
+				$parsed_date['day']    = absint( $parsed_date['day'] );
+				$parsed_date['hour']   = absint( $parsed_date['hour'] );
+				$parsed_date['minute'] = absint( $parsed_date['minute'] );
+				// Validate ranges
+				if ( $parsed_date['month'] < 1 || $parsed_date['month'] > 12 ) {
+					$parsed_date['month'] = $date_defaults['month'];
+				}
+				if ( $parsed_date['day'] < 1 || $parsed_date['day'] > 31 ) {
+					$parsed_date['day'] = $date_defaults['day'];
+				}
+				if ( $parsed_date['hour'] > 23 ) {
+					$parsed_date['hour'] = 23;
+				}
+				if ( $parsed_date['minute'] > 59 ) {
+					$parsed_date['minute'] = 59;
+				}
 
-			$date_obj_cutoff->setTimezone( new DateTimeZone( XLWCTY_Common::wc_timezone_string() ) );
+				$date_obj_cutoff->setTimezone( new DateTimeZone( XLWCTY_Common::wc_timezone_string() ) );
 
-			$date_obj_cutoff->setDate( $parsed_date['year'], $parsed_date['month'], $parsed_date['day'] );
-			$date_obj_cutoff->setTime( $parsed_date['hour'], $parsed_date['minute'], $parsed_date['second'] );
+				try {
+					$date_obj_cutoff->setDate( $parsed_date['year'], $parsed_date['month'], $parsed_date['day'] );
+					$date_obj_cutoff->setTime( $parsed_date['hour'], $parsed_date['minute'], $parsed_date['second'] );
 
-			if ( $date_obj->getTimestamp() > $date_obj_cutoff->getTimestamp() ) {
-				$date_obj->modify( '+1 days' );
+					if ( $date_obj->getTimestamp() > $date_obj_cutoff->getTimestamp() ) {
+						$date_obj->modify( '+1 days' );
+					}
+				} catch ( Exception $e ) {
+					// Invalid date, skip cutoff
+					$atts['cutoff'] = '';
+				}
 			}
 		}
 
@@ -224,7 +329,11 @@ class XLWCTY_ShortCode_Merge_Tags {
 		}
 		/** Cut-Off functionality Ends */
 		if ( $atts['adjustment'] !== '' ) {
-			$date_obj->modify( $atts['adjustment'] );
+			try {
+				$date_obj->modify( trim( $atts['adjustment'] ) );
+			} catch ( Exception $e ) {
+				// Invalid adjustment, ignore
+			}
 		}
 		$itr = 0;
 		/**
@@ -235,41 +344,77 @@ class XLWCTY_ShortCode_Merge_Tags {
 			$itr ++;
 		}
 
-		return date_i18n( 'l', $date_obj->getTimestamp() );
+		// Escape output
+		return esc_html( date_i18n( 'l', $date_obj->getTimestamp() ) );
 	}
 
 	public static function process_today( $shortcode_attrs ) {
-		$atts     = shortcode_atts( array(
+		$atts = shortcode_atts( array(
 			'cutoff'        => '',
 			'exclude_days'  => '',
 			'exclude_dates' => '',
 		), $shortcode_attrs );
+
+		// Sanitize cutoff parameter
+		$atts['cutoff'] = sanitize_text_field( $atts['cutoff'] );
+
 		$date_obj = new DateTime();
 		$date_obj->setTimezone( new DateTimeZone( XLWCTY_Common::wc_timezone_string() ) );
 		$date_obj_cutoff = new DateTime();
 		/** cutoff functionlity starts */
 		if ( $atts['cutoff'] !== '' ) {
-			$parsed_date   = date_parse( $atts['cutoff'] );
-			$date_defaults = array(
-				'year'   => $date_obj_cutoff->format( 'Y' ),
-				'month'  => $date_obj_cutoff->format( 'm' ),
-				'day'    => $date_obj_cutoff->format( 'd' ),
-				'hour'   => $date_obj_cutoff->format( 'H' ),
-				'minute' => $date_obj_cutoff->format( 'i' ),
-				'second' => '00',
-			);
-			foreach ( $parsed_date as $attrs => &$date_elements ) {
-				if ( $date_elements === false && isset( $date_defaults[ $attrs ] ) ) {
-					$parsed_date[ $attrs ] = $date_defaults[ $attrs ];
+			// Validate cutoff before parsing
+			$parsed_date = date_parse( $atts['cutoff'] );
+			// Check if date_parse was successful
+			if ( $parsed_date === false || ( isset( $parsed_date['error_count'] ) && $parsed_date['error_count'] > 0 ) ) {
+				// Invalid date format, skip cutoff
+				$atts['cutoff'] = '';
+			} else {
+				$date_defaults = array(
+					'year'   => $date_obj_cutoff->format( 'Y' ),
+					'month'  => $date_obj_cutoff->format( 'm' ),
+					'day'    => $date_obj_cutoff->format( 'd' ),
+					'hour'   => $date_obj_cutoff->format( 'H' ),
+					'minute' => $date_obj_cutoff->format( 'i' ),
+					'second' => '00',
+				);
+				foreach ( $parsed_date as $attrs => &$date_elements ) {
+					if ( $date_elements === false && isset( $date_defaults[ $attrs ] ) ) {
+						$parsed_date[ $attrs ] = $date_defaults[ $attrs ];
+					}
+				}
+				$parsed_date = wp_parse_args( $parsed_date, $date_defaults );
+				// Validate parsed date values
+				$parsed_date['year']   = absint( $parsed_date['year'] );
+				$parsed_date['month']  = absint( $parsed_date['month'] );
+				$parsed_date['day']    = absint( $parsed_date['day'] );
+				$parsed_date['hour']   = absint( $parsed_date['hour'] );
+				$parsed_date['minute'] = absint( $parsed_date['minute'] );
+				// Validate ranges
+				if ( $parsed_date['month'] < 1 || $parsed_date['month'] > 12 ) {
+					$parsed_date['month'] = $date_defaults['month'];
+				}
+				if ( $parsed_date['day'] < 1 || $parsed_date['day'] > 31 ) {
+					$parsed_date['day'] = $date_defaults['day'];
+				}
+				if ( $parsed_date['hour'] > 23 ) {
+					$parsed_date['hour'] = 23;
+				}
+				if ( $parsed_date['minute'] > 59 ) {
+					$parsed_date['minute'] = 59;
+				}
+				$date_obj_cutoff->setTimezone( new DateTimeZone( XLWCTY_Common::wc_timezone_string() ) );
+				try {
+					$date_obj_cutoff->setDate( $parsed_date['year'], $parsed_date['month'], $parsed_date['day'] );
+					$date_obj_cutoff->setTime( $parsed_date['hour'], $parsed_date['minute'], $parsed_date['second'] );
+				} catch ( Exception $e ) {
+					// Invalid date, skip cutoff
+					$atts['cutoff'] = '';
 				}
 			}
-			$parsed_date = wp_parse_args( $parsed_date, $date_defaults );
-			$date_obj_cutoff->setTimezone( new DateTimeZone( XLWCTY_Common::wc_timezone_string() ) );
-			$date_obj_cutoff->setDate( $parsed_date['year'], $parsed_date['month'], $parsed_date['day'] );
-			$date_obj_cutoff->setTime( $parsed_date['hour'], $parsed_date['minute'], $parsed_date['second'] );
 		}
 
-		if ( $date_obj->getTimestamp() > $date_obj_cutoff->getTimestamp() ) {
+		if ( $atts['cutoff'] !== '' && $date_obj->getTimestamp() > $date_obj_cutoff->getTimestamp() ) {
 
 			$date_obj->modify( '+1 days' );
 			$is_excluded = false;
@@ -279,16 +424,15 @@ class XLWCTY_ShortCode_Merge_Tags {
 			 */
 			$itr = 0;
 			while ( $itr < self::$threshold_to_date && ( ( ( $atts['exclude_days'] !== '' ) && ( self::is_not_excluded_date( $date_obj, $atts['exclude_dates'] ) === false ) ) || ( ( $atts['exclude_days'] !== '' ) && ( self::is_not_excluded_day( $date_obj, $atts['exclude_days'] ) === false ) ) ) ) {
-				;
 				$date_obj->modify( '+1 day' );
 				$itr ++;
 				$is_excluded = true;
 			}
 
 			if ( $is_excluded ) {
-				return date_i18n( 'l', $date_obj->getTimestamp() );
+				return esc_html( date_i18n( 'l', $date_obj->getTimestamp() ) );
 			} else {
-				return __( 'tomorrow', 'woo-thank-you-page-nextmove-lite' );
+				return esc_html( __( 'tomorrow', 'woo-thank-you-page-nextmove-lite' ) );
 			}
 		} else {
 			$is_excluded = false;
@@ -302,9 +446,9 @@ class XLWCTY_ShortCode_Merge_Tags {
 				$itr ++;
 			}
 			if ( $is_excluded ) {
-				return date_i18n( 'l', $date_obj->getTimestamp() );
+				return esc_html( date_i18n( 'l', $date_obj->getTimestamp() ) );
 			} else {
-				return __( 'today', 'woo-thank-you-page-nextmove-lite' );
+				return esc_html( __( 'today', 'woo-thank-you-page-nextmove-lite' ) );
 			}
 		}
 	}
@@ -316,13 +460,32 @@ class XLWCTY_ShortCode_Merge_Tags {
 			'adjustment' => '',
 		), $shortcode_attrs );
 
+		// Sanitize format parameter - only allow valid date format characters
+		$atts['format'] = sanitize_text_field( $atts['format'] );
+		// Validate format contains only safe characters
+		if ( ! preg_match( '/^[a-zA-Z0-9\s\-\/\\\:\.\,\;]+$/', $atts['format'] ) ) {
+			$atts['format'] = $default_f;
+		}
+
+		// Sanitize adjustment parameter
+		$atts['adjustment'] = sanitize_text_field( $atts['adjustment'] );
+		// Validate adjustment - only allow relative date formats
+		if ( $atts['adjustment'] !== '' && ! preg_match( '/^[\+\-]?\d+\s*(second|minute|hour|day|week|month|year)s?$/i', trim( $atts['adjustment'] ) ) ) {
+			$atts['adjustment'] = '';
+		}
+
 		$date_obj = new DateTime();
 		$date_obj->setTimezone( new DateTimeZone( XLWCTY_Common::wc_timezone_string() ) );
 		if ( $atts['adjustment'] !== '' ) {
-			$date_obj->modify( $atts['adjustment'] );
+			try {
+				$date_obj->modify( trim( $atts['adjustment'] ) );
+			} catch ( Exception $e ) {
+				// Invalid adjustment, ignore
+			}
 		}
 
-		return date_i18n( $atts['format'], $date_obj->getTimestamp() );
+		// Escape output
+		return esc_html( date_i18n( $atts['format'], $date_obj->getTimestamp() ) );
 	}
 
 	public static function countdown_timer_admin( $shortcode_attrs ) {
@@ -335,6 +498,9 @@ class XLWCTY_ShortCode_Merge_Tags {
 			'key'   => '', //has to be user friendly , user will not understand 12:45 PM (g:i A) (https://codex.wordpress.org/Formatting_Date_and_Time)
 			'label' => '',
 		), $shortcode_attrs );
+
+		// Sanitize key parameter
+		$atts['key'] = sanitize_text_field( $atts['key'] );
 
 		if ( $atts['key'] === '' ) {
 			return __return_empty_string();
@@ -351,10 +517,12 @@ class XLWCTY_ShortCode_Merge_Tags {
 			return __return_empty_string();
 		}
 
+		// Sanitize and escape output
 		$label = wp_kses_post( $atts['label'] );
 		$value = wp_kses_post( $get_key_value );
 
-		return sprintf( '%s%s', '<span class="xlwcty_order_meta_label">' . $label . '</span>', $value );
+		// Properly escape the HTML output
+		return sprintf( '<span class="xlwcty_order_meta_label">%s</span>%s', $label, $value );
 	}
 
 

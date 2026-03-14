@@ -5,8 +5,8 @@ defined( 'ABSPATH' ) || exit;
 class XLWCTY_Cross_Sell_Product extends XLWCTY_Component {
 
 	private static $instance = null;
-	public $is_disable       = true;
-	public $viewpath         = '';
+	public $is_disable = true;
+	public $viewpath = '';
 
 
 	public function __construct( $order = false ) {

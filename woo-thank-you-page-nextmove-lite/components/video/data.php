@@ -12,9 +12,7 @@ $config['fields']   = array(
 	'xlwcty_accordion_head_end' => 'yes',
 	'xlwcty_icon'               => 'xlwcty-fa xlwcty-fa-video-camera',
 	'xlwcty_accordion_head_end' => 'yes',
-	'fields'                    => apply_filters(
-		'xlwcty_text',
-		array(
+	'fields'                    => apply_filters( 'xlwcty_text', array(
 			array(
 				'name'                       => __( 'Enable', 'woo-thank-you-page-nextmove-lite' ),
 				'id'                         => $config['slug'] . '_enable_1',
@@ -279,8 +277,7 @@ $config['fields']   = array(
 				),
 				'after_row'   => array( 'XLWCTY_Admin_CMB2_Support', 'cmb_after_row_cb' ),
 			),
-		)
-	),
+		) ),
 );
 
 $config['default'] = array(

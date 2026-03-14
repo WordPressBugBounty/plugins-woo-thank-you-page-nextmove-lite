@@ -417,6 +417,16 @@ class XLWCTY_Common {
 			exit;
 		}
 
+		// Security: Check user capabilities - this endpoint should only be accessible to authenticated admins
+		// as it exposes sensitive order data (order IDs, statuses, billing emails)
+		if ( ! is_user_logged_in() || ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json( array(
+				'status'  => 'error',
+				'message' => __( 'Unauthorized access. This action requires administrator privileges.', 'woo-thank-you-page-nextmove-lite' ),
+			) );
+			exit;
+		}
+
 		global $wpdb;
 		$array = array();
 		if ( isset( $_POST['term'] ) && $_POST['term'] !== '' ) {
@@ -1469,10 +1479,55 @@ class XLWCTY_Common {
 				'error_text' => __( 'Unauthorized access. ', 'woo-thank-you-page-nextmove-lite' ),
 			) );
 		}
+
+		// Security: Check user capabilities or validate order key for unauthenticated users
+		if ( ! is_user_logged_in() || ! current_user_can( 'manage_woocommerce' ) ) {
+			// For unauthenticated users, require order key validation
+			$order_id  = isset( $_POST['order'] ) ? absint( $_POST['order'] ) : 0;
+			$order_key = isset( $_POST['order_key'] ) ? sanitize_text_field( wp_unslash( $_POST['order_key'] ) ) : '';
+
+			if ( empty( $order_id ) || empty( $order_key ) ) {
+				wp_send_json( array(
+					'result'     => 'error',
+					'error_text' => __( 'Order key required for unauthenticated requests.', 'woo-thank-you-page-nextmove-lite' ),
+				) );
+			}
+
+			// Verify order key matches the order
+			$order = wc_get_order( $order_id );
+			if ( ! $order || XLWCTY_Compatibility::get_order_data( $order, 'order_key' ) !== $order_key ) {
+				wp_send_json( array(
+					'result'     => 'error',
+					'error_text' => __( 'Invalid order key.', 'woo-thank-you-page-nextmove-lite' ),
+				) );
+			}
+		}
+
 		if ( filter_input( INPUT_POST, 'order' ) !== null && filter_input( INPUT_POST, 'order' ) !== '' ) {
 
-			XLWCTY_Core()->data->setup_thankyou_post( (int) $_POST['order'] );
-			XLWCTY_Core()->data->load_order( (int) $_POST['order'] );
+			// Security: For nopriv requests, verify order key or capability
+			if ( ! is_user_logged_in() || ! current_user_can( 'manage_woocommerce' ) ) {
+				$order_key = isset( $_POST['order_key'] ) ? sanitize_text_field( wp_unslash( $_POST['order_key'] ) ) : '';
+				if ( empty( $order_key ) ) {
+					wp_send_json( array(
+						'result'     => 'error',
+						'error_text' => __( 'Order key required for unauthenticated requests.', 'woo-thank-you-page-nextmove-lite' ),
+					) );
+					exit;
+				}
+				// Verify order key matches the order
+				$order = wc_get_order( $order_id );
+				if ( ! $order || $order->get_order_key() !== $order_key ) {
+					wp_send_json( array(
+						'result'     => 'error',
+						'error_text' => __( 'Invalid order key.', 'woo-thank-you-page-nextmove-lite' ),
+					) );
+					exit;
+				}
+			}
+
+			XLWCTY_Core()->data->setup_thankyou_post( $order_id );
+			XLWCTY_Core()->data->load_order( $order_id );
 			$page      = XLWCTY_Core()->data->get_page();
 			$page_link = XLWCTY_Core()->data->get_page_link();
 			if ( is_numeric( $page ) ) {
@@ -1501,11 +1556,17 @@ class XLWCTY_Common {
 				unset( XLWCTY_Core()->public->header_info[0] );
 				foreach ( XLWCTY_Core()->public->header_info as $header_logs ) {
 					if ( strpos( $header_logs, 'Template:' ) === false ) {
-						$page->xlwcty_componets_html .= '<li>' . $header_logs . '</li>';
+						$page->xlwcty_componets_html .= '<li>' . esc_html( $header_logs ) . '</li>';
 					}
 				}
 				$page->xlwcty_componets_html .= '</ul>';
-				$page->public_link           = self::prepare_single_post_url( $page_link, wc_get_order( $_POST['order'] ) );
+				// Security fix: Use validated $order_id instead of $_POST['order']
+				$order_obj = wc_get_order( $order_id );
+				if ( $order_obj ) {
+					$page->public_link = self::prepare_single_post_url( $page_link, $order_obj );
+				} else {
+					$page->public_link = $page_link;
+				}
 				wp_send_json( array(
 					'result' => 'success',
 					'page'   => get_post( $page ),
@@ -1710,9 +1771,9 @@ class XLWCTY_Common {
 			$get_link_check = get_permalink( $get_posts_check[0] );
 			$get_link_check = self::parse_url_for_ssl( $get_link_check );
 
-			$remote = wp_remote_get( add_query_arg( array( 'permalink_check' => 'yes' ), $get_link_check ), array( 
+			$remote = wp_remote_get( add_query_arg( array( 'permalink_check' => 'yes' ), $get_link_check ), array(
 				'sslverify' => false,
-				'timeout' => 5,
+				'timeout'   => 5,
 			) );
 
 			$response_code = wp_remote_retrieve_response_code( $remote );

@@ -3,7 +3,7 @@
  * Plugin Name: NextMove Lite - Thank You Page for WooCommerce
  * Plugin URI: https://xlplugins.com/woocommerce-thank-you-page-nextmove/
  * Description: The only plugin in WooCommerce that empowers you to build profit-pulling Thank You Pages with plug & play components. It's for store owners who want to get repeat orders on autopilot.
- * Version: 2.23.0
+ * Version: 2.24.0
  * Author: XLPlugins
  * Author URI: https://www.xlplugins.com
  * License: GPLv3 or later
@@ -13,10 +13,10 @@
  * XL: True
  * XLTOOLS: True
  * Requires at least: 5.0
- * Tested up to: 6.9
+ * Tested up to: 6.9.4
  * Requires PHP: 7.4
  * WC requires at least: 4.4
- * WC tested up to: 10.5.0
+ * WC tested up to: 10.6.1
  *
  * NextMove Lite - Thank You Page for WooCommerce is free software.
  * You can redistribute it and/or modify it under the terms of the GNU General Public License as published by
@@ -160,7 +160,7 @@ if ( ! class_exists( 'XLWCTY_Core' ) ) :
 
 		public function define_plugin_properties() {
 			/** Defining Constants */
-            define( 'XLWCTY_VERSION', '2.23.0' );
+            define( 'XLWCTY_VERSION', '2.24.0' );
 			define( 'XLWCTY_MIN_WC_VERSION', '4.4' );
 			define( 'XLWCTY_NAME', 'NextMove Lite' );
 			define( 'XLWCTY_FULL_NAME', 'NextMove Lite - Thank You Page for WooCommerce' );

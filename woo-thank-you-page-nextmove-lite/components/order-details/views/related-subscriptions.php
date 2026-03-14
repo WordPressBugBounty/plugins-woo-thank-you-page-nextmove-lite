@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
  * @version     2.0.0
  */
 if ( ! defined( 'ABSPATH' ) ) {
-    exit; // Exit if accessed directly
+	exit; // Exit if accessed directly
 }
 ?>
 <div class="xlwcty_Box xlwcty_subscription xlwcty_order_details_2_col xlwcty_Box xlwcty_minicart">
@@ -26,18 +26,18 @@ if ( ! defined( 'ABSPATH' ) ) {
         </thead>
         <tbody>
 
-        <?php foreach ( $subscriptions as $subscription_id => $subscription ) : ?>
+		<?php foreach ( $subscriptions as $subscription_id => $subscription ) : ?>
             <tr class="order">
                 <td data-title="Subscription" class="subscription-id order-number xlwcty_left">
                     <a href="<?php echo esc_url( $subscription->get_view_order_url() ); ?>"><strong><?php printf( esc_html__( '#%s', 'hash before order number', 'woo-thank-you-page-nextmove-lite' ), esc_html( $subscription->get_order_number() ) ); ?></strong></a>
                     <small>(
-                        <?php
-                        if ( function_exists( 'wcs_get_subscription_status_name' ) ) {
-                            echo ' ' . esc_attr( wcs_get_subscription_status_name( $subscription->get_status() ) );
-                        } else {
-                            echo ' ' . esc_attr( $subscription->get_status() );
-                        }
-                        ?>
+						<?php
+						if ( function_exists( 'wcs_get_subscription_status_name' ) ) {
+							echo ' ' . esc_attr( wcs_get_subscription_status_name( $subscription->get_status() ) );
+						} else {
+							echo ' ' . esc_attr( $subscription->get_status() );
+						}
+						?>
                         )</small>
                 </td>
                 <td data-title="Next Payment" class="subscription-next-payment order-date xlwcty_center "> <?php echo esc_attr( $subscription->get_date_to_display( 'next_payment' ) ); ?></td>
@@ -46,8 +46,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <a href="<?php echo esc_url( $subscription->get_view_order_url() ); ?>" class="button view"><?php echo esc_html__( 'View', 'woo-thank-you-page-nextmove-lite' ); ?></a>
                 </td>
             </tr>
-        <?php endforeach; ?>
+		<?php endforeach; ?>
         </tbody>
     </table>
-    <?php do_action( 'woocommerce_subscription_after_related_subscriptions_table', $subscriptions, $order_id ); ?>
+	<?php do_action( 'woocommerce_subscription_after_related_subscriptions_table', $subscriptions, $order_id ); ?>
 </div>

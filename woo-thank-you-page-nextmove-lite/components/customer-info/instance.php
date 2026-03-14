@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) || exit;
 class XLWCTY_Customer_Information extends XLWCTY_Component {
 
 	private static $instance = null;
-	public $viewpath         = '';
+	public $viewpath = '';
 
 	public function __construct( $order = false ) {
 		parent::__construct();

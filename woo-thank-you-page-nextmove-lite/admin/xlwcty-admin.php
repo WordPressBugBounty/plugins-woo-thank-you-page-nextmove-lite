@@ -1,5 +1,6 @@
 <?php
 defined( 'ABSPATH' ) || exit;
+
 #[AllowDynamicProperties]
 class xlwcty_Admin {
 
@@ -501,7 +502,7 @@ class xlwcty_Admin {
 				$option   .= $page->post_title;
 				$option   .= '</option>';
 
-				echo ( $option );
+				echo( $option );
 			}
 			?>
         </select>
@@ -663,7 +664,7 @@ class xlwcty_Admin {
                                                     </li>
                                                 </ul>
                                                 <p>And the list goes on ...</p>
-                                                <center><a class="button-primary" href=<?php echo $unlock_pro_link; ?>>Unlock all the Awesome Features now</a></center>
+                                                <center><a class="button-primary" href="<?php echo esc_url( $unlock_pro_link ); ?>">Unlock all the Awesome Features now</a></center>
                                                 <p></p>
                                             </div>
                                         </div>
@@ -726,11 +727,11 @@ class xlwcty_Admin {
 									foreach ( $xlwcty_faq as $key => $val ) {
 										?>
                                         <li class="control-section accordion-section" id="">
-                                            <h4 class="accordion-section-title hndle" tabindex="<?php echo $index; ?>">
-												<?php echo $key; ?>
+                                            <h4 class="accordion-section-title hndle" tabindex="<?php echo esc_attr( $index ); ?>">
+												<?php echo esc_html( $key ); ?>
                                             </h4>
                                             <div class="accordion-section-content ">
-												<?php echo $val; ?>
+												<?php echo wp_kses_post( $val ); ?>
                                             </div><!-- .accordion-section-content -->
                                         </li><!-- .accordion-section -->
 										<?php
@@ -847,7 +848,9 @@ class xlwcty_Admin {
 			wp_localize_script( 'xlwcty_admin-js', 'xlwcty_site_url', array( site_url() ) );
 			wp_localize_script( 'xlwcty_admin-js', 'xlwcty_admin_permalink', array( admin_url( 'options-permalink.php' ) ) );
 			wp_localize_script( 'xlwcty_admin-js', 'xlwctyParams', array(
-				'ajax_nonce' => wp_create_nonce( 'xlwctyaction-admin' ),
+				'ajax_nonce'            => wp_create_nonce( 'xlwctyaction-admin' ),
+				'ajax_url'              => admin_url( 'admin-ajax.php' ),
+				'search_products_nonce' => wp_create_nonce( 'search-products' ),
 			) );
 			wp_localize_script( 'xlwcty_admin-js', 'xlwcty_nonces', array(
 				'xlwcty_get_pages_for_order' => wp_create_nonce( 'xlwcty_get_pages_for_order' ),
@@ -1182,6 +1185,7 @@ class xlwcty_Admin {
 			);
 			wp_localize_script( 'xlwcty-admin-app', 'xlwctyParams', $data );
 		}
+
 
 		if ( $this->is_builder_page ) {
 			add_filter( 'wp_default_editor', function ( $editor ) {
@@ -1743,9 +1747,12 @@ class xlwcty_Admin {
                 <div class="xlwcty_screen_wrap">
                     <div class="xlwcty_load_pattern"></div>
                     <div class="xlicon"></div>
-					<?php if ( isset( $_COOKIE['xlwcty_preview_data'] ) && $_COOKIE['xlwcty_preview_data'] !== '' ) { ?>
+					<?php
+					// Security fix: Sanitize and validate cookie value before use
+					$preview_url = isset( $_COOKIE['xlwcty_preview_data'] ) && $_COOKIE['xlwcty_preview_data'] !== '' ? esc_url( sanitize_text_field( wp_unslash( $_COOKIE['xlwcty_preview_data'] ) ) ) : '';
+					if ( ! empty( $preview_url ) ) { ?>
                         <div class="xlwcty_load_info"><?php _e( "Your preview will open in new window automatically.<br/>If it doesn't click on Preview button again or allow Pop-ups for your domain.", 'woo-thank-you-page-nextmove-lite' ); ?></div>
-                        <a style="visibility:hidden;" target="_blank" href="<?php echo $_COOKIE['xlwcty_preview_data']; ?>"></a>
+                        <a style="visibility:hidden;" target="_blank" href="<?php echo $preview_url; ?>"></a>
 					<?php } ?>
                 </div>
             </div>

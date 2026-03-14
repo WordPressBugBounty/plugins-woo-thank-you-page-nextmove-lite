@@ -1,6 +1,13 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+// Security: Check if order_data exists before proceeding
+if ( empty( $order_data ) || ! is_object( $order_data ) || ! method_exists( $order_data, 'get_id' ) ) {
+	XLWCTY_Core()->public->add_header_logs( sprintf( '%s - %s', $this->get_component_property( 'title' ), __( 'Order data not available', 'woo-thank-you-page-nextmove-lite' ) ) );
+
+	return false;
+}
+
 remove_action( 'woocommerce_thankyou', 'woocommerce_order_details_table', 10 );
 $payment_method = XLWCTY_Compatibility::get_order_data( $order_data, 'payment_method' );
 remove_action( 'wp_footer', array( XLWCTY_Core()->public, 'execute_wc_thankyou_hooks' ), 1 );
@@ -13,7 +20,7 @@ $get_content = ob_get_clean();
  * SECURITY: Extract and validate scripts before escaping HTML content
  * This prevents XSS while allowing legitimate tracking scripts to execute
  */
-$scripts = array();
+$scripts        = array();
 $script_pattern = '/(<script\b[^>]*>.*?<\/script>)/is';
 
 if ( preg_match_all( $script_pattern, $get_content, $script_matches ) ) {
@@ -28,7 +35,7 @@ if ( preg_match_all( $script_pattern, $get_content, $script_matches ) ) {
 			'XMLHttpRequest',
 			'DOMContentLoaded',
 		);
-		
+
 		$is_safe = false;
 		foreach ( $safe_script_keywords as $keyword ) {
 			if ( strpos( $script, $keyword ) !== false ) {
@@ -46,7 +53,7 @@ if ( preg_match_all( $script_pattern, $get_content, $script_matches ) ) {
 			'innerHTML',
 			'outerHTML',
 		);
-		
+
 		$is_dangerous = false;
 		foreach ( $dangerous_patterns as $pattern ) {
 			if ( strpos( $script, $pattern ) !== false ) {
@@ -54,13 +61,13 @@ if ( preg_match_all( $script_pattern, $get_content, $script_matches ) ) {
 				break;
 			}
 		}
-		
+
 		// Only allow safe scripts without dangerous patterns
 		if ( $is_safe && ! $is_dangerous ) {
 			$scripts[] = $script;
 		}
 	}
-	
+
 	// Remove scripts from content before escaping
 	$get_content = preg_replace( $script_pattern, '', $get_content );
 }
@@ -76,13 +83,13 @@ $parsed_content = trim( $parsed_content );
 
 if ( '' !== $parsed_content ) {
 	?>
-	<div class="xlwcty_Box xlwcty_textBox xlwcty-wc-thankyou"><?php echo $filtered_content; ?>
-	</div>
+    <div class="xlwcty_Box xlwcty_textBox xlwcty-wc-thankyou"><?php echo $filtered_content; ?>
+    </div>
 	<?php
 } else {
 	?>
-	<div style="display: none;"><?php echo $filtered_content; ?>
-	</div>
+    <div style="display: none;"><?php echo $filtered_content; ?>
+    </div>
 	<?php
 }
 
@@ -91,7 +98,7 @@ if ( '' !== $parsed_content ) {
  * This maintains security while allowing legitimate tracking scripts
  */
 if ( ! empty( $scripts ) ) {
-	add_action( 'wp_footer', function() use ( $scripts ) {
+	add_action( 'wp_footer', function () use ( $scripts ) {
 		foreach ( $scripts as $script ) {
 			// Scripts have been validated - output directly
 			echo $script; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
