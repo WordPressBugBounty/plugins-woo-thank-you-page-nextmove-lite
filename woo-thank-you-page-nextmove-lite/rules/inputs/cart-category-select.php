@@ -48,10 +48,10 @@ class xlwcty_Input_Cart_Category_Select {
             </tr>
             <tr>
                 <td style="width:32px; vertical-align:top;">
-                    <input type="text" id="<?php echo $field['id']; ?>_qty" name="<?php echo $field['name']; ?>[qty]" value="<?php echo isset( $value['qty'] ) ? $value['qty'] : 1; ?>"/>
+                    <input type="text" id="<?php echo esc_attr( $field['id'] ); ?>_qty" name="<?php echo xlwcty_Input_Builder::esc_name( $field['name'] ); ?>[qty]" value="<?php echo esc_attr( isset( $value['qty'] ) ? $value['qty'] : 1 ); ?>"/>
                 </td>
                 <td>
-                    <select id="<?php echo $field['id']; ?>" name="<?php echo $field['name']; ?>[categories][]" class="chosen_select <?php echo esc_attr( $field['class'] ); ?>" multiple="multiple" data-placeholder="<?php echo( isset( $field['placeholder'] ) ? $field['placeholder'] : __( 'Search...', 'woo-thank-you-page-nextmove-lite' ) ); ?>">
+                    <select id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo xlwcty_Input_Builder::esc_name( $field['name'] ); ?>[categories][]" class="chosen_select <?php echo esc_attr( $field['class'] ); ?>" multiple="multiple" data-placeholder="<?php echo esc_attr( isset( $field['placeholder'] ) ? $field['placeholder'] : __( 'Search...', 'woo-thank-you-page-nextmove-lite' ) ); ?>">
 						<?php
 						foreach ( $choices as $choice => $title ) {
 							$selected = in_array( $choice, $current );

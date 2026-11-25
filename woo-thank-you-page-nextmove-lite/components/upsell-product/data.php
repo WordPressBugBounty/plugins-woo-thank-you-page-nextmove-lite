@@ -3,7 +3,7 @@ defined( 'ABSPATH' ) || exit;
 
 $config             = array();
 $config['slug']     = '_xlwcty_upsell_product';
-$config['title']    = 'Upsells';
+$config['title']    = __( 'Upsells', 'woo-thank-you-page-nextmove-lite' );
 $config['instance'] = require __DIR__ . '/instance.php';
 $config['fields']   = array(
 	'id'                        => $config['slug'],

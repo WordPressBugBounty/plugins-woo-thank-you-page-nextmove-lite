@@ -44,7 +44,11 @@ class XLWCTY_Dynamic_Merge_Tags {
 
 						if ( method_exists( __CLASS__, $single ) ) {
 							$get_parsed_value = call_user_func( array( __CLASS__, $single ) );
-							$content          = str_replace( $old_match, $get_parsed_value, $content );
+							/** Neutralise shortcode brackets in customer/order data so do_shortcode() later cannot execute them */
+							if ( is_string( $get_parsed_value ) ) {
+								$get_parsed_value = str_replace( array( '[', ']' ), array( '&#91;', '&#93;' ), $get_parsed_value );
+							}
+							$content = str_replace( $old_match, $get_parsed_value, $content );
 						}
 					}
 				}
@@ -476,7 +480,7 @@ class XLWCTY_Dynamic_Merge_Tags {
 		foreach ( $coupons as $coupon_code ) {
 			$coupon                = new WC_Coupon( $coupon_code );
 			$expiry_date           = $coupon->get_date_expires();
-			$coupon_expiry_dates[] = $coupon_code . ' = ' . ( $expiry_date ? $expiry_date->date( 'Y-m-d' ) : 'No expiry date' );
+			$coupon_expiry_dates[] = $coupon_code . ' = ' . ( $expiry_date ? wc_format_datetime( $expiry_date ) : __( 'No expiry date', 'woo-thank-you-page-nextmove-lite' ) );
 		}
 
 		return implode( ', ', $coupon_expiry_dates );

@@ -42,7 +42,7 @@ class xlwcty_Input_Chosen_Select {
 		$choices = $field['choices'];
 		?>
 
-        <select id="<?php echo $field['id']; ?>" name="<?php echo $field['name']; ?>[]" class="chosen_select <?php echo esc_attr( $field['class'] ); ?>" multiple="multiple" data-placeholder="<?php echo( isset( $field['placeholder'] ) ? $field['placeholder'] : __( 'Search...', 'woo-thank-you-page-nextmove-lite' ) ); ?>">
+        <select id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo xlwcty_Input_Builder::esc_name( $field['name'] ); ?>[]" class="chosen_select <?php echo esc_attr( $field['class'] ); ?>" multiple="multiple" data-placeholder="<?php echo esc_attr( isset( $field['placeholder'] ) ? $field['placeholder'] : __( 'Search...', 'woo-thank-you-page-nextmove-lite' ) ); ?>">
 			<?php
 			foreach ( $choices as $choice => $title ) {
 				$selected = in_array( $choice, $current );

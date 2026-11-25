@@ -10,8 +10,8 @@ if ( class_exists( 'WFOCU_Common' ) ) {
 
 		public function get_possibile_rule_operators() {
 			$operators = array(
-				'in'    => __( 'is', 'thank-you-page-for-woocommerce-nextmove' ),
-				'notin' => __( 'is not', 'thank-you-page-for-woocommerce-nextmove' ),
+				'in'    => __( 'is', 'woo-thank-you-page-nextmove-lite' ),
+				'notin' => __( 'is not', 'woo-thank-you-page-nextmove-lite' ),
 			);
 
 			return $operators;
@@ -72,8 +72,8 @@ if ( class_exists( 'WFACP_Core' ) ) {
 
 		public function get_possibile_rule_operators() {
 			$operators = array(
-				'in'    => __( 'is', 'thank-you-page-for-woocommerce-nextmove' ),
-				'notin' => __( 'is not', 'thank-you-page-for-woocommerce-nextmove' ),
+				'in'    => __( 'is', 'woo-thank-you-page-nextmove-lite' ),
+				'notin' => __( 'is not', 'woo-thank-you-page-nextmove-lite' ),
 			);
 
 			return $operators;

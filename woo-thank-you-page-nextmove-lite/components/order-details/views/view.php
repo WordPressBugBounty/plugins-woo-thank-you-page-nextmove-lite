@@ -31,8 +31,11 @@ echo $after_desc_parsed ? '<div' . $desc_class . '>' . wp_kses_post( $after_desc
 unset( $desc_class );
 $after_desc = ob_get_clean();
 
+// Use the NextMove related-subscriptions template only while this component renders.
+add_filter( 'wc_get_template', array( $this, 'subs_get_template' ), 10, 5 );
 if ( 'default' === $this->data->layout ) {
 	include __DIR__ . '/order-summary-default.php';
 } else {
 	include __DIR__ . '/order-summary-custom.php';
 }
+remove_filter( 'wc_get_template', array( $this, 'subs_get_template' ), 10 );

@@ -50,4 +50,19 @@ class xlwcty_Input_Builder {
 		return $field_args;
 	}
 
+	/**
+	 * Escape a field name for an HTML attribute.
+	 *
+	 * The rule row template (admin/views/metabox-rules-rule-template.php) renders names such as
+	 * xlwcty_rule[<%= groupId %>][<%= ruleId %>][operator] for the Underscore template used by
+	 * the rules JS, so those template tags are kept intact after escaping.
+	 *
+	 * @param string $name Field name.
+	 *
+	 * @return string
+	 */
+	public static function esc_name( $name ) {
+		return str_replace( array( '&lt;%=', '%&gt;' ), array( '<%=', '%>' ), esc_attr( $name ) );
+	}
+
 }

@@ -23,8 +23,8 @@ if ( ! class_exists( 'XL_Addon_Install_Stripe' ) ) {
 			$desc    = __( 'SCA-Ensured Secure Gateway to Accept Payments in WooCommerce, Quick Onboarding, Multiple Payment Methods and Recurring Subscriptions', 'woo-thank-you-page-nextmove-lite' );
 			?>
 			<section class="xl-top">
-				<img class="img-top" src="<?php echo esc_url( $img ); ?>" alt="<?php esc_attr_e( $heading ); ?>"/>
-				<h1><?php esc_attr_e( $heading ); ?></h1>
+				<img class="img-top" src="<?php echo esc_url( $img ); ?>" alt="<?php echo esc_attr( $heading ); ?>"/>
+				<h1><?php echo esc_html( $heading ); ?></h1>
 				<p><?php echo wp_kses_post( $desc ); ?></p>
 			</section>
 			<?php

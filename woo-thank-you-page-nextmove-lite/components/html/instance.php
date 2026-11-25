@@ -27,6 +27,27 @@ class XLWCTY_Text extends XLWCTY_Component {
 		return self::$instance;
 	}
 
+	/**
+	 * CMB2 sanitization callback for the HTML content editor.
+	 *
+	 * Users with the unfiltered_html capability (administrators on single site) keep raw HTML so they can embed
+	 * third-party forms and scripts. Everyone else who can reach the builder (e.g. shop managers, or admins on
+	 * multisite) is limited to post-safe HTML, the same rule WordPress applies to post content.
+	 *
+	 * @param mixed $value      Submitted value.
+	 * @param array $field_args Field arguments (unused).
+	 * @param mixed $field      CMB2_Field instance (unused).
+	 *
+	 * @return mixed
+	 */
+	public static function sanitize_html_content( $value, $field_args = array(), $field = null ) {
+		if ( current_user_can( 'unfiltered_html' ) ) {
+			return $value;
+		}
+
+		return is_array( $value ) ? array_map( 'wp_kses_post', $value ) : wp_kses_post( (string) $value );
+	}
+
 	public function setup_fields() {
 		$this->fields = array(
 			'heading'            => $this->get_slug() . '_heading_1',

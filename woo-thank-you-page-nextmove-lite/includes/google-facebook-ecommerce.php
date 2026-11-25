@@ -33,6 +33,16 @@ if ( ! empty( $google_analytics_id ) && ! $ga4_tracking_fired ) {
 	// Prepare the items array
 	foreach ( $order->get_items() as $item ) {
 		$product    = $item->get_product();
+		if ( ! $product instanceof WC_Product ) {
+			// Product was deleted after the order was placed: fall back to the data stored on the order line.
+			$items[] = [
+				'item_id'   => $item->get_product_id(),
+				'item_name' => $item->get_name(),
+				'price'     => (float) $order->get_item_subtotal( $item, false, false ),
+				'quantity'  => $item->get_quantity(),
+			];
+			continue;
+		}
 		$item_id    = $product->get_id();
 		$item_name  = $product->get_name();
 		$item_price = $product->get_price();
@@ -78,16 +88,22 @@ if ( ! empty( $google_analytics_id ) && ! $ga4_tracking_fired ) {
 		$ga4_tracking_fired = true; // Set the flag to true after firing the event
 		?>
         gtag('event', 'purchase', {
-            transaction_id: '<?php echo $transaction_id; ?>',
-            value: <?php echo $value; ?>,
-            tax: <?php echo $tax; ?>,
-            shipping: <?php echo $shipping; ?>,
-            currency: '<?php echo $currency; ?>',
-            coupon: '<?php echo $coupon_codes; ?>',
-            items: <?php echo wp_json_encode( $items ); ?>,
+            transaction_id: '<?php echo esc_js( $transaction_id ); ?>',
+            value: <?php echo wp_json_encode( (float) $value ); ?>,
+            tax: <?php echo wp_json_encode( (float) $tax ); ?>,
+            shipping: <?php echo wp_json_encode( (float) $shipping ); ?>,
+            currency: '<?php echo esc_js( $currency ); ?>',
+            coupon: '<?php echo esc_js( $coupon_codes ); ?>',
+            items: <?php echo wp_json_encode( $items, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ); ?>,
         });
     </script>
 	<?php
+}
+
+if ( $ga4_tracking_fired ) {
+	// Mark the order as tracked as soon as the GA purchase event is printed, so GA-only setups do not re-fire it on reload.
+	$order->update_meta_data( 'xlwcty_fb_gb_event_fire', 'yes' );
+	$order->save_meta_data();
 }
 
 if ( $pixel_id > 0 || ! empty( $get_tracking_codes[0] ) ) {
@@ -171,27 +187,28 @@ if ( $pixel_id > 0 || ! empty( $get_tracking_codes[0] ) ) {
 			}
 		}
 		$order->update_meta_data( 'xlwcty_fb_gb_event_fire', 'yes' );
-		$order->save();
+		$order->save_meta_data();
 	}
 }
+$xlwcty_fab_ecom = array(
+	'pixel_id'                                  => isset( $pixel_id ) ? (string) $pixel_id : '',
+	'fb_pa_count'                               => isset( $fb_pa ) ? count( $fb_pa ) : '',
+	'fb_pa_data'                                => isset( $fb_pa ) ? (object) $fb_pa : new stdClass(),
+	'facebook_tracking_event'                   => isset( $facebook_tracking_event ) ? (string) $facebook_tracking_event : '',
+	'facebook_purchase_event'                   => isset( $facebook_purchase_event ) ? (string) $facebook_purchase_event : '',
+	'facebook_purchase_advanced_matching_event' => isset( $facebook_purchase_advanced_matching_event ) ? (string) $facebook_purchase_advanced_matching_event : '',
+	'facebook_purchase_event_conversion'        => isset( $facebook_purchase_event_conversion ) ? (string) $facebook_purchase_event_conversion : '',
+	'products'                                  => isset( $products ) ? array_values( $products ) : array(),
+	'order_id'                                  => isset( $order_id ) ? (string) $order_id : '',
+	'order_total'                               => isset( $order_total ) ? (string) $order_total : '',
+	'currency'                                  => (string) get_woocommerce_currency(),
+	'shipping_total'                            => isset( $order_shipping_total ) ? (string) $order_shipping_total : '',
+	'order_tax'                                 => isset( $order_tax ) ? (string) $order_tax : '',
+	'affiliation'                               => (string) get_bloginfo( 'name' ),
+	'gproducts'                                 => isset( $gproducts ) ? array_values( $gproducts ) : array(),
+);
 ?>
     <script>
-        var xlwcty_fab_ecom = {
-            'pixel_id': '<?php echo isset( $pixel_id ) ? $pixel_id : ''; ?>',
-            'fb_pa_count': '<?php echo isset( $fb_pa ) ? count( $fb_pa ) : ''; ?>',
-            'fb_pa_data': '<?php echo isset( $fb_pa ) ? wp_json_encode( $fb_pa ) : ''; ?>',
-            'facebook_tracking_event': '<?php echo isset( $facebook_tracking_event ) ? $facebook_tracking_event : ''; ?>',
-            'facebook_purchase_event': '<?php echo isset( $facebook_purchase_event ) ? $facebook_purchase_event : ''; ?>',
-            'facebook_purchase_advanced_matching_event': '<?php echo isset( $facebook_purchase_advanced_matching_event ) ? $facebook_purchase_advanced_matching_event : ''; ?>',
-            'facebook_purchase_event_conversion': '<?php echo isset( $facebook_purchase_event_conversion ) ? $facebook_purchase_event_conversion : ''; ?>',
-            'products': '<?php echo isset( $products ) ? wp_json_encode( $products ) : ''; ?>',
-            'order_id': '<?php echo isset( $order_id ) ? $order_id : ''; ?>',
-            'order_total': '<?php echo isset( $order_total ) ? $order_total : ''; ?>',
-            'currency': '<?php echo get_woocommerce_currency(); ?>',
-            'shipping_total': '<?php echo isset( $order_shipping_total ) ? $order_shipping_total : ''; ?>',
-            'order_tax': '<?php echo isset( $order_tax ) ? $order_tax : ''; ?>',
-            'affiliation': '<?php bloginfo( 'name' ); ?>',
-            'gproducts': '<?php echo isset( $gproducts ) ? wp_json_encode( $gproducts ) : ''; ?>',
-        };
+        var xlwcty_fab_ecom = <?php echo wp_json_encode( $xlwcty_fab_ecom, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ); ?>;
     </script>
 <?php

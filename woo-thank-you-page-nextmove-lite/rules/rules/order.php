@@ -25,7 +25,7 @@ class xlwcty_Rule_Order_Item_Count extends xlwcty_Rule_Base {
 	public function is_match( $rule_data, $order_id ) {
 		$order = wc_get_order( $order_id );
 		if ( ! $order instanceof WC_Order ) {
-			$this->return_is_match( false, $rule_data );
+			return $this->return_is_match( false, $rule_data );
 		}
 
 		$count = absint( $order->get_item_count() );
@@ -82,12 +82,13 @@ class xlwcty_Rule_Order_Item extends xlwcty_Rule_Base {
 	public function is_match( $rule_data, $order_id ) {
 		$products = isset( $rule_data['condition']['products'] ) ? $rule_data['condition']['products'] : [];
 		if ( empty( $products ) ) {
-			$this->return_is_match( false, $rule_data );
+			return $this->return_is_match( false, $rule_data );
 		}
+		$products = XLWCTY_Common::expand_ids_with_translations( $products, 'post' );
 
 		$order = wc_get_order( $order_id );
 		if ( ! $order instanceof WC_Order ) {
-			$this->return_is_match( false, $rule_data );
+			return $this->return_is_match( false, $rule_data );
 		}
 
 		$quantity = intval( $rule_data['condition']['qty'] );
@@ -112,7 +113,12 @@ class xlwcty_Rule_Order_Item extends xlwcty_Rule_Base {
 				$variationID = ( is_array( $cart_item['variation_id'] ) && count( $cart_item['variation_id'] ) > 0 ) ? $cart_item['variation_id'][0] : 0;
 			}
 
-			if ( in_array( $productID, $products ) || ( ( $productID ) && in_array( $variationID, $products ) ) ) {
+			$candidate_ids = XLWCTY_Common::expand_ids_with_translations(
+				array_filter( array( $productID, $variationID ) ),
+				'post'
+			);
+
+			if ( ! empty( array_intersect( $candidate_ids, $products ) ) ) {
 				$found_quantity += absint( $cart_item['qty'] );
 			}
 		}
@@ -186,11 +192,12 @@ class xlwcty_Rule_Order_Category extends xlwcty_Rule_Base {
 		if ( empty( $categories ) ) {
 			return $this->return_is_match( false, $rule_data );
 		}
+		$categories = XLWCTY_Common::expand_ids_with_translations( $categories, 'term' );
 
 		$type  = $rule_data['operator'];
 		$order = wc_get_order( $order_id );
 		if ( ! $order instanceof WC_Order ) {
-			$this->return_is_match( false, $rule_data );
+			return $this->return_is_match( false, $rule_data );
 		}
 
 		if ( ! is_array( $order->get_items() ) || empty( $order->get_items() ) ) {
@@ -219,6 +226,7 @@ class xlwcty_Rule_Order_Category extends xlwcty_Rule_Base {
 		if ( empty( $all_terms ) ) {
 			return $this->return_is_match( false, $rule_data );
 		}
+		$all_terms = XLWCTY_Common::expand_ids_with_translations( $all_terms, 'term' );
 
 		$result = false;
 		switch ( $type ) {
@@ -276,7 +284,7 @@ class xlwcty_Rule_Order_Item_Type extends xlwcty_Rule_Base {
 		$type  = $rule_data['operator'];
 		$order = wc_get_order( $order_id );
 		if ( ! $order instanceof WC_Order ) {
-			$this->return_is_match( false, $rule_data );
+			return $this->return_is_match( false, $rule_data );
 		}
 
 		if ( ! is_array( $order->get_items() ) || empty( $order->get_items() ) ) {

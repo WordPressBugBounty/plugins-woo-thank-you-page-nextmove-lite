@@ -3,7 +3,7 @@ defined( 'ABSPATH' ) || exit;
 
 $config             = array();
 $config['slug']     = '_xlwcty_additional_info';
-$config['title']    = 'Additional Information';
+$config['title']    = __( 'Additional Information', 'woo-thank-you-page-nextmove-lite' );
 $config['instance'] = require __DIR__ . '/instance.php';
 $config['fields']   = array(
 	'id'                        => $config['slug'],
@@ -16,7 +16,7 @@ $config['fields']   = array(
 			'name'                       => __( 'Enable', 'woo-thank-you-page-nextmove-lite' ),
 			'id'                         => $config['slug'] . '_enable',
 			'type'                       => 'xlwcty_switch',
-			'description'                => 'WooCommerce or other plugins sometimes add additional information to native Thank You pages. This component will show those additional information blocks.<br>For example WooCommerce displays additional information for payment gateways such as BACS or Cheque.',
+			'description'                => __( 'WooCommerce or other plugins sometimes add additional information to native Thank You pages. This component will show those additional information blocks.<br>For example WooCommerce displays additional information for payment gateways such as BACS or Cheque.', 'woo-thank-you-page-nextmove-lite' ),
 			'row_classes'                => array( 'xlwcty_is_enable' ),
 			'label'                      => array(
 				'on'  => __( 'Yes', 'woo-thank-you-page-nextmove-lite' ),
@@ -35,7 +35,7 @@ $config['fields']   = array(
 			'id'          => $config['slug'] . '_border_style',
 			'type'        => 'select',
 			'row_classes' => array( 'xlwcty_no_border', 'xlwcty_select_small', 'xlwcty_combine_3_field_start' ),
-			'before'      => '<p class="xlwcty_mt5 xlwcty_mb5">Style</p>',
+			'before'      => '<p class="xlwcty_mt5 xlwcty_mb5">' . esc_html__( 'Style', 'woo-thank-you-page-nextmove-lite' ) . '</p>',
 			'options'     => array(
 				'dotted' => __( 'Dotted', 'woo-thank-you-page-nextmove-lite' ),
 				'dashed' => __( 'Dashed', 'woo-thank-you-page-nextmove-lite' ),
@@ -53,7 +53,7 @@ $config['fields']   = array(
 			'id'          => $config['slug'] . '_border_width',
 			'type'        => 'text_small',
 			'row_classes' => array( 'xlwcty_no_border', 'xlwcty_hide_label', 'xlwcty_combine_3_field_middle' ),
-			'before'      => '<p class="xlwcty_mt5 xlwcty_mb5">Width (px)</p>',
+			'before'      => '<p class="xlwcty_mt5 xlwcty_mb5">' . esc_html__( 'Width (px)', 'woo-thank-you-page-nextmove-lite' ) . '</p>',
 			'attributes'  => array(
 				'type'                   => 'number',
 				'min'                    => '0',
@@ -67,15 +67,15 @@ $config['fields']   = array(
 			'id'          => $config['slug'] . '_border_color',
 			'type'        => 'colorpicker',
 			'row_classes' => array( 'xlwcty_hide_label', 'xlwcty_combine_3_field_end' ),
-			'before'      => '<p class="xlwcty_mt5 xlwcty_mb5">Color</p>',
+			'before'      => '<p class="xlwcty_mt5 xlwcty_mb5">' . esc_html__( 'Color', 'woo-thank-you-page-nextmove-lite' ) . '</p>',
 			'attributes'  => array(
 				'data-conditional-id'    => $config['slug'] . '_enable',
 				'data-conditional-value' => '1',
 			),
 		),
 		array(
-			'name'        => __( 'Background', 'thank-you-page-for-woocommerce-nextmove' ),
-			'desc'        => __( 'Component background color', 'thank-you-page-for-woocommerce-nextmove' ),
+			'name'        => __( 'Background', 'woo-thank-you-page-nextmove-lite' ),
+			'desc'        => __( 'Component background color', 'woo-thank-you-page-nextmove-lite' ),
 			'id'          => $config['slug'] . '_component_bg',
 			'type'        => 'colorpicker',
 			'row_classes' => array(),

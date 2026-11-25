@@ -45,11 +45,11 @@ class xlwcty_Input_Cart_Product_Select {
             </tr>
             <tr>
                 <td style="width:32px; vertical-align:top;">
-                    <input type="text" id="<?php echo $field['id']; ?>_qty" name="<?php echo $field['name']; ?>[qty]" value="<?php echo isset( $value['qty'] ) ? $value['qty'] : 1; ?>"/>
+                    <input type="text" id="<?php echo esc_attr( $field['id'] ); ?>_qty" name="<?php echo xlwcty_Input_Builder::esc_name( $field['name'] ); ?>[qty]" value="<?php echo esc_attr( isset( $value['qty'] ) ? $value['qty'] : 1 ); ?>"/>
 
                 </td>
                 <td>
-                    <select id="<?php echo $field['id']; ?>" name="<?php echo $field['name']; ?>[products][]" class="ajax_chosen_select_products" multiple="multiple" data-placeholder="<?php _e( 'Search for a product&hellip;', 'woocommerce' ); ?>">
+                    <select id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo xlwcty_Input_Builder::esc_name( $field['name'] ); ?>[products][]" class="ajax_chosen_select_products" multiple="multiple" data-placeholder="<?php _e( 'Search for a product&hellip;', 'woocommerce' ); ?>">
 						<?php
 						$current     = isset( $value['products'] ) ? $value['products'] : array();
 						$product_ids = ! empty( $current ) ? array_map( 'absint', $current ) : null;
@@ -63,7 +63,7 @@ class xlwcty_Input_Cart_Product_Select {
 
 								$product_name = XLWCTY_Compatibility::woocommerce_get_formatted_product_name( $product );
 
-								echo '<option value="' . esc_attr( $product_id ) . '" selected="selected">' . ( $product_name ) . '</option>';
+								echo '<option value="' . esc_attr( $product_id ) . '" selected="selected">' . esc_html( $product_name ) . '</option>';
 							}
 						}
 						?>

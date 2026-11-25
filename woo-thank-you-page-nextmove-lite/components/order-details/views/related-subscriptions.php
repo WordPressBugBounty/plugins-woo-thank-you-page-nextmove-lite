@@ -28,8 +28,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<?php foreach ( $subscriptions as $subscription_id => $subscription ) : ?>
             <tr class="order">
-                <td data-title="Subscription" class="subscription-id order-number xlwcty_left">
-                    <a href="<?php echo esc_url( $subscription->get_view_order_url() ); ?>"><strong><?php printf( esc_html__( '#%s', 'hash before order number', 'woo-thank-you-page-nextmove-lite' ), esc_html( $subscription->get_order_number() ) ); ?></strong></a>
+                <td data-title="<?php esc_attr_e( 'Subscription', 'woo-thank-you-page-nextmove-lite' ); ?>" class="subscription-id order-number xlwcty_left">
+                    <a href="<?php echo esc_url( $subscription->get_view_order_url() ); ?>"><strong><?php printf( esc_html_x( '#%s', 'hash before order number', 'woo-thank-you-page-nextmove-lite' ), esc_html( $subscription->get_order_number() ) ); ?></strong></a>
                     <small>(
 						<?php
 						if ( function_exists( 'wcs_get_subscription_status_name' ) ) {
@@ -40,9 +40,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 						?>
                         )</small>
                 </td>
-                <td data-title="Next Payment" class="subscription-next-payment order-date xlwcty_center "> <?php echo esc_attr( $subscription->get_date_to_display( 'next_payment' ) ); ?></td>
-                <td data-title="Total" class="subscription-total order-total xlwcty_center "> <?php echo wp_kses_post( $subscription->get_formatted_order_total() ); ?></td>
-                <td data-title="Action" class="subscription-actions order-actions xlwcty_center">
+                <td data-title="<?php esc_attr_e( 'Next Payment', 'woo-thank-you-page-nextmove-lite' ); ?>" class="subscription-next-payment order-date xlwcty_center "> <?php echo esc_attr( $subscription->get_date_to_display( 'next_payment' ) ); ?></td>
+                <td data-title="<?php esc_attr_e( 'Total', 'woo-thank-you-page-nextmove-lite' ); ?>" class="subscription-total order-total xlwcty_center "> <?php echo wp_kses_post( $subscription->get_formatted_order_total() ); ?></td>
+                <td data-title="<?php esc_attr_e( 'Action', 'woo-thank-you-page-nextmove-lite' ); ?>" class="subscription-actions order-actions xlwcty_center">
                     <a href="<?php echo esc_url( $subscription->get_view_order_url() ); ?>" class="button view"><?php echo esc_html__( 'View', 'woo-thank-you-page-nextmove-lite' ); ?></a>
                 </td>
             </tr>

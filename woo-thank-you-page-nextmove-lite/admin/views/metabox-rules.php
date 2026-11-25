@@ -47,7 +47,7 @@ $pro_link = add_query_arg( array(
 				}
 				?>
 
-                <div class="xlwcty-rule-group-container" data-groupid="<?php echo $group_id; ?>">
+                <div class="xlwcty-rule-group-container" data-groupid="<?php echo esc_attr( $group_id ); ?>">
                     <div class="xlwcty-rule-group-header">
 						<?php if ( $group_counter == 0 ) : ?>
                             <h4><?php _e( 'Open this page when these conditions are matched:', 'woo-thank-you-page-nextmove-lite' ); ?></h4>
@@ -57,7 +57,7 @@ $pro_link = add_query_arg( array(
                         <a href="#" class="xlwcty-remove-rule-group button"></a>
                     </div>
 					<?php if ( is_array( $group ) ) : ?>
-                        <table class="xlwcty-rules" data-groupid="<?php echo $group_id; ?>">
+                        <table class="xlwcty-rules" data-groupid="<?php echo esc_attr( $group_id ); ?>">
                             <tbody>
 							<?php
 							foreach ( $group as $rule_id => $rule ) :
@@ -65,7 +65,7 @@ $pro_link = add_query_arg( array(
 									$rule_id = 'rule' . $rule_id;
 								}
 								?>
-                                <tr data-ruleid="<?php echo $rule_id; ?>" class="xlwcty-rule">
+                                <tr data-ruleid="<?php echo esc_attr( $rule_id ); ?>" class="xlwcty-rule">
                                     <td class="rule-type">
 										<?php
 										// allow custom location rules

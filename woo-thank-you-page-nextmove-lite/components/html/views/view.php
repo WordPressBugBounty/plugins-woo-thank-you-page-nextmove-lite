@@ -11,7 +11,7 @@ if ( '' !== $this->data->html_content || '' !== $this->data->heading ) {
 		$html_content_parsed = $this->data->html_content ? apply_filters( 'xlwcty_the_content', $this->data->html_content ) : '';
 		// Unfiltered HTML output is intentional for this component.
 		// This enables embedding third-party forms (Gravity Forms, WPForms), scripts, and iframes.
-		// Security: Content is only editable by users with manage_woocommerce capability via the admin page builder.
+		// Security: raw HTML is only stored for users with unfiltered_html; others are limited to wp_kses_post on save (XLWCTY_Text::sanitize_html_content()).
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $html_content_parsed ? '<div class="xlwcty_content">' . $html_content_parsed . '</div>' : '';
 		?>

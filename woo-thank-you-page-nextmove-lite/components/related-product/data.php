@@ -3,7 +3,7 @@ defined( 'ABSPATH' ) || exit;
 
 $config             = array();
 $config['slug']     = '_xlwcty_related_product';
-$config['title']    = 'Related Products';
+$config['title']    = __( 'Related Products', 'woo-thank-you-page-nextmove-lite' );
 $config['instance'] = require __DIR__ . '/instance.php';
 $config['fields']   = array(
 	'id'                     => $config['slug'],

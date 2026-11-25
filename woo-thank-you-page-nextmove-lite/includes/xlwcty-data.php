@@ -40,6 +40,11 @@ class XLWCTY_Data {
 		if ( ! is_numeric( $order_id ) ) {
 			return;
 		}
+
+		// Reset the previous order's match so an order matching no page does not inherit it.
+		$this->page_id   = false;
+		$this->page_link = false;
+
 		$this->load_order( $order_id );
 
 		// Trigger WPML language switching if needed.
@@ -61,17 +66,17 @@ class XLWCTY_Data {
 
 		$key = 'xlwcty_instances';
 
-		// handling for WPML.
-		$current_lang = '';
-		if ( defined( 'ICL_LANGUAGE_CODE' ) && ICL_LANGUAGE_CODE !== '' ) {
-			$current_lang = ICL_LANGUAGE_CODE;
-			$key          .= '_' . $current_lang;
-		} elseif ( defined( 'ICL_SITEPRESS_VERSION' ) && class_exists( 'XLWCTY_WPML' ) ) {
-			$wpml_compat  = XLWCTY_WPML::get_instance();
-			$current_lang = $wpml_compat->get_current_language();
+		// handling for multilingual plugins.
+		$current_lang      = '';
+		$multilingual_compat = XLWCTY_Common::get_multilingual_compat();
+		if ( $multilingual_compat && method_exists( $multilingual_compat, 'get_current_language' ) ) {
+			$current_lang = $multilingual_compat->get_current_language();
 			if ( $current_lang ) {
 				$key .= '_' . $current_lang;
 			}
+		} elseif ( defined( 'ICL_LANGUAGE_CODE' ) && ICL_LANGUAGE_CODE !== '' ) {
+			$current_lang = ICL_LANGUAGE_CODE;
+			$key          .= '_' . $current_lang;
 		}
 
 		$contents = array();
@@ -103,10 +108,9 @@ class XLWCTY_Data {
 		$contents = apply_filters( 'xlwcty_before_rules_validation', $contents, $order_id, $this, $skip_rules );
 
 		if ( is_array( $contents ) && count( $contents ) > 0 ) {
-			// If WPML is active and we have an order, prioritize pages in order's language
-			if ( defined( 'ICL_SITEPRESS_VERSION' ) && class_exists( 'XLWCTY_WPML' ) && $this->order instanceof WC_Order ) {
-				$wpml_compat = XLWCTY_WPML::get_instance();
-				$order_lang  = $wpml_compat->get_order_language( $this->order );
+			// Prioritize thank you pages in the order's language.
+			if ( $multilingual_compat && $this->order instanceof WC_Order && method_exists( $multilingual_compat, 'get_order_language' ) && method_exists( $multilingual_compat, 'get_post_language' ) ) {
+				$order_lang = $multilingual_compat->get_order_language( $this->order );
 
 				// Reorder pages: put pages in order's language first
 				$pages_in_order_lang = array();
@@ -114,7 +118,7 @@ class XLWCTY_Data {
 
 				foreach ( $contents as $content_single ) {
 					$content_id = ( $content_single instanceof WP_Post && is_object( $content_single ) ) ? $content_single->ID : $content_single;
-					$page_lang  = $wpml_compat->get_post_language( $content_id );
+					$page_lang  = $multilingual_compat->get_post_language( $content_id );
 
 					if ( $page_lang === $order_lang ) {
 						$pages_in_order_lang[] = $content_single;
@@ -142,26 +146,29 @@ class XLWCTY_Data {
 						$content_id = $custom_pages[ $content_id ];
 					}
 
-					// Get translated page ID if WPML is active.
-					if ( defined( 'ICL_SITEPRESS_VERSION' ) && class_exists( 'XLWCTY_WPML' ) && $this->order instanceof WC_Order ) {
-						$wpml_compat         = XLWCTY_WPML::get_instance();
-						$order_lang          = $wpml_compat->get_order_language( $this->order );
+					// Get translated page ID if a multilingual plugin is active.
+					if ( $multilingual_compat && $this->order instanceof WC_Order && method_exists( $multilingual_compat, 'get_order_language' ) && method_exists( $multilingual_compat, 'get_translated_page_id' ) && method_exists( $multilingual_compat, 'get_post_language' ) ) {
+						$order_lang          = $multilingual_compat->get_order_language( $this->order );
 						$original_content_id = $content_id;
 
 						// Check if current page is already in order's language
-						$page_lang = $wpml_compat->get_post_language( $content_id );
+						$page_lang = $multilingual_compat->get_post_language( $content_id );
 						if ( $page_lang !== $order_lang ) {
 							// Get translation for order's language
-							$content_id = $wpml_compat->get_translated_page_id( $content_id, $order_lang );
+							$content_id = $multilingual_compat->get_translated_page_id( $content_id, $order_lang );
 						}
 
 						// Verify the page exists and is accessible
 						$page_post = get_post( $content_id );
 						if ( ! $page_post || $page_post->post_status !== 'publish' ) {
 							// Try to get default language version
-							$default_lang = $wpml_compat->get_default_language();
+							$default_lang = method_exists( $multilingual_compat, 'get_default_language' ) ? $multilingual_compat->get_default_language() : '';
 							if ( $default_lang ) {
-								$default_id   = apply_filters( 'wpml_object_id', $original_content_id, XLWCTY_Common::get_thank_you_page_post_type_slug(), true, $default_lang );
+								if ( function_exists( 'pll_get_post' ) ) {
+									$default_id = pll_get_post( $original_content_id, $default_lang );
+								} else {
+									$default_id = apply_filters( 'wpml_object_id', $original_content_id, XLWCTY_Common::get_thank_you_page_post_type_slug(), true, $default_lang );
+								}
 								$default_post = get_post( $default_id );
 								if ( $default_post && $default_post->post_status === 'publish' ) {
 									$content_id = $default_id;
@@ -174,21 +181,25 @@ class XLWCTY_Data {
 
 					// Get translated page ID first, then generate permalink
 					$final_page_id = $content_id;
-					if ( defined( 'ICL_SITEPRESS_VERSION' ) && class_exists( 'XLWCTY_WPML' ) && $this->order instanceof WC_Order ) {
-						$wpml_compat  = XLWCTY_WPML::get_instance();
-						$order_lang   = $wpml_compat->get_order_language( $this->order );
-						$current_lang = $wpml_compat->get_current_language();
+					if ( $multilingual_compat && $this->order instanceof WC_Order && method_exists( $multilingual_compat, 'get_order_language' ) && method_exists( $multilingual_compat, 'get_translated_page_id' ) ) {
+						$order_lang   = $multilingual_compat->get_order_language( $this->order );
+						$current_lang = method_exists( $multilingual_compat, 'get_current_language' ) ? $multilingual_compat->get_current_language() : '';
 
-						// Get translated page ID for order's language (already done above, but ensure we use it)
-						// $content_id is already translated above, but let's verify
-						$final_page_id = $wpml_compat->get_translated_page_id( $content_id, $order_lang );
+						$final_page_id = $multilingual_compat->get_translated_page_id( $content_id, $order_lang );
 
-						// Switch to order's language to get correct permalink
-						global $sitepress;
-						if ( $sitepress instanceof SitePress ) {
-							$sitepress->switch_lang( $order_lang, true );
-							$permalink = get_permalink( $final_page_id );
-							$sitepress->switch_lang( $current_lang, true );
+						if ( method_exists( $multilingual_compat, 'switch_to_language' ) && method_exists( $multilingual_compat, 'restore_language' ) ) {
+							$previous_language = $multilingual_compat->switch_to_language( $order_lang );
+							$permalink         = get_permalink( $final_page_id );
+							$multilingual_compat->restore_language( $previous_language );
+						} elseif ( class_exists( 'SitePress' ) ) {
+							global $sitepress;
+							if ( $sitepress instanceof SitePress ) {
+								$sitepress->switch_lang( $order_lang, true );
+								$permalink = get_permalink( $final_page_id );
+								$sitepress->switch_lang( $current_lang, true );
+							} else {
+								$permalink = get_permalink( $final_page_id );
+							}
 						} else {
 							$permalink = get_permalink( $final_page_id );
 						}
@@ -213,7 +224,7 @@ class XLWCTY_Data {
 		}
 
 		if ( 0 === $order_id ) {
-			$order_id = ( isset( $_GET['order_id'] ) && ( $_GET['order_id'] !== '' ) ) ? wc_clean( $_GET['order_id'] ) : 0;
+			$order_id = ( isset( $_GET['order_id'] ) && ( $_GET['order_id'] !== '' ) ) ? absint( wp_unslash( $_GET['order_id'] ) ) : 0;
 		}
 		if ( 0 !== $order_id ) {
 			$this->order_id = $order_id;
@@ -231,7 +242,7 @@ class XLWCTY_Data {
 		}
 
 		if ( 0 === $order_id ) {
-			$order_id = ( isset( $_GET['order_id'] ) && ( $_GET['order_id'] !== '' ) ) ? wc_clean( $_GET['order_id'] ) : 0;
+			$order_id = ( isset( $_GET['order_id'] ) && ( $_GET['order_id'] !== '' ) ) ? absint( wp_unslash( $_GET['order_id'] ) ) : 0;
 		}
 
 		$this->order_id = $order_id;

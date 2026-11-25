@@ -94,8 +94,9 @@ body .xlwcty_wrap table.woocommerce-table tr > *:first-child {border-left-width:
 
 .xlwcty_wrap .xlwcty_embed_video { margin: 20px 0 0; position: relative; }
 .xlwcty_wrap .xlwcty_embed_video .xlwcty_16by9 {position: relative; padding-top: 56.25%}
+/* Vendor override: FitVids sets padding-top/position as inline styles on this wrapper, only !important can reset them. */
 .xlwcty_wrap .xlwcty_embed_video .xlwcty_16by9 .fluid-width-video-wrapper{padding:0!important;position:initial!important}
-.xlwcty_wrap .xlwcty_embed_video .xlwcty_16by9 iframe { position: absolute; top: 0; bottom: 0; left: 0; width: 100% !important; height: 100% !important; border: 0; }
+.xlwcty_wrap .xlwcty_embed_video .xlwcty_16by9 iframe { position: absolute; top: 0; bottom: 0; left: 0; width: 100%; height: 100%; border: 0; }
 
 .xlwcty_wrap .xlwcty_img_with_text .xlwcty_col { margin: 15px 0; }
 .xlwcty_wrap .xlwcty_img_with_text .xlwcty_col.xlwcty_last_item { margin-bottom: 0; }
@@ -270,6 +271,7 @@ body .xlwcty_wrap table.woocommerce-table tr > *:first-child {border-left-width:
 .xlwcty_wrap .xlwcty_btn_wrap .xlwcty_btn_title:before { content: ' '; border-left: 1px solid #fff; border-left: 1px solid rgba(255,255,255,0.35); position: absolute; top: 10px; bottom: 10px; left: 0; }
 .xlwcty_wrap .xlwcty_btn_wrap .xlwcty_social_control_wrap { min-width: 128px; height: 40px; padding-right: 15px; padding-left: 50px; text-align: center;}
 .xlwcty_wrap .xlwcty_btn_wrap .xlwcty_social_control_wrap .fb-like {height: 30px;margin-top: 5px;display: inline-block;}
+/* Vendor override: the Facebook SDK writes vertical-align as an inline style on this span, only !important can reset it. */
 .xlwcty_wrap .xlwcty_btn_wrap .xlwcty_social_control_wrap .fb-like span { vertical-align: top !important; }
 .xlwcty_wrap .xlwcty_btn_wrap:hover .xlwcty_btn_title { left: 100%; }
 .xlwcty_wrap .xlwcty_fb_share .xlwcty_btn_wrap:hover .xlwcty_btn_title { left: 38px; }
@@ -295,12 +297,13 @@ body .xlwcty_wrap table.woocommerce-table tr > *:first-child {border-left-width:
 .xlwcty_dropbtn_wrap .xlwcty_dropbtn_inner:hover .xlwcty_dropbtn_outie { background-color: #2d4373;    color: rgba(255,255,255,0); }
 .xlwcty_wrap .xlwcty_share_btn {    display: inline-block;        padding: 3px 10px;    border-radius: 4px;    color: #fff;    line-height: 20px;    font-weight: normal;    background: #4080ff;    border: 1px solid #4080ff;     height: 28px; position: relative; top: -1px; margin-top: 5px;}
 .xlwcty_imgBox_2cw{margin-bottom: 15px}
-.xlwcty_admin_page_node .ab-sub-wrapper .ab-submenu li span.ab-item{padding:0px 10px 0px 10px!important}
-.xlwcty_admin_page_node .ab-sub-wrapper .ab-submenu li span.ab-item a{display:inline-block !important;padding:0px !important;text-decoration:underline!important}
-li.xlwcty_admin_page_node > .ab-item {background:#1bc2a8!important;color:#fff!important;}
+/* Admin bar "XL NextMove" node: scoped to #wpadminbar plus the node ID, which outranks core admin-bar.css (single #wpadminbar selectors) without !important. */
+#wpadminbar #wp-admin-bar-xlwcty_admin_page_node .ab-sub-wrapper .ab-submenu li span.ab-item{padding:0px 10px 0px 10px}
+#wpadminbar #wp-admin-bar-xlwcty_admin_page_node .ab-sub-wrapper .ab-submenu li span.ab-item a{display:inline-block;padding:0px;text-decoration:underline}
+#wpadminbar li#wp-admin-bar-xlwcty_admin_page_node.xlwcty_admin_page_node > .ab-item {background:#1bc2a8;color:#fff;}
 ul#wp-admin-bar-xlwcty_admin_page_node-default {-webkit-column-count: 2;-moz-column-count: 2;column-count: 2;}
 ul#wp-admin-bar-xlwcty_admin_page_node-default > li { width:270px;padding:0 10px;}
-ul#wp-admin-bar-xlwcty_admin_page_node-default > li > span {height:auto !important;white-space:initial !important;padding:0!important;line-height:19px !important;}
+#wpadminbar #wp-admin-bar-xlwcty_admin_page_node #wp-admin-bar-xlwcty_admin_page_node-default > li > span {height:auto;white-space:initial;padding:0;line-height:19px;}
 
 /* share div style */
 .xlwcty_wrap .xlwcty_share_prev { margin: 0 0 15px; border: 1px solid #ebebeb; }

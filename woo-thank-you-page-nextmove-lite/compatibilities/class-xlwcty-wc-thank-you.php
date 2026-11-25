@@ -7,7 +7,11 @@ class XLWCTY_WC_Thank_You {
 	private static $ins = null;
 
 	public function __construct() {
-		add_action( 'plugins_loaded', array( $this, 'actions' ), 3 );
+		/**
+		 * This file is loaded by XLWCTY_Compatibilities on plugins_loaded priority 999, so hooking
+		 * plugins_loaded at a lower priority would never fire. All plugins are loaded by now; run directly.
+		 */
+		$this->actions();
 	}
 
 	public static function get_instance() {

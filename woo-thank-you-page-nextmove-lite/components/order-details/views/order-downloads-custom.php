@@ -37,7 +37,7 @@ echo '<br><div class="xlwcty_title">' . __( 'Downloads', 'woocommerce' ) . '</di
 								if ( ! empty( $download['access_expires'] ) ) {
 									echo '<time datetime="' . esc_attr( date( 'Y-m-d', strtotime( $download['access_expires'] ) ) ) . '" title="' . esc_attr( strtotime( $download['access_expires'] ) ) . '">' . esc_html( date_i18n( get_option( 'date_format' ), strtotime( $download['access_expires'] ) ) ) . '</time>';
 								} else {
-									esc_html__( 'Never', 'woocommerce' );
+									esc_html_e( 'Never', 'woocommerce' );
 								}
 								break;
 						}

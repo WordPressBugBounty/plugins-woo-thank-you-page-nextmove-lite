@@ -1,6 +1,16 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * The order pre-data runs a wc_get_orders() query. This file is included on every
+ * `cmb2_init` (i.e. every admin request), so only build it on the NextMove settings
+ * screen where the debug box is actually rendered.
+ */
+$xlwcty_debug_pre_data = array();
+if ( is_admin() && 'wc-settings' === filter_input( INPUT_GET, 'page' ) && XLWCTY_Common::get_wc_settings_tab_slug() === filter_input( INPUT_GET, 'tab' ) && 'settings' === filter_input( INPUT_GET, 'section' ) ) {
+	$xlwcty_debug_pre_data = XLWCTY_Admin_CMB2_Support::get_orders_cmb2( null, true );
+}
+
 return array(
 	array(
 		'id'               => "order_select",
@@ -11,7 +21,7 @@ return array(
 		'show_option_none' => __( 'Choose an Order', 'woo-thank-you-page-nextmove-lite' ),
 		'options_cb'       => array( 'XLWCTY_Admin_CMB2_Support', 'get_orders_cmb2' ),
 		'attributes'       => array(
-			'data-pre-data' => wp_json_encode( XLWCTY_Admin_CMB2_Support::get_orders_cmb2( null, true ) ),
+			'data-pre-data' => wp_json_encode( $xlwcty_debug_pre_data ),
 		)
 	),
 	array(

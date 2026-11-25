@@ -1,48 +1,59 @@
 (function ($, window, document) {
     'use strict';
 
-    (function (d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id))
+    /**
+     * Third-party SDKs (Facebook JS SDK, Twitter widgets.js) are no longer injected on every thank-you page.
+     * They are loaded on demand, only when one of the social helpers below is actually called.
+     * The legacy Universal Analytics loader (analytics.js) has been removed; GA4 tracking is printed separately.
+     */
+    window.xlwcty_with_fb = function (callback) {
+        if (typeof window.FB !== 'undefined') {
+            callback();
             return;
-        js = d.createElement(s);
-        js.id = id;
-        js.src = "//connect.facebook.net/en_US/sdk.js";
-        fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-
-    (function (i, s, o, g, r, a, m) {
-        i.GoogleAnalyticsObject = r;
-        i[r] = i[r] || function () {
-            (i[r].q = i[r].q || []).push(arguments);
-        }, i[r].l = 1 * new Date();
-        a = s.createElement(o),
-            m = s.getElementsByTagName(o)[0];
-        a.async = 1;
-        a.src = g;
-        m.parentNode.insertBefore(a, m);
-    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-
-    window.twttr = (function (d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0],
-            t = window.twttr || {};
-        if (d.getElementById(id))
-            return t;
-        js = d.createElement(s);
-        js.id = id;
-        js.src = "https://platform.twitter.com/widgets.js";
-        fjs.parentNode.insertBefore(js, fjs);
-
-        t._e = [];
-        t.ready = function (f) {
-            t._e.push(f);
+        }
+        var prev_init = window.fbAsyncInit;
+        window.fbAsyncInit = function () {
+            if (typeof prev_init === 'function') {
+                prev_init();
+            } else {
+                FB.init(xlwcty.social.fb);
+            }
+            callback();
         };
+        if (document.getElementById('facebook-jssdk')) {
+            return;
+        }
+        var js = document.createElement('script'), fjs = document.getElementsByTagName('script')[0];
+        js.id = 'facebook-jssdk';
+        js.async = true;
+        js.src = 'https://connect.facebook.net/en_US/sdk.js';
+        fjs.parentNode.insertBefore(js, fjs);
+    };
+    window.xlwcty_with_twttr = function (callback) {
+        if (window.twttr && window.twttr.events) {
+            callback();
+            return;
+        }
+        window.twttr = (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0], t = window.twttr || {};
+            if (d.getElementById(id)) {
+                return t;
+            }
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "https://platform.twitter.com/widgets.js";
+            fjs.parentNode.insertBefore(js, fjs);
 
-        return t;
-    }(document, "script", "twitter-wjs"));
+            t._e = [];
+            t.ready = function (f) {
+                t._e.push(f);
+            };
 
-    window.fbAsyncInit = function () {
-        FB.init(xlwcty.social.fb);
+            return t;
+        }(document, "script", "twitter-wjs"));
+        if (typeof window.twttr.ready === 'function') {
+            window.twttr.ready(callback);
+        }
     };
     window.xlwcty_hooks = {
         hooks: {action: {}, filter: {}}, addAction: function (t, n, e, i) {
@@ -85,6 +96,12 @@
         }
     };
     window.facebook_share = function (data, callback) {
+        if (typeof window.FB === 'undefined') {
+            xlwcty_with_fb(function () {
+                facebook_share(data, callback);
+            });
+            return;
+        }
         if (Object.keys(data).length == 0) {
             return false;
         }
@@ -106,12 +123,16 @@
         }
     };
     window.facebook_like = function (callback_like, callback_dislike) {
-        FB.Event.subscribe('edge.create', callback_like);
+        xlwcty_with_fb(function () {
+            FB.Event.subscribe('edge.create', callback_like);
+        });
     };
 
     window.twitter_follow = function (callback) {
-        twttr.events.bind('follow', function (event) {
-            callback(event);
+        xlwcty_with_twttr(function () {
+            twttr.events.bind('follow', function (event) {
+                callback(event);
+            });
         });
     };
 
@@ -198,6 +219,12 @@
         }
 
         if (typeof xlwcty_fab_ecom !== 'undefined' && xlwcty_fab_ecom) {
+            // Tracking data is printed as a JS object literal; parse any legacy JSON-string values defensively.
+            $.each(['fb_pa_data', 'products', 'gproducts'], function (i, key) {
+                if (typeof xlwcty_fab_ecom[key] === 'string') {
+                    xlwcty_fab_ecom[key] = maybeParseJson(xlwcty_fab_ecom[key]);
+                }
+            });
             if (xlwcty_fab_ecom.pixel_id > 0 && xlwcty_fab_ecom.pixel_id !== undefined) {
                 !function (f, b, e, v, n, t, s) {
                     if (f.fbq)
@@ -231,17 +258,15 @@
                     fbq('track', 'PageView');
                 }
 
-                if (xlwcty_fab_ecom.facebook_purchase_event === 'on') {
-                    fbq('track', 'Purchase', {
-                        contents: xlwcty_fab_ecom.products,
-                        content_type: 'product',
-                        value: xlwcty_fab_ecom.order_total,
-                        currency: xlwcty_fab_ecom.currency,
-                    });
-                }
-
-                if (xlwcty_fab_ecom.facebook_purchase_event_conversion === 'on') {
-                    fbq('track', 'Purchase', {'value': xlwcty_fab_ecom.order_total, 'currency': xlwcty_fab_ecom.currency});
+                // Fire a single Purchase event even when both purchase toggles are on (contents are added when the
+                // "purchase event" toggle is on) and pass the order id as eventID so Facebook can deduplicate it.
+                if (xlwcty_fab_ecom.facebook_purchase_event === 'on' || xlwcty_fab_ecom.facebook_purchase_event_conversion === 'on') {
+                    var xlwcty_purchase_data = {value: xlwcty_fab_ecom.order_total, currency: xlwcty_fab_ecom.currency};
+                    if (xlwcty_fab_ecom.facebook_purchase_event === 'on') {
+                        xlwcty_purchase_data.contents = xlwcty_fab_ecom.products;
+                        xlwcty_purchase_data.content_type = 'product';
+                    }
+                    fbq('track', 'Purchase', xlwcty_purchase_data, {eventID: String(xlwcty_fab_ecom.order_id)});
                 }
             }
         }

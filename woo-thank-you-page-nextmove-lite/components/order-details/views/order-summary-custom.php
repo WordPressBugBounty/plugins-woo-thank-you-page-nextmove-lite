@@ -35,7 +35,7 @@ $show_purchase_note = $order_data->has_status( apply_filters( 'woocommerce_purch
 						?>
                         <div class="xlwcty_p_img">
 							<?php
-							$thumbnail = ( $product ) ? $product->get_image( 'shop_thumbnail' ) : '';
+							$thumbnail = ( $product ) ? $product->get_image( 'woocommerce_gallery_thumbnail' ) : '';
 							if ( ! $product_permalink ) {
 								echo $thumbnail;
 							} else {
@@ -78,7 +78,8 @@ $show_purchase_note = $order_data->has_status( apply_filters( 'woocommerce_purch
 			<?php
 			endif;
 		}
-		do_action( 'woocommerce_order_items_table', $order_data );
+		// Current hook; WooCommerce's deprecated-hook mapper also runs legacy woocommerce_order_items_table callbacks (with a notice).
+		do_action( 'woocommerce_order_details_after_order_table_items', $order_data );
 		?>
         <table>
             <tfoot>

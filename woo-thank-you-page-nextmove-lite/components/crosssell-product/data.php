@@ -3,7 +3,7 @@ defined( 'ABSPATH' ) || exit;
 
 $config             = array();
 $config['slug']     = '_xlwcty_cross_sell_product';
-$config['title']    = 'Cross-Sell';
+$config['title']    = __( 'Cross-Sell', 'woo-thank-you-page-nextmove-lite' );
 $config['instance'] = require __DIR__ . '/instance.php';
 $config['fields']   = array(
 	'id'                     => $config['slug'],

@@ -20,14 +20,21 @@ class XLWCTY_Wc_Subscriptions {
 		if ( '' != $is_subscription_switch_order ) {
 			$all_switches = maybe_unserialize( $order->get_meta( '_subscription_switch_data', true ) );
 			if ( is_array( $all_switches ) && count( $all_switches ) > 0 ) {
-				$all_switches = $all_switches[ $is_subscription_switch_order ]['switches'];
+				$all_switches  = isset( $all_switches[ $is_subscription_switch_order ]['switches'] ) ? $all_switches[ $is_subscription_switch_order ]['switches'] : array();
+				$removed_items = array();
+				$added_items   = array();
 				if ( is_array( $all_switches ) && count( $all_switches ) > 0 ) {
-					$removed_items = array();
-					$added_items   = array();
 					foreach ( $all_switches as $key1 => $value1 ) {
-						$removed_items[] = $value1['remove_line_item'];
-						$added_items[]   = $value1['add_line_item'];
+						if ( ! empty( $value1['remove_line_item'] ) ) {
+							$removed_items[] = absint( $value1['remove_line_item'] );
+						}
+						if ( ! empty( $value1['add_line_item'] ) ) {
+							$added_items[] = absint( $value1['add_line_item'] );
+						}
 					}
+				}
+				if ( empty( $removed_items ) || empty( $added_items ) ) {
+					return $final_result;
 				}
 				$table_order_itemmeta        = $wpdb->prefix . 'woocommerce_order_itemmeta';
 				$how_many                    = count( $removed_items );
@@ -35,39 +42,51 @@ class XLWCTY_Wc_Subscriptions {
 				$format                      = implode( ', ', $placeholders );
 				$query                       = 'SELECT woi.order_item_id, woi.meta_value as product_id FROM `' . $table_order_itemmeta . "` as woi WHERE woi.meta_key = '_product_id' AND woi.order_item_id IN($format)";
 				$results_removed_product_ids = $wpdb->get_results( $wpdb->prepare( $query, $removed_items ), ARRAY_A );
-				$results_added_product_ids   = $wpdb->get_results( $wpdb->prepare( $query, $added_items ), ARRAY_A );
+				$format_added                = implode( ', ', array_fill( 0, count( $added_items ), '%d' ) );
+				$query_added                 = 'SELECT woi.order_item_id, woi.meta_value as product_id FROM `' . $table_order_itemmeta . "` as woi WHERE woi.meta_key = '_product_id' AND woi.order_item_id IN($format_added)";
+				$results_added_product_ids   = $wpdb->get_results( $wpdb->prepare( $query_added, $added_items ), ARRAY_A );
 				if ( is_array( $results_removed_product_ids ) && count( $results_removed_product_ids ) > 0 ) {
 					$all_itmes_total_removed_price = 0;
 					$all_itmes_total_added_price   = 0;
 					foreach ( $results_removed_product_ids as $key1 => $value1 ) {
 						$product = wc_get_product( $value1['product_id'] );
+						if ( ! $product instanceof WC_Product ) {
+							// Product deleted: prices cannot be compared reliably.
+							return $final_result;
+						}
 						if ( $product->is_type( 'variable' ) ) {
 							$query        = 'SELECT woi.order_item_id, woi.meta_value as variation_id FROM `' . $table_order_itemmeta . "` as woi WHERE woi.meta_key = '_variation_id' AND woi.order_item_id = %d";
 							$variation_id = $wpdb->get_results( $wpdb->prepare( $query, $value1['order_item_id'] ), ARRAY_A );
 							if ( is_array( $variation_id ) && count( $variation_id ) > 0 ) {
 								$variation_id                  = $variation_id[0]['variation_id'];
 								$variable_product              = wc_get_product( $variation_id );
-								$price                         = $variable_product->price;
-								$all_itmes_total_removed_price += $price;
+								if ( $variable_product instanceof WC_Product ) {
+									$all_itmes_total_removed_price += (float) $variable_product->get_price();
+								}
 							}
 						} else {
-							$price                         = $product->get_price();
+							$price                         = (float) $product->get_price();
 							$all_itmes_total_removed_price += $price;
 						}
 					}
 					foreach ( $results_added_product_ids as $key1 => $value1 ) {
 						$product = wc_get_product( $value1['product_id'] );
+						if ( ! $product instanceof WC_Product ) {
+							// Product deleted: prices cannot be compared reliably.
+							return $final_result;
+						}
 						if ( $product->is_type( 'variable' ) ) {
 							$query        = 'SELECT woi.order_item_id, woi.meta_value as variation_id FROM `' . $table_order_itemmeta . "` as woi WHERE woi.meta_key = '_variation_id' AND woi.order_item_id = %d";
 							$variation_id = $wpdb->get_results( $wpdb->prepare( $query, $value1['order_item_id'] ), ARRAY_A );
 							if ( is_array( $variation_id ) && count( $variation_id ) > 0 ) {
 								$variation_id                = $variation_id[0]['variation_id'];
 								$variable_product            = wc_get_product( $variation_id );
-								$price                       = $variable_product->price;
-								$all_itmes_total_added_price += $price;
+								if ( $variable_product instanceof WC_Product ) {
+									$all_itmes_total_added_price += (float) $variable_product->get_price();
+								}
 							}
 						} else {
-							$price                       = $product->get_price();
+							$price                       = (float) $product->get_price();
 							$all_itmes_total_added_price += $price;
 						}
 					}

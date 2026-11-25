@@ -124,7 +124,7 @@ class XLWCTY_Upsell {
 	public function notice_enqueue_scripts() {
 		wp_enqueue_style( 'xlwcty-notices-css', plugin_dir_url( $this->plugin_path ) . 'admin/assets/css/xlwcty-xl-notice.css', array(), XLWCTY_VERSION );
 		wp_enqueue_script( 'wp-util' );
-		wp_enqueue_script( 'xlwcty-notices.js', $this->get_admin_url() . '/assets/js/xlwcty-notices.min.js', XLWCTY_VERSION );
+		wp_enqueue_script( 'xlwcty-notices.js', $this->get_admin_url() . '/assets/js/xlwcty-notices.min.js', array( 'jquery', 'wp-util' ), XLWCTY_VERSION, true );
 		$xlwcty_notice_nonce = wp_create_nonce( 'xlwcty_notice_nonce' );
 		wp_localize_script( 'xlwcty-notices.js', 'xlwcty_notice_vars', array(
 			'nonce' => $xlwcty_notice_nonce,
@@ -472,7 +472,7 @@ class XLWCTY_Upsell {
 			) );
 			exit;
 		}
-		$nonce = isset( $_POST['xli_nonce'] ) ? $_POST['xli_nonce'] : '';
+		$nonce = isset( $_POST['xli_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['xli_nonce'] ) ) : '';
 		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'xlwcty_notice_nonce' ) ) {
 			wp_send_json( array(
 				'status'  => 'error',
@@ -480,12 +480,23 @@ class XLWCTY_Upsell {
 			) );
 			exit;
 		}
-		if ( isset( $_POST['notice_displayed_count'] ) && ( '' != $_POST['notice_displayed_count'] ) ) {
-			$notice_displayed_count = $_POST['notice_displayed_count'];
+		if ( isset( $_POST['notice_displayed_count'] ) && ( '+1' === wp_unslash( $_POST['notice_displayed_count'] ) ) ) {
+			$notice_displayed_count = '+1'; // "Later" snooze, handled by dismiss_notice().
+		} elseif ( isset( $_POST['notice_displayed_count'] ) && ( '' != $_POST['notice_displayed_count'] ) ) {
+			$notice_displayed_count = absint( $_POST['notice_displayed_count'] );
 		} else {
-			$notice_displayed_count = '100';
+			$notice_displayed_count = 100;
 		}
-		$this->dismiss_notice( $_POST['plugin'], $notice_displayed_count );
+		// Sanitize the plugin identifier — it is used to build an option/transient name.
+		$plugin = isset( $_POST['plugin'] ) ? sanitize_key( wp_unslash( $_POST['plugin'] ) ) : '';
+		if ( '' === $plugin ) {
+			wp_send_json( array(
+				'status'  => 'error',
+				'message' => 'Invalid plugin.',
+			) );
+			exit;
+		}
+		$this->dismiss_notice( $plugin, $notice_displayed_count );
 		wp_send_json_success();
 	}
 
@@ -532,34 +543,14 @@ class XLWCTY_Upsell {
                     var noticeWrap = $('#xl_notice_type_3');
                     var pluginShortSlug = noticeWrap.attr("data-plugin");
                     var pluginSlug = noticeWrap.attr("data-plugin-slug");
-                    $('body').on('click', '.xl-notice-dismiss', function (e) {
-                        e.preventDefault();
-                        var $this = $(this);
-                        var xlDisplayedMode = $this.attr("data-mode");
-                        if (xlDisplayedMode == 'dismiss') {
-                            xlDisplayedCount = '100';
-                        } else if (xlDisplayedMode == 'later') {
-                            xlDisplayedCount = '+1';
-                        }
-                        noticeWrap = $this.parents('#xl_notice_type_3');
-                        pluginShortSlug = noticeWrap.attr("data-plugin");
-                        pluginSlug = noticeWrap.attr("data-plugin-slug");
-                        wp.ajax.send('finale_upsells_dismiss', {
-                            data: {
-                                plugin: pluginShortSlug,
-                                notice_displayed_count: xlDisplayedCount,
-                            },
-                        });
-                        $this.closest('.updated').slideUp('fast', function () {
-                            $this.remove();
-                        });
-                    });
+                    /** Dismiss / later clicks are handled by xlwcty-notices.js (nonce-protected nextmove_upsells_dismiss) */
                     $(document).on('wp-plugin-install-success', function (e, args) {
-                        if (args.slug == pluginSlug) {
-                            wp.ajax.send('finale_upsells_dismiss', {
+                        if (args.slug == pluginSlug && typeof xlwcty_notice_vars !== 'undefined') {
+                            wp.ajax.send('nextmove_upsells_dismiss', {
                                 data: {
                                     plugin: pluginShortSlug,
                                     notice_displayed_count: '100',
+                                    xli_nonce: xlwcty_notice_vars.nonce,
                                 },
                             });
                         }

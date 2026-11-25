@@ -12,7 +12,6 @@ class XLWCTY_Order_Details extends XLWCTY_Component {
 		parent::__construct();
 		$this->viewpath = __DIR__ . '/views/view.php';
 		add_action( 'xlwcty_after_components_loaded', array( $this, 'setup_fields' ) );
-		add_filter( 'wc_get_template', array( $this, 'subs_get_template' ), 10, 5 );
 		add_action( 'xlwcty_after_component_data_setup_xlwcty_order_details', array( $this, 'setup_style' ) );
 
 		if ( class_exists( 'WC_Subscriptions_Order' ) ) {
@@ -47,6 +46,11 @@ class XLWCTY_Order_Details extends XLWCTY_Component {
 		);
 	}
 
+	/**
+	 * Swap WooCommerce Subscriptions' related-subscriptions template for the NextMove one.
+	 * Attached only while this component renders (see views/view.php), so the native
+	 * order-received page, My Account and other requests keep the WCS/theme template.
+	 */
 	public function subs_get_template( $located, $template_name, $args, $template_path, $default_path ) {
 
 		if ( 'myaccount/related-subscriptions.php' === $template_name ) {

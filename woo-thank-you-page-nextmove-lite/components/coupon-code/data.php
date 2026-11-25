@@ -3,7 +3,7 @@ defined( 'ABSPATH' ) || exit;
 
 $config             = array();
 $config['slug']     = '_xlwcty_coupon';
-$config['title']    = 'Dynamic Coupons';
+$config['title']    = __( 'Dynamic Coupons', 'woo-thank-you-page-nextmove-lite' );
 $config['instance'] = require __DIR__ . '/instance.php';
 $config['fields']   = array(
 	'id'                     => $config['slug'],

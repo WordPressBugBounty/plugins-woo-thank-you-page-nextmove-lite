@@ -45,7 +45,7 @@ $show_customer_details = is_user_logged_in() && $order_data->get_user_id() === g
 									?>
                                     <td width="100">
 										<?php
-										$thumbnail = $product->get_image();
+										$thumbnail = $product ? $product->get_image() : wc_placeholder_img();
 										if ( ! $product_permalink ) {
 											echo $thumbnail;
 										} else {
@@ -86,7 +86,8 @@ $show_customer_details = is_user_logged_in() && $order_data->get_user_id() === g
 				<?php
 				endif;
 			}
-			do_action( 'woocommerce_order_items_table', $order_data );
+			// Current hook; WooCommerce's deprecated-hook mapper also runs legacy woocommerce_order_items_table callbacks (with a notice).
+			do_action( 'woocommerce_order_details_after_order_table_items', $order_data );
 			?>
             </tbody>
             <tfoot>

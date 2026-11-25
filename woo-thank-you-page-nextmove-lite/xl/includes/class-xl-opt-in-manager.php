@@ -38,7 +38,7 @@ class XL_optIn_Manager {
 		// optin yes track callback
 		add_action( 'xl_optin_success_track_scheduled', array( __CLASS__, 'optin_track_usage' ), 10 );
 
-		add_filter( 'cron_schedules', array( __CLASS__, 'register_weekly_schedule' ), 10 );
+		add_filter( 'cron_schedules', array( __CLASS__, 'register_weekly_schedule' ), 10, 2 );
 	}
 
 	/**
@@ -224,7 +224,15 @@ class XL_optIn_Manager {
 		return $user_count;
 	}
 
-	public static function register_weekly_schedule( $schedules ) {
+	/**
+	 * Register weekly schedule for cron.
+	 *
+	 * @param array $schedules Existing cron schedules.
+	 * @param mixed $interval  Optional. Ignored; present for PHP 8+ named-argument compatibility
+	 *                         when the hook is invoked with an 'interval' parameter (e.g. from core/other plugins).
+	 * @return array Modified schedules.
+	 */
+	public static function register_weekly_schedule( $schedules, $interval = null ) {
 		$schedules['weekly_xl'] = array(
 			'interval' => WEEK_IN_SECONDS,
 			'display'  => __( 'Weekly XL' ),
@@ -234,7 +242,16 @@ class XL_optIn_Manager {
 	}
 
 	public static function xlo_optin_call() {
-		$nonce = isset( $_POST['xlo_nonce'] ) ? $_POST['xlo_nonce'] : '';
+		// Enabling telemetry and forwarding data to the vendor is an admin-level action.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json( array(
+				'status'  => 'error',
+				'message' => 'Insufficient permissions.',
+			) );
+			exit;
+		}
+
+		$nonce = isset( $_POST['xlo_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['xlo_nonce'] ) ) : '';
 		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'xlo_optin_nonce' ) ) {
 			wp_send_json( array(
 				'status'  => 'error',
@@ -244,7 +261,7 @@ class XL_optIn_Manager {
 		}
 
 		$_POST['domain'] = site_url();
-		$_POST['ip']     = $_SERVER['REMOTE_ADDR'];
+		$_POST['ip']     = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 		XL_API::post_optin_data( $_POST );
 
 		self::Allow_optin();

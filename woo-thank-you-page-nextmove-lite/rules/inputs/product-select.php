@@ -40,7 +40,7 @@ class xlwcty_Input_Product_Select {
 
 		?>
 
-        <select id="<?php echo $field['id']; ?>" name="<?php echo $field['name']; ?>[]" class="ajax_chosen_select_products" multiple="multiple" data-placeholder="<?php _e( 'Search for a product&hellip;', 'woocommerce' ); ?>">
+        <select id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo xlwcty_Input_Builder::esc_name( $field['name'] ); ?>[]" class="ajax_chosen_select_products" multiple="multiple" data-placeholder="<?php _e( 'Search for a product&hellip;', 'woocommerce' ); ?>">
 			<?php
 			$current     = $value ? $value : array();
 			$product_ids = ! empty( $current ) ? array_map( 'absint', $current ) : null;

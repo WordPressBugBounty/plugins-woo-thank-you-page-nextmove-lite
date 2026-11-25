@@ -52,6 +52,18 @@ function xlwcty_getCookie(cname) {
     return "";
 }
 
+function xlwctyIsSafePreviewWindowUrl(url) {
+    if (!url || typeof url !== 'string') {
+        return false;
+    }
+    try {
+        var parsed = new URL(url.trim(), window.location.href);
+        return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    } catch (e) {
+        return false;
+    }
+}
+
 function xlwcty_manage_radio_active($) {
     if ($(".cmb-row.xlwcty_radio_btn").length > 0) {
         $(".cmb-row.xlwcty_radio_btn").each(function () {
@@ -125,7 +137,7 @@ function xlwcty_manage_radio_active($) {
                     // We don't need to check ten times for one radio field with ten options,
                     // the conditionals are for the field, not the option.
                     if ('undefined' !== typeof currentFieldName && '' !== currentFieldName && $.inArray(currentFieldName, dependantsSeen) < 0) {
-                        dependantsSeen.push = currentFieldName;
+                        dependantsSeen.push(currentFieldName);
 
                         if ('checkbox' === elm.attr('type')) {
                             if ('undefined' === typeof requiredValue) {
@@ -720,47 +732,6 @@ function xlwcty_manage_radio_active($) {
 
         var nonce = cmb2_vars.nonce;
         $(".xlwcty_cmb2_chosen select").xlChosen({});
-        if ($(".xlwcty_cmb2_coupon select").length > 0) {
-            $(".xlwcty_cmb2_coupon select").xlAjaxChosen({
-                type: 'POST',
-                minTermLength: 3,
-                afterTypeDelay: 500,
-                data: {
-                    'action': 'get_coupons_cmb2',
-                    cmb2_nonce: nonce,
-                },
-                url: ajaxurl,
-                dataType: 'json'
-            }, function (data) {
-                var results = [];
-                $.each(data, function (i, val) {
-                    results.push({value: val.value, text: val.text});
-                });
-                return results;
-            }).change(function () {
-                var $this = $(this);
-                var descElem = $this.parents(".cmb-td").children(".cmb2-metabox-description");
-                if (descElem.length > 0) {
-                    var descElemVal = 'NextMove reveals the selected Coupon code. If you choose to <em>personalize</em> this coupon, all the settings of this coupon will be copied to generate a new personalized Coupon. Don\'t forget to check coupon\'s <a href="{coupon_link}" target="_blank">usage restrictions</a>.';
-                    if ($this.val()) {
-                        var newVal = parseInt($this.val());
-                        if (newVal > 0) {
-                            descElemVal = descElemVal.replace('{coupon_link}', xlwctyParams.admin_url + 'post.php?post=' + newVal + '&action=edit#usage_restriction_coupon_data');
-                            descElem.html(descElemVal);
-                            descElem.css("display", "block");
-                        } else {
-                            descElemVal = descElemVal.replace('{coupon_link}', "javascript:void(0)");// jshint ignore:line
-                            descElem.html(descElemVal);
-                            descElem.css("display", "none");
-                        }
-                    } else {
-                        descElemVal = descElemVal.replace('{coupon_link}', "javascript:void(0)");// jshint ignore:line
-                        descElem.html(descElemVal);
-                        descElem.css("display", "none");
-                    }
-                }
-            });
-        }
         if ($(".xlwcty_product_cmb2_chosen select").length > 0) {
             $(".xlwcty_product_cmb2_chosen select").xlAjaxChosen({
                 type: 'POST',
@@ -844,9 +815,11 @@ function xlwcty_manage_radio_active($) {
             var expires = "expires=" + d.toUTCString();
             document.cookie = "xlwcty_preview_data  = ;" + expires + ";path=/";
 
-            setTimeout(function () {
-                window.open(CookieVal, '', 'menubar=no,status=no,width=1000,height=700,resizable=yes');
-            }, 600);
+            if (xlwctyIsSafePreviewWindowUrl(CookieVal)) {
+                setTimeout(function () {
+                    window.open(CookieVal, '', 'menubar=no,status=no,width=1000,height=700,resizable=yes');
+                }, 600);
+            }
         }
     });
 
@@ -1030,25 +1003,34 @@ function xlwcty_manage_radio_active($) {
     }
 
     $(document).on('cmb_init', function () {
-        $(document).on('cmb_init', function () {
-            $(".cmb2-colorpicker").each(function () {
-                var oldCb = jQuery(this).iris("option", "change");
-                jQuery(this).iris("option", "change", function (event, ui) {
-                        oldCb(event, ui);
-                        if (XLWCTY_ContentLoaded === true) {
-                            Formchanges = true;
-                        }
-                    }
-                );
-            });
-
-            var color_result_text = $(".wp-color-result-text");
-            if (color_result_text.length > 0) {
-                color_result_text.each(function () {
-                    $(this).text('Select Color');
-                });
+        $(".cmb2-colorpicker").each(function () {
+            var $picker = jQuery(this);
+            var oldCb;
+            if ($picker.data('xlwctyIrisBound')) {
+                return;
             }
-
+            try {
+                oldCb = $picker.iris("option", "change");
+            } catch (err) {
+                return; // iris not initialised on this field yet
+            }
+            $picker.data('xlwctyIrisBound', true);
+            $picker.iris("option", "change", function (event, ui) {
+                    if (typeof oldCb === 'function') {
+                        oldCb(event, ui);
+                    }
+                    if (XLWCTY_ContentLoaded === true) {
+                        Formchanges = true;
+                    }
+                }
+            );
         });
+
+        var color_result_text = $(".wp-color-result-text");
+        if (color_result_text.length > 0) {
+            color_result_text.each(function () {
+                $(this).text('Select Color');
+            });
+        }
     });
 })(jQuery);

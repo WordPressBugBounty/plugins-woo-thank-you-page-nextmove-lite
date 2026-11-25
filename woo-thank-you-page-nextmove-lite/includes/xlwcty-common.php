@@ -31,7 +31,6 @@ class XLWCTY_Common {
 		/**
 		 * Checking xlwcty query params
 		 */
-		add_action( 'init', array( __CLASS__, 'check_query_params' ), 1 );
 		/**
 		 * Loading XL core
 		 */
@@ -43,8 +42,6 @@ class XLWCTY_Common {
 		add_action( 'wp', array( __CLASS__, 'xlwcty_contain_current_query' ), 1 );
 
 		// ajax
-		add_action( 'wp_ajax_get_coupons_cmb2', array( __CLASS__, 'get_coupons_cmb2' ) );
-		add_action( 'wp_ajax_nopriv_get_coupons_cmb2', array( __CLASS__, 'get_coupons_cmb2' ) );
 		add_action( 'wp_ajax_get_product_cmb2', array( __CLASS__, 'get_product_cmb2' ) );
 		add_action( 'wp_ajax_nopriv_get_product_cmb2', array( __CLASS__, 'get_product_cmb2' ) );
 		add_action( 'wp_ajax_xlwcty_get_orders_cmb2', array( __CLASS__, 'xlwcty_get_orders_cmb2' ) );
@@ -75,6 +72,13 @@ class XLWCTY_Common {
 		$date_format = $date_format ? $date_format : 'M d, Y';
 
 		return $date_format;
+	}
+
+	public static function xlwcty_get_time_format() {
+		$time_format = get_option( 'time_format', true );
+		$time_format = $time_format ? $time_format : 'g:i a';
+
+		return $time_format;
 	}
 
 	public static function array_flatten( $array ) {
@@ -110,9 +114,9 @@ class XLWCTY_Common {
 	}
 
 	public static function register_wcthankyou_post_type() {
-		$menu_name = _x( XLWCTY_FULL_NAME, 'Admin menu name', 'woo-thank-you-page-nextmove-lite' );
+		$menu_name = XLWCTY_FULL_NAME; // Product name constant, not a translatable literal.
 		if ( filter_input( INPUT_POST, 'woocommerce_checkout_order_received_endpoint' ) !== null ) {
-			$rewrite_slug = filter_input( INPUT_POST, 'woocommerce_checkout_order_received_endpoint' );
+			$rewrite_slug = sanitize_title( wp_unslash( filter_input( INPUT_POST, 'woocommerce_checkout_order_received_endpoint' ) ) );
 		} else {
 			$rewrite_slug = get_option( 'woocommerce_checkout_order_received_endpoint', 'order-received' );
 		}
@@ -228,14 +232,22 @@ class XLWCTY_Common {
 			$is_ajax = true;
 		}
 		if ( $is_ajax ) {
-			if ( ! check_ajax_referer( 'xlwctyaction-admin', 'security' ) ) {
+			if ( ! check_ajax_referer( 'xlwctyaction-admin', 'security' ) || ! current_user_can( 'manage_woocommerce' ) ) {
 				die();
 			}
-			$options = array_merge( $defaults, $_POST );
+			$posted  = wp_unslash( $_POST );
+			$options = array_merge( $defaults, array(
+				'group_id'  => isset( $posted['group_id'] ) ? sanitize_key( $posted['group_id'] ) : 0,
+				'rule_id'   => isset( $posted['rule_id'] ) ? sanitize_key( $posted['rule_id'] ) : 0,
+				'rule_type' => isset( $posted['rule_type'] ) ? sanitize_text_field( $posted['rule_type'] ) : null,
+				'condition' => isset( $posted['condition'] ) ? $posted['condition'] : null,
+				'operator'  => isset( $posted['operator'] ) ? $posted['operator'] : null,
+			) );
 		} else {
 			$options = array_merge( $defaults, $options );
 		}
-		$rule_object = self::woocommerce_xlwcty_rule_get_rule_object( $options['rule_type'] );
+		$options['operator'] = self::normalize_rule_operator( $options['operator'] );
+		$rule_object         = self::woocommerce_xlwcty_rule_get_rule_object( $options['rule_type'] );
 		if ( ! empty( $rule_object ) ) {
 			$values               = $rule_object->get_possibile_rule_values();
 			$operators            = $rule_object->get_possibile_rule_operators();
@@ -250,7 +262,7 @@ class XLWCTY_Common {
 			if ( ! empty( $operators ) ) {
 				xlwcty_Input_Builder::create_input_field( $operator_args, $options['operator'] );
 			} else {
-				echo '<input type="hidden" name="' . $operator_args['name'] . '" value="==" />';
+				echo '<input type="hidden" name="' . xlwcty_Input_Builder::esc_name( $operator_args['name'] ) . '" value="==" />';
 			}
 			echo '</td>';
 			// create values field
@@ -291,48 +303,6 @@ class XLWCTY_Common {
 		} else {
 			return null;
 		}
-	}
-
-	public static function get_coupons_cmb2() {
-		$nonce = isset( $_POST['cmb2_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['cmb2_nonce'] ) ) : '';
-		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'cmb2_nonce' ) ) {
-			wp_send_json( array(
-				'status'  => 'error',
-				'message' => 'Invalid nonce',
-			) );
-			exit;
-		}
-
-		$array = array();
-		if ( isset( $_POST['term'] ) && $_POST['term'] !== '' ) {
-			$args               = array(
-				'post_type'     => 'shop_coupon',
-				'post_per_page' => 2,
-				'paged'         => 1,
-				's'             => sanitize_text_field( wp_unslash( $_POST['term'] ) ),
-			);
-			$args['meta_query'] = array(
-				array(
-					'key'     => 'is_xlwcty_coupon',
-					'compare' => 'NOT EXISTS',
-				),
-			);
-			$posts              = get_posts( $args );
-			if ( $posts && is_array( $posts ) && count( $posts ) > 0 ) {
-				foreach ( $posts as $post ) :
-					setup_postdata( $post );
-					$order        = wc_get_order( $post->ID );
-					$order_key    = XLWCTY_Compatibility::get_order_data( $order, 'order_key' );
-					$order_status = wc_get_order_status_name( $order->get_status() );
-					$label        = '#' . XLWCTY_Compatibility::get_order_id( $order ) . ' (' . $order_status . ') ' . XLWCTY_Compatibility::get_order_data( $order, 'billing_email' ) . '';
-					$array[]      = array(
-						'value' => $order_key . '||' . $post->ID,
-						'text'  => $label,
-					);
-				endforeach;
-			}
-		}
-		wp_send_json( $array );
 	}
 
 	public static function get_coupons( $is_ajax = false ) {
@@ -388,10 +358,10 @@ class XLWCTY_Common {
 		$array = array();
 		if ( isset( $_POST['term'] ) && $_POST['term'] !== '' ) {
 			$args  = array(
-				'post_type'     => 'product',
-				'post_per_page' => 20,
-				'paged'         => 1,
-				's'             => sanitize_text_field( wp_unslash( $_POST['term'] ) ),
+				'post_type'      => 'product',
+				'posts_per_page' => 20,
+				'paged'          => 1,
+				's'              => sanitize_text_field( wp_unslash( $_POST['term'] ) ),
 			);
 			$posts = get_posts( $args );
 			if ( $posts && is_array( $posts ) && count( $posts ) > 0 ) {
@@ -427,29 +397,36 @@ class XLWCTY_Common {
 			exit;
 		}
 
-		global $wpdb;
 		$array = array();
 		if ( isset( $_POST['term'] ) && $_POST['term'] !== '' ) {
 			$order_statuses = XLWCTY_Core()->data->get_option( 'allowed_order_statuses' );
+			$order_statuses = is_array( $order_statuses ) ? array_values( array_filter( array_map( 'sanitize_key', $order_statuses ) ) ) : array();
 			$term           = sanitize_text_field( wp_unslash( $_POST['term'] ) );
 
-			$query = $wpdb->prepare( "SELECT * FROM $wpdb->posts WHERE `ID` LIKE %s AND `post_status` IN (" . implode( ',', array_fill( 0, count( $order_statuses ), '%s' ) ) . ") LIMIT 0,10", '%' . $wpdb->esc_like( $term ) . '%', ...$order_statuses );
+			// Search through the WooCommerce order data store so HPOS and legacy storage both work.
+			$order_ids = ( ! empty( $order_statuses ) && function_exists( 'wc_order_search' ) ) ? array_filter( array_map( 'absint', (array) wc_order_search( $term ) ) ) : array();
+			$orders    = array();
+			if ( ! empty( $order_ids ) ) {
+				$orders = wc_get_orders( array(
+					'post__in' => array_values( $order_ids ),
+					'status'   => $order_statuses,
+					'type'     => 'shop_order',
+					'limit'    => 10,
+					'orderby'  => 'date',
+					'order'    => 'DESC',
+				) );
+			}
 
-			$posts = $wpdb->get_results( $query );
-
-
-			if ( $posts && is_array( $posts ) && count( $posts ) > 0 ) {
-				foreach ( $posts as $post ) :
-					setup_postdata( $post );
-					$order = wc_get_order( $post->ID );
-					if ( ! $order instanceof Wc_Order ) {
+			if ( $orders && is_array( $orders ) ) {
+				foreach ( $orders as $order ) :
+					if ( ! $order instanceof WC_Order ) {
 						continue;
 					}
 					$order_key    = XLWCTY_Compatibility::get_order_data( $order, 'order_key' );
 					$order_status = wc_get_order_status_name( $order->get_status() );
 					$label        = '#' . XLWCTY_Compatibility::get_order_id( $order ) . ' (' . $order_status . ') ' . XLWCTY_Compatibility::get_order_data( $order, 'billing_email' ) . '';
 					$array[]      = array(
-						'value' => $order_key . '||' . $post->ID,
+						'value' => $order_key . '||' . XLWCTY_Compatibility::get_order_id( $order ),
 						'text'  => $label,
 					);
 				endforeach;
@@ -518,7 +495,7 @@ class XLWCTY_Common {
 		if ( ! empty( $operators ) ) {
 			xlwcty_Input_Builder::create_input_field( $operator_args, $options['operator'] );
 		} else {
-			echo '<input type="hidden" name="' . $operator_args['name'] . '" value="==" />';
+			echo '<input type="hidden" name="' . xlwcty_Input_Builder::esc_name( $operator_args['name'] ) . '" value="==" />';
 		}
 		echo '</td>';
 		// create values field
@@ -583,6 +560,10 @@ class XLWCTY_Common {
 					foreach ( $group as $rule_id => $rule ) {
 						$rule_object = self::woocommerce_xlwcty_rule_get_rule_object( $rule['rule_type'] );
 						if ( is_object( $rule_object ) ) {
+							if ( isset( $rule['operator'] ) ) {
+								// Recover rules saved with an HTML-encoded operator ('&lt;' / '&lt;=').
+								$rule['operator'] = self::normalize_rule_operator( $rule['operator'] );
+							}
 							$match = $rule_object->is_match( $rule, $order_id );
 							if ( false === $match ) {
 								$result = false;
@@ -658,13 +639,13 @@ class XLWCTY_Common {
 
 		$woofunnels = array();
 		if ( class_exists( 'WFOCU_Common' ) ) {
-			$woofunnels['upstroke'] = __( 'Upstroke Funnel', 'thank-you-page-for-woocommerce-nextmove' );
+			$woofunnels['upstroke'] = __( 'Upstroke Funnel', 'woo-thank-you-page-nextmove-lite' );
 		}
 		if ( class_exists( 'WFACP_Core' ) ) {
-			$woofunnels['aerocheckout'] = __( 'AeroCheckout Page', 'thank-you-page-for-woocommerce-nextmove' );
+			$woofunnels['aerocheckout'] = __( 'AeroCheckout Page', 'woo-thank-you-page-nextmove-lite' );
 		}
 		if ( ! empty( $woofunnels ) ) {
-			$types[ __( 'WooFunnels', 'thank-you-page-for-woocommerce-nextmove' ) ] = $woofunnels;
+			$types[ __( 'WooFunnels', 'woo-thank-you-page-nextmove-lite' ) ] = $woofunnels;
 		}
 
 		return $types;
@@ -692,6 +673,63 @@ class XLWCTY_Common {
 		}
 
 		return $sanitized;
+	}
+
+	/**
+	 * Decode an operator that was stored HTML-encoded.
+	 *
+	 * sanitize_text_field() turns a lone '<' into '&lt;', so rules saved by
+	 * affected versions hold '&lt;' / '&lt;=' instead of '<' / '<='.
+	 *
+	 * @param mixed $operator Stored operator.
+	 *
+	 * @return mixed Decoded operator, or the value unchanged when it is not an encoded comparison operator.
+	 */
+	public static function normalize_rule_operator( $operator ) {
+		if ( ! is_string( $operator ) || false === strpos( $operator, '&' ) ) {
+			return $operator;
+		}
+
+		$decoded = wp_specialchars_decode( $operator, ENT_QUOTES );
+
+		return in_array( $decoded, array( '<', '<=', '>', '>=' ), true ) ? $decoded : $operator;
+	}
+
+	/**
+	 * Restore each rule's operator to an allowed operator key of its rule type.
+	 *
+	 * Operators such as '<' and '<=' must not go through sanitize_text_field(),
+	 * so they are whitelisted against the rule object's operators instead.
+	 *
+	 * @param array $rules Rules already passed through sanitize_rules_array().
+	 *
+	 * @return array
+	 */
+	private static function sanitize_rules_operators( $rules ) {
+		foreach ( $rules as $group_id => $group ) {
+			if ( ! is_array( $group ) ) {
+				continue;
+			}
+			foreach ( $group as $rule_id => $rule ) {
+				if ( ! is_array( $rule ) || ! isset( $rule['operator'] ) ) {
+					continue;
+				}
+				$operator    = self::normalize_rule_operator( $rule['operator'] );
+				$rule_object = isset( $rule['rule_type'] ) ? self::woocommerce_xlwcty_rule_get_rule_object( $rule['rule_type'] ) : null;
+				if ( is_object( $rule_object ) ) {
+					$allowed = array_map( 'strval', array_keys( (array) $rule_object->get_possibile_rule_operators() ) );
+					if ( empty( $allowed ) ) {
+						// Rules without operators submit a hidden '==' field.
+						$allowed = array( '==' );
+					}
+					$operator = in_array( $operator, $allowed, true ) ? $operator : '';
+				}
+
+				$rules[ $group_id ][ $rule_id ]['operator'] = $operator;
+			}
+		}
+
+		return $rules;
 	}
 
 	/**
@@ -724,10 +762,19 @@ class XLWCTY_Common {
 		}
 
 		$key = 'xlwcty_instances';
-		if ( defined( 'ICL_LANGUAGE_CODE' ) && ICL_LANGUAGE_CODE !== '' ) {
+		$compat = self::get_multilingual_compat();
+		if ( $compat && method_exists( $compat, 'get_current_language' ) ) {
+			$current_lang = $compat->get_current_language();
+			if ( $current_lang ) {
+				$key .= '_' . $current_lang;
+			}
+		} elseif ( defined( 'ICL_LANGUAGE_CODE' ) && ICL_LANGUAGE_CODE !== '' ) {
 			$key .= '_' . ICL_LANGUAGE_CODE;
 		}
-		delete_transient( $key );
+		/** Same key/group the page query caches under (XLWCTY_Data::setup_thankyou_post) */
+		if ( class_exists( 'XL_Transient' ) ) {
+			XL_Transient::get_instance()->delete_transient( $key, 'nextmove' );
+		}
 
 		if ( isset( $_POST['xlwcty_settings_location'] ) ) {
 			$location = explode( ':', $_POST['xlwcty_settings_location'] );
@@ -750,6 +797,7 @@ class XLWCTY_Common {
 			if ( is_array( $rules ) ) {
 				// Recursively sanitize nested array structure.
 				$rules = self::sanitize_rules_array( $rules );
+				$rules = self::sanitize_rules_operators( $rules );
 			} else {
 				$rules = sanitize_text_field( $rules );
 			}
@@ -795,7 +843,7 @@ class XLWCTY_Common {
 				$q->the_post();
 				$status           = get_post_status( get_the_ID() );
 				$row_actions      = array();
-				$deactivation_url = wp_nonce_url( add_query_arg( 'page', 'wc-settings', add_query_arg( 'tab', self::get_wc_settings_tab_slug(), add_query_arg( 'action', 'xlwcty-post-deactivate', add_query_arg( 'postid', get_the_ID(), add_query_arg( 'trigger', $trigger ) ), network_admin_url( 'admin.php' ) ) ) ), 'xlwcty-post-deactivate' );
+				$deactivation_url = wp_nonce_url( add_query_arg( 'page', 'wc-settings', add_query_arg( 'tab', self::get_wc_settings_tab_slug(), add_query_arg( 'action', 'xlwcty-post-deactivate', add_query_arg( 'postid', get_the_ID(), add_query_arg( 'trigger', $trigger ) ), network_admin_url( 'admin.php' ) ) ) ), 'xlwcty-post-deactivate_' . get_the_ID() );
 
 				$row_actions[] = array(
 					'action' => 'manage_components',
@@ -813,7 +861,7 @@ class XLWCTY_Common {
 				if ( $status == XLWCTY_SHORT_SLUG . 'disabled' ) {
 					$text           = __( 'Activate', 'woo-thank-you-page-nextmove-lite' );
 					$link           = get_post_permalink( get_the_ID() );
-					$activation_url = wp_nonce_url( add_query_arg( 'page', 'wc-settings', add_query_arg( 'tab', self::get_wc_settings_tab_slug(), add_query_arg( 'action', 'xlwcty-post-activate', add_query_arg( 'postid', get_the_ID(), add_query_arg( 'trigger', $trigger ) ), network_admin_url( 'admin.php' ) ) ) ), 'xlwcty-post-activate' );
+					$activation_url = wp_nonce_url( add_query_arg( 'page', 'wc-settings', add_query_arg( 'tab', self::get_wc_settings_tab_slug(), add_query_arg( 'action', 'xlwcty-post-activate', add_query_arg( 'postid', get_the_ID(), add_query_arg( 'trigger', $trigger ) ), network_admin_url( 'admin.php' ) ) ) ), 'xlwcty-post-activate_' . get_the_ID() );
 
 					$row_actions[] = array(
 						'action' => 'activate',
@@ -834,7 +882,7 @@ class XLWCTY_Common {
 				$row_actions[] = array(
 					'action' => 'xlwcty_duplicate',
 					'text'   => __( 'Duplicate', 'woo-thank-you-page-nextmove-lite' ),
-					'link'   => wp_nonce_url( add_query_arg( 'page', 'wc-settings', add_query_arg( 'tab', self::get_wc_settings_tab_slug(), add_query_arg( 'action', 'xlwcty-duplicate', add_query_arg( 'postid', get_the_ID(), add_query_arg( 'trigger', $trigger ) ), network_admin_url( 'admin.php' ) ) ) ), 'xlwcty-duplicate' ),
+					'link'   => wp_nonce_url( add_query_arg( 'page', 'wc-settings', add_query_arg( 'tab', self::get_wc_settings_tab_slug(), add_query_arg( 'action', 'xlwcty-duplicate', add_query_arg( 'postid', get_the_ID(), add_query_arg( 'trigger', $trigger ) ), network_admin_url( 'admin.php' ) ) ) ), 'xlwcty-duplicate_' . get_the_ID() ),
 					'attrs'  => '',
 				);
 				$row_actions[] = array(
@@ -876,12 +924,6 @@ class XLWCTY_Common {
 	 *  @return $post_id (int)
 	 */
 
-	public static function pr( $arr ) {
-		echo '<pre>';
-		print_r( $arr );
-		echo '</pre>';
-	}
-
 	public static function register_post_status() {
 		// acf-disabled
 		register_post_status( XLWCTY_SHORT_SLUG . 'disabled', array(
@@ -890,6 +932,7 @@ class XLWCTY_Common {
 			'exclude_from_search'       => false,
 			'show_in_admin_all_list'    => true,
 			'show_in_admin_status_list' => true,
+			/* translators: %s: number of disabled thank you pages */
 			'label_count'               => _n_noop( 'Disabled <span class="count">(%s)</span>', 'Disabled <span class="count">(%s)</span>', 'woo-thank-you-page-nextmove-lite' ),
 		) );
 	}
@@ -945,6 +988,10 @@ class XLWCTY_Common {
 	 * @return mixed|string|void
 	 */
 	public static function wc_timezone_string() {
+		/** WP 5.3+: exact site timezone (or ±HH:MM offset) instead of the approximate offset map below */
+		if ( function_exists( 'wp_timezone_string' ) ) {
+			return wp_timezone_string();
+		}
 		// if site timezone string exists, return it
 		if ( $timezone = get_option( 'timezone_string' ) ) {
 			return $timezone;
@@ -1131,42 +1178,6 @@ class XLWCTY_Common {
 		}
 	}
 
-	/**
-	 * Function to get timezone string by checking wp settings
-	 * @return false|mixed|string|void
-	 * @deprecated
-	 */
-	public static function wc_timezone_string_old() {
-		// if site timezone string exists, return it
-		if ( $timezone = get_option( 'timezone_string' ) ) {
-			return $timezone;
-		}
-		// get UTC offset, if it isn't set then return UTC
-		if ( 0 === ( $utc_offset = get_option( 'gmt_offset', 0 ) ) ) {
-			return 'UTC';
-		}
-		// adjust UTC offset from hours to seconds
-		$utc_offset *= 3600;
-		// attempt to guess the timezone string from the UTC offset
-		$timezone = timezone_name_from_abbr( '', $utc_offset, 0 );
-		// last try, guess timezone string manually
-		if ( false === $timezone ) {
-			$is_dst = gmdate( 'I' );
-			foreach ( timezone_abbreviations_list() as $abbr ) {
-				foreach ( $abbr as $city ) {
-					if ( $city['dst'] == $is_dst && $city['offset'] == $utc_offset ) {
-						return $city['timezone_id'];
-					}
-				}
-			}
-
-			// fallback to UTC
-			return 'UTC';
-		}
-
-		return $timezone;
-	}
-
 	public static function get_loop_count( $start_date_timestamp, $todayDate, $total_gap ) {
 		$incre = 0;
 		if ( $total_gap > 0 ) {
@@ -1199,13 +1210,6 @@ class XLWCTY_Common {
 		}
 
 		return $aReturn;
-	}
-
-	public static function check_query_params() {
-		$force_debug = filter_input( INPUT_GET, 'xlwcty_force_debug' );
-		if ( $force_debug === 'yes' ) {
-			self::$is_force_debug = true;
-		}
 	}
 
 	public static function is_load_admin_assets( $cur_screen = 'single' ) {
@@ -1370,7 +1374,8 @@ class XLWCTY_Common {
 		return array(
 			'xlwcty_preview_mode'     => 'live',
 			'google_map_api'          => '',
-			'google_map_error_txt'    => 'Map unable to load, something wrong with address.',
+			// Translate only once translations may load (defaults are also read on plugins_loaded, before init).
+			'google_map_error_txt'    => did_action( 'init' ) ? __( 'Map unable to load, something wrong with address.', 'woo-thank-you-page-nextmove-lite' ) : 'Map unable to load, something wrong with address.',
 			'allowed_order_statuses'  => array( 'wc-processing', 'wc-pending', 'wc-on-hold', 'wc-completed' ),
 			'wrap_left_right_padding' => '0',
 		);
@@ -1407,26 +1412,15 @@ class XLWCTY_Common {
 			return;
 		}
 
-		$upload_dir = wp_upload_dir();
-		$base_url   = $upload_dir['baseurl'] . '/' . XLWCTY_SHORT_SLUG;
-		$args       = array(
+		$args = array(
 			'id'    => 'xlwcty_admin_page_node',
-			'title' => 'XL NextMove',
+			'title' => __( 'XL NextMove', 'woo-thank-you-page-nextmove-lite' ),
 			'href'  => admin_url( 'admin.php?page=wc-settings&tab=' . XLWCTY_Common::get_wc_settings_tab_slug() ),
 			'meta'  => array(
 				'class' => 'xlwcty_admin_page_node',
 			),
 		);
 		$wp_admin_bar->add_node( $args );
-		if ( is_singular( self::get_thank_you_page_post_type_slug() ) ) {
-			$args = array(
-				'id'     => 'xlwcty_admin_page_node_1',
-				'title'  => 'See Log',
-				'href'   => $base_url . '/force.txt',
-				'parent' => 'xlwcty_admin_page_node',
-			);
-			$wp_admin_bar->add_node( $args );
-		}
 	}
 
 	public static function get_formatted_date_from_date( $date, $format = 'Y-m-d' ) {
@@ -1480,10 +1474,12 @@ class XLWCTY_Common {
 			) );
 		}
 
+		// Read the order once so both the admin and the order-key paths use it.
+		$order_id = isset( $_POST['order'] ) ? absint( $_POST['order'] ) : 0;
+
 		// Security: Check user capabilities or validate order key for unauthenticated users
 		if ( ! is_user_logged_in() || ! current_user_can( 'manage_woocommerce' ) ) {
 			// For unauthenticated users, require order key validation
-			$order_id  = isset( $_POST['order'] ) ? absint( $_POST['order'] ) : 0;
 			$order_key = isset( $_POST['order_key'] ) ? sanitize_text_field( wp_unslash( $_POST['order_key'] ) ) : '';
 
 			if ( empty( $order_id ) || empty( $order_key ) ) {
@@ -1495,7 +1491,7 @@ class XLWCTY_Common {
 
 			// Verify order key matches the order
 			$order = wc_get_order( $order_id );
-			if ( ! $order || XLWCTY_Compatibility::get_order_data( $order, 'order_key' ) !== $order_key ) {
+			if ( ! $order || ! hash_equals( (string) XLWCTY_Compatibility::get_order_data( $order, 'order_key' ), (string) $order_key ) ) {
 				wp_send_json( array(
 					'result'     => 'error',
 					'error_text' => __( 'Invalid order key.', 'woo-thank-you-page-nextmove-lite' ),
@@ -1517,7 +1513,7 @@ class XLWCTY_Common {
 				}
 				// Verify order key matches the order
 				$order = wc_get_order( $order_id );
-				if ( ! $order || $order->get_order_key() !== $order_key ) {
+				if ( ! $order || ! hash_equals( (string) $order->get_order_key(), (string) $order_key ) ) {
 					wp_send_json( array(
 						'result'     => 'error',
 						'error_text' => __( 'Invalid order key.', 'woo-thank-you-page-nextmove-lite' ),
@@ -1540,7 +1536,10 @@ class XLWCTY_Common {
 
 				$get_layout = XLWCTY_Core()->data->get_layout();
 
-				$file_data                   = get_file_data( plugin_dir_path( XLWCTY_PLUGIN_FILE ) . 'templates/' . $get_layout . '.php', array( 'XLWCTY Template Name' ) );
+				$allowed_layouts = wp_list_pluck( self::get_builder_layouts(), 'slug' );
+				$get_layout      = in_array( $get_layout, $allowed_layouts, true ) ? $get_layout : '';
+
+				$file_data                   = ( '' !== $get_layout ) ? get_file_data( plugin_dir_path( XLWCTY_PLUGIN_FILE ) . 'templates/' . $get_layout . '.php', array( 'XLWCTY Template Name' ) ) : array();
 				$page->xlwcty_layout         = ( ! empty( $file_data ) ) ? $file_data[0] : '';
 				$page->xlwcty_componets_html = '';
 				ob_start();
@@ -1596,6 +1595,49 @@ class XLWCTY_Common {
 	}
 
 	/**
+	 * Build the NextMove thank you redirect URL for an order.
+	 *
+	 * @param WC_Order $order Order object.
+	 *
+	 * @return string|false
+	 */
+	public static function get_thankyou_redirect_url_for_order( $order ) {
+		if ( ! $order instanceof WC_Order ) {
+			return false;
+		}
+
+		$default_settings = XLWCTY_Core()->data->get_option();
+		if ( isset( $default_settings['xlwcty_preview_mode'] ) && 'sandbox' === $default_settings['xlwcty_preview_mode'] ) {
+			return false;
+		}
+
+		$multilingual_compat = self::get_multilingual_compat();
+		$previous_language   = null;
+
+		if ( $multilingual_compat && method_exists( $multilingual_compat, 'get_order_language' ) && method_exists( $multilingual_compat, 'switch_to_language' ) ) {
+			$order_lang = $multilingual_compat->get_order_language( $order );
+			if ( $order_lang ) {
+				$previous_language = $multilingual_compat->switch_to_language( $order_lang );
+			}
+		}
+
+		$get_link = XLWCTY_Core()->data->setup_thankyou_post( XLWCTY_Compatibility::get_order_id( $order ), false )->get_page_link();
+
+		if ( $multilingual_compat && method_exists( $multilingual_compat, 'restore_language' ) ) {
+			$multilingual_compat->restore_language( $previous_language );
+		}
+
+		if ( false === $get_link || empty( $get_link ) ) {
+			return false;
+		}
+
+		$get_link = trim( $get_link );
+		$get_link = wp_specialchars_decode( $get_link );
+
+		return self::prepare_single_post_url( $get_link, $order );
+	}
+
+	/**
 	 * filters and returned valid order statuses for order queries
 	 * @return mixed|void
 	 */
@@ -1604,23 +1646,32 @@ class XLWCTY_Common {
 	}
 
 	public static function maybe_duplicate_post() {
-		global $wpdb;
 		if ( isset( $_GET['action'] ) && $_GET['action'] == 'xlwcty-duplicate' ) {
 
-			if ( wp_verify_nonce( $_GET['_wpnonce'], 'xlwcty-duplicate' ) ) {
+			$original_id = isset( $_GET['postid'] ) ? absint( $_GET['postid'] ) : 0;
+			$nonce       = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
 
-				$original_id = filter_input( INPUT_GET, 'postid' );
-				$section     = filter_input( INPUT_GET, 'trigger' );
+			if ( $original_id && wp_verify_nonce( $nonce, 'xlwcty-duplicate_' . $original_id ) ) {
+
+				$section = isset( $_GET['trigger'] ) ? sanitize_key( wp_unslash( $_GET['trigger'] ) ) : '';
+
+				// Only NextMove thank-you pages may be duplicated, and only by users who can edit them.
+				$original_post = get_post( $original_id );
+				if ( ! $original_post instanceof WP_Post || self::get_thank_you_page_post_type_slug() !== $original_post->post_type || ! current_user_can( 'edit_post', $original_id ) ) {
+					wp_die( esc_html__( 'Unable to Duplicate', 'woo-thank-you-page-nextmove-lite' ), '', array( 'response' => 403 ) );
+				}
+
 				if ( $original_id ) {
 
 					// Get the post as an array
 					$duplicate = get_post( $original_id, 'ARRAY_A' );
 
+					// A duplicated page always starts deactivated, so it does not go live before it is edited.
 					$settings = $defaults = array(
-						'status'                => 'same',
+						'status'                => XLWCTY_SHORT_SLUG . 'disabled',
 						'type'                  => 'same',
 						'timestamp'             => 'current',
-						'title'                 => __( 'Copy', 'post-duplicator' ),
+						'title'                 => __( 'Copy', 'woo-thank-you-page-nextmove-lite' ),
 						'slug'                  => 'copy',
 						'time_offset'           => false,
 						'time_offset_days'      => 0,
@@ -1664,13 +1715,19 @@ class XLWCTY_Common {
 					$duplicate['post_modified']     = gmdate( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) );
 					$duplicate['post_modified_gmt'] = gmdate( 'Y-m-d H:i:s', current_time( 'timestamp', 1 ) );
 
+					// The copy belongs to the user who made it.
+					$duplicate['post_author'] = get_current_user_id();
+
 					// Remove some of the keys
 					unset( $duplicate['ID'] );
 					unset( $duplicate['guid'] );
 					unset( $duplicate['comment_count'] );
 
-					// Insert the post into the database
-					$duplicate_id = wp_insert_post( $duplicate );
+					// Insert the post into the database (wp_insert_post() expects slashed data).
+					$duplicate_id = wp_insert_post( wp_slash( $duplicate ) );
+					if ( empty( $duplicate_id ) || is_wp_error( $duplicate_id ) ) {
+						wp_die( esc_html__( 'Unable to Duplicate', 'woo-thank-you-page-nextmove-lite' ) );
+					}
 
 					// Duplicate all the taxonomies/terms
 					$taxonomies = get_object_taxonomies( $duplicate['post_type'] );
@@ -1684,22 +1741,23 @@ class XLWCTY_Common {
 					// Duplicate all the custom fields
 					$custom_fields = get_post_custom( $original_id );
 					foreach ( $custom_fields as $key => $value ) {
+						// Skip WordPress edit-lock data so the copy does not show as locked by another user.
+						if ( in_array( $key, array( '_edit_lock', '_edit_last' ), true ) ) {
+							continue;
+						}
 						if ( is_array( $value ) && count( $value ) > 0 ) {
-							foreach ( $value as $i => $v ) {
-								$result = $wpdb->insert( $wpdb->prefix . 'postmeta', array(
-									'post_id'    => $duplicate_id,
-									'meta_key'   => $key,
-									'meta_value' => $v,
-								) );
+							foreach ( $value as $v ) {
+								add_post_meta( $duplicate_id, wp_slash( $key ), wp_slash( maybe_unserialize( $v ) ) );
 							}
 						}
 					}
 					do_action( 'xlwcty_post_duplicated', $original_id, $duplicate_id, $settings );
 
 					wp_safe_redirect( admin_url( 'admin.php?page=wc-settings&tab=' . XLWCTY_Common::get_wc_settings_tab_slug() . '&section=' . $section ) );
+					exit;
 				}
 			} else {
-				die( __( 'Unable to Duplicate', 'woo-thank-you-page-nextmove-lite' ) );
+				wp_die( esc_html__( 'Unable to Duplicate', 'woo-thank-you-page-nextmove-lite' ) );
 			}
 		}
 	}
@@ -1768,35 +1826,44 @@ class XLWCTY_Common {
 		) );
 
 		if ( ! empty( $get_posts_check ) ) {
-			$get_link_check = get_permalink( $get_posts_check[0] );
+			$get_page_id    = $get_posts_check[0];
+			$get_link_check = get_permalink( $get_page_id );
 			$get_link_check = self::parse_url_for_ssl( $get_link_check );
 
-			$remote = wp_remote_get( add_query_arg( array( 'permalink_check' => 'yes' ), $get_link_check ), array(
-				'sslverify' => false,
-				'timeout'   => 5,
-			) );
+			// The loopback request is slow, so reuse a recent result (failures are kept only briefly so a permalink reset shows up quickly).
+			$transient_key = 'xlwcty_permalink_check_' . md5( (string) $get_link_check );
+			$cached_state  = get_transient( $transient_key );
 
-			$response_code = wp_remote_retrieve_response_code( $remote );
+			if ( false !== $cached_state ) {
+				$permalink_state = ( 'yes' === $cached_state );
+			} else {
+				$remote = wp_remote_get( add_query_arg( array( 'permalink_check' => 'yes' ), $get_link_check ), array(
+					'timeout' => 5,
+				) );
 
-			// If no errors and the response code is valid, set permalink state
-			if ( is_wp_error( $remote ) ) {
-				// For WPML sites, permalink check might fail due to language requirements
-				// Check if permalink can be generated instead
-				$test_permalink = get_permalink( $get_page_id );
-				if ( $test_permalink && ! is_wp_error( $test_permalink ) ) {
-					$permalink_state = true; // Assume state is OK if permalink can be generated
+				$response_code = wp_remote_retrieve_response_code( $remote );
+
+				// If no errors and the response code is valid, set permalink state
+				if ( is_wp_error( $remote ) ) {
+					// For WPML sites, permalink check might fail due to language requirements
+					// Check if permalink can be generated instead
+					$test_permalink = get_permalink( $get_page_id );
+					if ( $test_permalink && ! is_wp_error( $test_permalink ) ) {
+						$permalink_state = true; // Assume state is OK if permalink can be generated
+					}
+				} elseif ( $response_code !== 404 ) {
+					$permalink_state = true;
 				}
-			} elseif ( $response_code !== 404 ) {
-				$permalink_state = true;
-			}
 
-			$matches      = array();
-			$api_response = preg_match( '/{"status.*}/', wp_remote_retrieve_body( $remote ), $matches );
-			$api_response = current( $matches );
-			$api_response = json_decode( $api_response, true );
+				$matches      = array();
+				$api_response = preg_match( '/{"status.*}/', wp_remote_retrieve_body( $remote ), $matches );
+				$api_response = current( $matches );
+				$api_response = json_decode( $api_response, true );
+				if ( is_array( $api_response ) && isset( $api_response['status'] ) && $api_response['status'] === 'success' ) {
+					$permalink_state = true;
+				}
 
-			if ( is_array( $api_response ) && isset( $api_response['status'] ) && $api_response['status'] === 'success' ) {
-				$permalink_state = true;
+				set_transient( $transient_key, $permalink_state ? 'yes' : 'no', $permalink_state ? HOUR_IN_SECONDS : MINUTE_IN_SECONDS );
 			}
 		}
 
@@ -1830,7 +1897,7 @@ class XLWCTY_Common {
 		 */
 		$nextmove_state = 'failed';
 
-		$check_preview = '<p>' . __( 'Something is wrong with settings. Thank You page won\'t appear until all points turn green.', 'woo-thank-you-page-nextmove-lite' ) . '</p><h3>Possible Solutions</h3><ul>';
+		$check_preview = '<p>' . __( 'Something is wrong with settings. Thank You page won\'t appear until all points turn green.', 'woo-thank-you-page-nextmove-lite' ) . '</p><h3>' . esc_html__( 'Possible Solutions', 'woo-thank-you-page-nextmove-lite' ) . '</h3><ul>';
 
 		// Add suggestions for each failed condition
 		if ( $mode === 'sandbox' ) {
@@ -1839,8 +1906,8 @@ class XLWCTY_Common {
 		}
 
 		if ( ! $permalink_state ) {
-			$reset_link    = ' <a href="' . admin_url( 'options-permalink.php' ) . '" target="_blank">' . __( 'Reset', 'woo-thank-you-page-nextmove-lite' ) . '</a>';
-			$check_preview .= '<li>' . __( 'Permalink needs reset. Click here to', 'woo-thank-you-page-nextmove-lite' ) . $reset_link . __( ' it.', 'woo-thank-you-page-nextmove-lite' ) . '</li>';
+			/* translators: %s: URL of the Permalinks settings screen */
+			$check_preview .= '<li>' . sprintf( __( 'Permalink needs reset. Click here to <a href="%s" target="_blank">reset</a> it.', 'woo-thank-you-page-nextmove-lite' ), esc_url( admin_url( 'options-permalink.php' ) ) ) . '</li>';
 		}
 
 		if ( ! $available_thankyou_page ) {
@@ -1851,22 +1918,31 @@ class XLWCTY_Common {
 			$check_preview .= '<li>' . __( 'There are no Active WooCommerce Orders with selected order statuses', 'woo-thank-you-page-nextmove-lite' ) . ' (' . self::order_status_label_output( $nm_allowed_order_statuses ) . '). ' . __( 'Kindly create an order to see the preview.', 'woo-thank-you-page-nextmove-lite' ) . '</li>';
 		}
 
-		$check_preview .= '</ul><p><strong>' . __( 'If still unable to set up the Thank You page, create a', 'woo-thank-you-page-nextmove-lite' ) . ' <a target="_blank" href="' . admin_url( 'admin.php?page=xlplugins&tab=support' ) . '">support ticket</a>.</strong></p>';
+		/* translators: %s: URL of the XLPlugins support screen */
+		$check_preview .= '</ul><p><strong>' . sprintf( __( 'If still unable to set up the Thank You page, create a <a target="_blank" href="%s">support ticket</a>.', 'woo-thank-you-page-nextmove-lite' ), esc_url( admin_url( 'admin.php?page=xlplugins&tab=support' ) ) ) . '</strong></p>';
 
 		// Mark success if all conditions are met
 		if ( $mode === 'live' && $available_thankyou_page && $permalink_state && $recent_order_state ) {
 			$nextmove_state = 'success';
+			/* translators: %s: order preview URL */
 			$check_preview  = '<p>' . sprintf( __( 'Looks Good! <a target="_blank" href="%s">See Order Preview</a>', 'woo-thank-you-page-nextmove-lite' ), esc_url( $get_link ) ) . '</p>';
 		}
 
 		// Prepare final HTML for the status
-		$html = sprintf( '<li><i class="xl_circle_%s"></i>Mode: %s (<a href="%s" target="_blank">Change</a>)</li>', ( $mode === 'live' ) ? 'success' : 'error', ucfirst( $mode ), admin_url( 'admin.php?page=wc-settings&tab=xl-thank-you&section=settings' ) );
+		$yes = __( 'Yes', 'woo-thank-you-page-nextmove-lite' );
+		$no  = __( 'No', 'woo-thank-you-page-nextmove-lite' );
 
-		$html .= sprintf( '<li><i class="xl_circle_%s"></i>Permalink State: %s %s</li>', ( $permalink_state ) ? 'success' : 'error', ( $permalink_state ) ? 'OK' : 'Needs Reset', ( $permalink_state ) ? '' : '<a target="_blank" href="' . admin_url( 'options-permalink.php' ) . '">Reset</a>' );
+		/* translators: 1: mode name (Live / Sandbox), 2: settings URL */
+		$html = '<li><i class="xl_circle_' . ( ( $mode === 'live' ) ? 'success' : 'error' ) . '"></i>' . sprintf( __( 'Mode: %1$s (<a href="%2$s" target="_blank">Change</a>)', 'woo-thank-you-page-nextmove-lite' ), esc_html( ( $mode === 'live' ) ? __( 'Live', 'woo-thank-you-page-nextmove-lite' ) : ( ( $mode === 'sandbox' ) ? __( 'Sandbox', 'woo-thank-you-page-nextmove-lite' ) : ucfirst( $mode ) ) ), esc_url( admin_url( 'admin.php?page=wc-settings&tab=xl-thank-you&section=settings' ) ) ) . '</li>';
 
-		$html .= sprintf( '<li><i class="xl_circle_%s"></i>Active Pages: %s</li>', ( $available_thankyou_page ) ? 'success' : 'error', ( $available_thankyou_page ) ? 'Yes' : 'No' );
+		/* translators: 1: OK / Needs Reset, 2: optional "Reset" link */
+		$html .= '<li><i class="xl_circle_' . ( ( $permalink_state ) ? 'success' : 'error' ) . '"></i>' . sprintf( __( 'Permalink State: %1$s %2$s', 'woo-thank-you-page-nextmove-lite' ), ( $permalink_state ) ? esc_html__( 'OK', 'woo-thank-you-page-nextmove-lite' ) : esc_html__( 'Needs Reset', 'woo-thank-you-page-nextmove-lite' ), ( $permalink_state ) ? '' : '<a target="_blank" href="' . esc_url( admin_url( 'options-permalink.php' ) ) . '">' . esc_html__( 'Reset', 'woo-thank-you-page-nextmove-lite' ) . '</a>' ) . '</li>';
 
-		$html .= sprintf( '<li><i class="xl_circle_%s"></i>Active WC Orders: %s</li>', ( $recent_order_state ) ? 'success' : 'error', ( $recent_order_state ) ? 'Yes' : 'No' );
+		/* translators: %s: Yes / No */
+		$html .= '<li><i class="xl_circle_' . ( ( $available_thankyou_page ) ? 'success' : 'error' ) . '"></i>' . sprintf( __( 'Active Pages: %s', 'woo-thank-you-page-nextmove-lite' ), esc_html( ( $available_thankyou_page ) ? $yes : $no ) ) . '</li>';
+
+		/* translators: %s: Yes / No */
+		$html .= '<li><i class="xl_circle_' . ( ( $recent_order_state ) ? 'success' : 'error' ) . '"></i>' . sprintf( __( 'Active WC Orders: %s', 'woo-thank-you-page-nextmove-lite' ), esc_html( ( $recent_order_state ) ? $yes : $no ) ) . '</li>';
 
 		// Send JSON response
 		wp_send_json( array(
@@ -1953,6 +2029,95 @@ class XLWCTY_Common {
 		}
 
 		return $parent_id;
+	}
+
+	/**
+	 * Get active multilingual compatibility handler (WPML or Polylang).
+	 *
+	 * @return object|false
+	 */
+	public static function get_multilingual_compat() {
+		static $compat = null;
+
+		if ( null !== $compat ) {
+			return false === $compat ? false : $compat;
+		}
+
+		if ( defined( 'ICL_SITEPRESS_VERSION' ) && class_exists( 'XLWCTY_WPML' ) ) {
+			$wpml = XLWCTY_WPML::get_instance();
+			if ( $wpml->is_wpml_active() ) {
+				$compat = $wpml;
+
+				return $compat;
+			}
+		}
+
+		if ( function_exists( 'pll_current_language' ) && class_exists( 'XLWCTY_Polylang' ) ) {
+			$polylang = XLWCTY_Polylang::get_instance();
+			if ( $polylang->is_polylang_active() ) {
+				$compat = $polylang;
+
+				return $compat;
+			}
+		}
+
+		$compat = false;
+
+		return false;
+	}
+
+	/**
+	 * Expand post/term IDs to include all linked translations.
+	 *
+	 * @param array  $ids  IDs to expand.
+	 * @param string $type Either 'post' or 'term'.
+	 *
+	 * @return array
+	 */
+	public static function expand_ids_with_translations( $ids, $type = 'post' ) {
+		$ids = array_filter( array_map( 'absint', (array) $ids ) );
+		if ( empty( $ids ) ) {
+			return array();
+		}
+
+		$expanded = $ids;
+
+		if ( 'term' === $type && function_exists( 'pll_get_term_translations' ) ) {
+			foreach ( $ids as $id ) {
+				$translations = pll_get_term_translations( $id );
+				if ( is_array( $translations ) ) {
+					$expanded = array_merge( $expanded, array_values( $translations ) );
+				}
+			}
+		} elseif ( 'post' === $type && function_exists( 'pll_get_post_translations' ) ) {
+			foreach ( $ids as $id ) {
+				$translations = pll_get_post_translations( $id );
+				if ( is_array( $translations ) ) {
+					$expanded = array_merge( $expanded, array_values( $translations ) );
+				}
+			}
+		} elseif ( defined( 'ICL_SITEPRESS_VERSION' ) && class_exists( 'SitePress' ) ) {
+			global $sitepress;
+			if ( $sitepress instanceof SitePress ) {
+				$active_languages = $sitepress->get_active_languages();
+				foreach ( $ids as $id ) {
+					foreach ( array_keys( $active_languages ) as $lang ) {
+						if ( 'term' === $type ) {
+							$taxonomy     = 'product_cat';
+							$translated   = apply_filters( 'wpml_object_id', $id, $taxonomy, false, $lang );
+						} else {
+							$post_type  = get_post_type( $id ) ?: 'product';
+							$translated = apply_filters( 'wpml_object_id', $id, $post_type, false, $lang );
+						}
+						if ( $translated ) {
+							$expanded[] = (int) $translated;
+						}
+					}
+				}
+			}
+		}
+
+		return array_values( array_unique( array_filter( array_map( 'absint', $expanded ) ) ) );
 	}
 
 	/**
@@ -2075,6 +2240,10 @@ class XLWCTY_Common {
 	}
 
 	public static function is_lmfwc_activated() {
+		// is_plugin_active() lives in an admin include that WP < 6.8 does not load on the front end.
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
 		$is_activated = is_plugin_active( 'license-manager-for-woocommerce/license-manager-for-woocommerce.php' );
 
 		return $is_activated ? true : false;

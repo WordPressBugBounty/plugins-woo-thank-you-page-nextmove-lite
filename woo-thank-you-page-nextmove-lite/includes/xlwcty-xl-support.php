@@ -32,18 +32,24 @@ class XLWCTY_XL_Support {
 		add_action( 'admin_menu', array( $this, 'add_xlwcty_menu' ), 85 );
 
 		add_filter( 'xl_uninstall_reasons', array( $this, 'modify_uninstall_reason' ) );
-		add_filter( 'xl_uninstall_reason_threshold_' . XLWCTY_PLUGIN_BASENAME, function () {
-			return 10;
-		} );
-		add_filter( 'xl_default_reason_' . XLWCTY_PLUGIN_BASENAME, function () {
-			return 8;
-		} );
+		add_filter( 'xl_uninstall_reason_threshold_' . XLWCTY_PLUGIN_BASENAME, array( $this, 'uninstall_reason_threshold' ) );
+		add_filter( 'xl_default_reason_' . XLWCTY_PLUGIN_BASENAME, array( $this, 'default_uninstall_reason' ) );
 		add_filter( 'xl_global_tracking_data', array( $this, 'xl_add_administration_emails' ) );
-		add_filter( 'xl_in_update_message_support', function ( $config ) {
-			$config[ XLWCTY_PLUGIN_BASENAME ] = 'https://plugins.svn.wordpress.org/woo-thank-you-page-nextmove-lite/trunk/readme.txt';
+		add_filter( 'xl_in_update_message_support', array( $this, 'add_update_message_readme' ) );
+	}
 
-			return $config;
-		} );
+	public function uninstall_reason_threshold() {
+		return 10;
+	}
+
+	public function default_uninstall_reason() {
+		return 8;
+	}
+
+	public function add_update_message_readme( $config ) {
+		$config[ XLWCTY_PLUGIN_BASENAME ] = 'https://plugins.svn.wordpress.org/woo-thank-you-page-nextmove-lite/trunk/readme.txt';
+
+		return $config;
 	}
 
 	/**
@@ -81,6 +87,7 @@ class XLWCTY_XL_Support {
 		}
 
 		if ( ! XL_admin_notifications::has_notification( 'license_needs_attention' ) && count( $invalid_licenses ) > 0 ) {
+			/* translators: 1: plugin name(s), 2: licenses screen URL */
 			$license_invalid_text = sprintf( __( '<p>You are <strong>not receiving</strong> Latest Updates, New Features, Security Updates &amp; Bug Fixes for <strong>%1$s</strong>. <a href="%2$s">Click Here To Fix This</a>.</p>', 'woo-thank-you-page-nextmove-lite' ), implode( ',', $invalid_licenses ), add_query_arg( array(
 				'tab' => 'licenses',
 			), $this->expected_url ) );
@@ -318,10 +325,15 @@ class XLWCTY_XL_Support {
 		if ( isset( $data['admins'] ) ) {
 			return $data;
 		}
-		$users = get_users( array(
-			'role'   => 'administrator',
-			'fields' => array( 'user_email', 'user_nicename' ),
-		) );
+		/** Only the current (consenting) administrator, never every admin on the site */
+		$users = array();
+		$user  = wp_get_current_user();
+		if ( $user instanceof WP_User && $user->exists() && user_can( $user, 'manage_options' ) ) {
+			$users[] = (object) array(
+				'user_email'    => $user->user_email,
+				'user_nicename' => $user->user_nicename,
+			);
+		}
 
 		$data['admins'] = $users;
 
@@ -678,48 +690,31 @@ class XLWCTY_XL_Support {
 	public function export_xl_tools_right_area() {
 	}
 
-	public function xl_fetch_tools_data( $file, $post ) {
-
-		if ( $file == 'thank-you-page-for-woocommerce-nextmove-lite.php' ) {
-			$xl_support_url = '';
-			$system_info    = XL_Support::get_instance()->prepare_system_information_report( true ) + $this->xl_support_system_info( true );
-			$upload_dir     = wp_upload_dir();
-			$basedir        = $upload_dir['basedir'];
-			$baseurl        = $upload_dir['baseurl'];
-			if ( is_writable( $basedir ) ) {
-				$xl_support     = $basedir . '/xl_support';
-				$xl_support_url = $baseurl . '/xl_support';
-				if ( ! file_exists( $xl_support ) ) {
-					mkdir( $xl_support, 0755, true );
-				}
-				if ( is_array( $system_info ) && count( $system_info ) > 0 ) {
-					$xl_support_file_path = $xl_support . '/thankyou-lite-support.json';
-					$success              = file_put_contents( $xl_support_file_path, wp_json_encode( $system_info ) );
-					if ( $success ) {
-						$xl_support_url .= '/thankyou-lite-support.json';
-					}
-				}
-			}
-			echo $xl_support_url;
-		}
-	}
-
 	public function xl_addon_installation() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		// Installing and activating plugins requires the dedicated capabilities, not just
+		// manage_options. On multisite these are Super-Admin-only, so gating on
+		// manage_options would let a regular site admin install/activate arbitrary plugins.
+		if ( ! current_user_can( 'install_plugins' ) || ! current_user_can( 'activate_plugins' ) ) {
 			wp_send_json_error( 'Insufficient permissions.' );
 		}
 
-		$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '';
+		$nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
 		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'xl_addon_installation_nonce' ) ) {
 			wp_send_json_error( 'Security error.' );
 		}
 
-		$plugin_slug = isset( $_POST['xl_slug'] ) ? $_POST['xl_slug'] : '';
-		$plugin_file = isset( $_POST['xl_file'] ) ? $_POST['xl_file'] : '';
+		$plugin_slug = isset( $_POST['xl_slug'] ) ? sanitize_key( wp_unslash( $_POST['xl_slug'] ) ) : '';
+		$plugin_file = isset( $_POST['xl_file'] ) ? sanitize_text_field( wp_unslash( $_POST['xl_file'] ) ) : '';
 		if ( empty( $plugin_slug ) || empty( $plugin_file ) ) {
 			wp_send_json_error( 'File slug or name is invalid.' );
 		}
 		$plugin_file = $plugin_slug . $plugin_file;
+
+		// Constrain to a plugin file path — no directory traversal, only <dir>/<file>.php.
+		$plugin_file = ltrim( str_replace( array( '..', "\0" ), '', $plugin_file ), '/' );
+		if ( ! preg_match( '#^[A-Za-z0-9_./-]+\.php$#', $plugin_file ) ) {
+			wp_send_json_error( 'File slug or name is invalid.' );
+		}
 
 		if ( $this->is_plugin_installed( $plugin_file ) ) {
 			/** Plugin installed */

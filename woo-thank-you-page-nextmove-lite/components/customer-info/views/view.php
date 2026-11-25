@@ -8,13 +8,13 @@ if ( empty( $order_data ) || ! is_object( $order_data ) || ! method_exists( $ord
 	return false;
 }
 
-add_filter( 'woocommerce_order_formatted_billing_address', array( $this, 'xlwcty_format_billing_address' ), 11, 2 );
-add_filter( 'woocommerce_order_formatted_shipping_address', array( $this, 'xlwcty_format_shipping_address' ), 11, 2 );
 if ( 'yes' !== $this->data->show_billing && 'yes' !== $this->data->show_shipping ) {
 	XLWCTY_Core()->public->add_header_logs( sprintf( '%s - %s', $this->get_component_property( 'title' ), __( 'Data not set', 'woo-thank-you-page-nextmove-lite' ) ) );
 
 	return false;
 }
+add_filter( 'woocommerce_order_formatted_billing_address', array( $this, 'xlwcty_format_billing_address' ), 11, 2 );
+add_filter( 'woocommerce_order_formatted_shipping_address', array( $this, 'xlwcty_format_shipping_address' ), 11, 2 );
 XLWCTY_Core()->public->add_header_logs( sprintf( '%s - %s', $this->get_component_property( 'title' ), __( 'On', 'woo-thank-you-page-nextmove-lite' ) ) );
 
 $billing_email = XLWCTY_Compatibility::get_order_data( $order_data, 'billing_email' );
@@ -68,6 +68,7 @@ if ( '2c' === $this->data->layout ) {
 			}
 			echo '</div>';
 			echo '<div class="xlwcty_clear_15"></div>';
+			$billing_add_status = false;
 			if ( 'yes' === $this->data->show_billing ) {
 				// Security: Double-check order_data exists before calling methods
 				if ( empty( $order_data ) || ! is_object( $order_data ) ) {
@@ -78,6 +79,7 @@ if ( '2c' === $this->data->layout ) {
 				$contact_name        = trim( $billing_address_raw['first_name'] . ' ' . $billing_address_raw['last_name'] );
 				$contact_name        .= ( $billing_address_raw['company'] ) ? '<br/>' . $billing_address_raw['company'] : '';
 				if ( ! empty( $billing_address ) ) {
+					$billing_add_status = true;
 					?>
                     <div class="xlwcty_2_colLeft">
                         <p class="xlwcty_BSpace"><strong><?php echo esc_html__( 'Billing address', 'woocommerce' ); ?></strong></p>
@@ -101,7 +103,6 @@ if ( '2c' === $this->data->layout ) {
 					<?php
 				}
 			}
-			$billing_add_status = false;
 			if ( 'yes' === $this->data->show_shipping ) {
 				// Security: Double-check order_data exists before calling methods
 				if ( empty( $order_data ) || ! is_object( $order_data ) ) {
@@ -112,8 +113,7 @@ if ( '2c' === $this->data->layout ) {
 				$contact_name         = trim( $shipping_address_raw['first_name'] . ' ' . $shipping_address_raw['last_name'] );
 				$contact_name         .= ( $shipping_address_raw['company'] ) ? '<br/>' . $shipping_address_raw['company'] : '';
 				if ( ! empty( $shipping_address ) ) {
-					$billing_add_status = true;
-					$extra_class        = ( true === $billing_add_status ) ? 'xlwcty_2_colRight' : 'xlwcty_2_colLeft';
+					$extra_class = ( true === $billing_add_status ) ? 'xlwcty_2_colRight' : 'xlwcty_2_colLeft';
 					?>
                     <div class="<?php echo esc_attr( $extra_class ); ?>">
                         <p class="xlwcty_BSpace"><strong><?php echo esc_html( __( 'Shipping address', 'woocommerce' ) ); ?></strong></p>

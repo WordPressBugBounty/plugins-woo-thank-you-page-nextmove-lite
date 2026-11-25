@@ -2,7 +2,7 @@
 defined( 'ABSPATH' ) || exit;
 
 $source_left     = ! empty( $this->data->img_l_source ) ? $this->data->img_l_source : '';
-$left_image_link = ! empty( $this->data->img_l_link ) ? $this->data->img_l_link : 'javascript:void(0)';
+$left_image_link = ! empty( $this->data->img_l_link ) ? $this->data->img_l_link : '';
 $content         = $this->data->editor;
 $ratio           = $this->data->img_cont_ratio;
 
@@ -40,7 +40,11 @@ XLWCTY_Core()->public->add_header_logs( sprintf( '%s - %s', $this->get_component
         <div class="xlwcty_content xlwcty_center <?php echo esc_attr( $left_class ); ?>" data-style="left">
 			<?php
 			$left_img_link_parsed = XLWCTY_Common::maype_parse_merge_tags( $left_image_link );
-			printf( "<p><a href='%s' class='xlwcty_content_block_image_link'><img src='%s' class='xlwcty_content_block_image'/></a></p>", esc_url( $left_img_link_parsed ), esc_url( $source_left ) );
+			if ( ! empty( $left_img_link_parsed ) ) {
+				printf( "<p><a href='%s' class='xlwcty_content_block_image_link'><img src='%s' class='xlwcty_content_block_image' alt=''/></a></p>", esc_url( $left_img_link_parsed ), esc_url( $source_left ) );
+			} else {
+				printf( "<p><img src='%s' class='xlwcty_content_block_image' alt=''/></p>", esc_url( $source_left ) );
+			}
 			?>
         </div>
         <div class="xlwcty_content <?php echo esc_attr( $right_class ); ?>" data-style="right">
@@ -52,13 +56,13 @@ XLWCTY_Core()->public->add_header_logs( sprintf( '%s - %s', $this->get_component
     </div>
 	<?php
 	if ( $this->data->show_btn == 'yes' && $this->data->btn_text != '' ) {
-		$btn_link        = ! empty( $this->data->btn_link ) != '' ? $this->data->btn_link : 'javascript:void(0)';
+		$btn_link        = ! empty( $this->data->btn_link ) ? $this->data->btn_link : '';
 		$btn_link_parsed = XLWCTY_Common::maype_parse_merge_tags( $btn_link );
 		$btn_text_parsed = XLWCTY_Common::maype_parse_merge_tags( $this->data->btn_text );
 		?>
         <div class="xlwcty_clear_20"></div>
         <div class="xlwcty_clearfix xlwcty_center">
-            <a href="<?php echo esc_url( $btn_link_parsed ); ?>" class="xlwcty_btn">
+            <a<?php echo $btn_link_parsed ? ' href="' . esc_url( $btn_link_parsed ) . '"' : ''; ?> class="xlwcty_btn">
 				<?php echo wp_kses_post( $btn_text_parsed ); ?>
             </a>
         </div>

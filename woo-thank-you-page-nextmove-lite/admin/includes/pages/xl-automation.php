@@ -23,8 +23,8 @@ if ( ! class_exists( 'XL_Addon_Install_Automation' ) ) {
 			$desc    = __( 'The All-In-One Email Marketing Platform For WordPress to Create Email Broadcasts and Automated Campaigns', 'woo-thank-you-page-nextmove-lite' );
 			?>
 			<section class="xl-top">
-				<img class="img-top" src="<?php echo esc_url( $img ); ?>" alt="<?php esc_attr_e( $heading ); ?>"/>
-				<h1><?php esc_attr_e( $heading ); ?></h1>
+				<img class="img-top" src="<?php echo esc_url( $img ); ?>" alt="<?php echo esc_attr( $heading ); ?>"/>
+				<h1><?php echo esc_html( $heading ); ?></h1>
 				<p><?php echo wp_kses_post( $desc ); ?></p>
 			</section>
 			<?php
@@ -69,7 +69,10 @@ if ( ! class_exists( 'XL_Addon_Install_Automation' ) ) {
 					<h1><?php esc_html_e( 'Install and Activate FunnelKit Automations', 'woo-thank-you-page-nextmove-lite' ); ?></h1>
 					<p><?php esc_html_e( 'Click on the button below to install and activate the FunnelKit Automations.', 'woo-thank-you-page-nextmove-lite' ); ?></p>
 					<button id="xl_install_button" class="button button-primary" data-xl-slug="wp-marketing-automations" data-xl-file="/wp-marketing-automations.php">
-						<?php printf( __( 'Activate %s', 'woo-thank-you-page-nextmove-lite' ), 'FunnelKit Automations' ); ?>
+						<?php
+						/* translators: %s: plugin name */
+						printf( __( 'Activate %s', 'woo-thank-you-page-nextmove-lite' ), 'FunnelKit Automations' );
+						?>
 					</button>
 				</div>
 			</section>

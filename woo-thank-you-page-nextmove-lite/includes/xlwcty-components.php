@@ -55,7 +55,32 @@ class XLWCTY_Components {
 			return;
 		}
 
+		/** When only $_POST['action'] matched on admin-ajax or a front-end POST, load for this plugin's own actions only (not heartbeat, other plugins' calls or arbitrary form posts) */
+		$matched_by_get = ( isset( $_GET['page'] ) && 'xlwcty_builder' === $_GET['page'] ) || isset( $_GET['key'] ) || isset( $_GET['order_id'] );
+		if ( ! $matched_by_get && ( wp_doing_ajax() || ! is_admin() ) && ! $this->is_plugin_ajax_action() ) {
+			return;
+		}
+
 		$this->load_all_components();
+	}
+
+	/**
+	 * Whether the current admin-ajax request is one of NextMove's actions.
+	 *
+	 * @return bool
+	 */
+	protected function is_plugin_ajax_action() {
+		$action = isset( $_REQUEST['action'] ) ? sanitize_key( wp_unslash( $_REQUEST['action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( '' === $action ) {
+			return false;
+		}
+		if ( 0 === strpos( $action, 'xlwcty' ) ) {
+			return true;
+		}
+
+		$actions = apply_filters( 'xlwcty_component_ajax_actions', array( 'get_coupons_cmb2', 'get_product_cmb2' ) );
+
+		return in_array( $action, (array) $actions, true );
 	}
 
 	public function load_all_components() {

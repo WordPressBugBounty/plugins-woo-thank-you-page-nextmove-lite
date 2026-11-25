@@ -17,91 +17,36 @@ do_action( "woocommerce_thankyou_{$payment_method}", XLWCTY_Compatibility::get_o
 $get_content = ob_get_clean();
 
 /**
- * SECURITY: Extract and validate scripts before escaping HTML content
- * This prevents XSS while allowing legitimate tracking scripts to execute
+ * Output the woocommerce_thankyou / woocommerce_thankyou_{gateway} markup exactly as WooCommerce core does
+ * (woocommerce/templates/checkout/thankyou.php fires the same actions and prints their output unfiltered).
+ *
+ * This markup is generated server-side by installed plugins (payment gateways, tracking/GTM, affiliate
+ * integrations), not by request input, so it is trusted the same way WooCommerce trusts it. Running it through
+ * wp_kses_post() or a script keyword allow-list removed gateway forms, iframes, <noscript> pixels and most
+ * tracking scripts without adding a security boundary: each callback is responsible for escaping the data it prints.
+ * NextMove's own fallback (XLWCTY_Public::execute_wc_thankyou_hooks()) already prints this output unfiltered.
+ *
+ * Sites that still want to post-process it can use this filter.
+ *
+ * @param string   $get_content Captured hook output.
+ * @param WC_Order $order_data  Current order.
  */
-$scripts        = array();
-$script_pattern = '/(<script\b[^>]*>.*?<\/script>)/is';
-
-if ( preg_match_all( $script_pattern, $get_content, $script_matches ) ) {
-	foreach ( $script_matches[0] as $script ) {
-		$safe_script_keywords = array(
-			'bwf_thankyou_ajax',
-			'xlwcty_fab_ecom',
-			'fbq(',
-			'gtag(',
-			'ga(',
-			'facebook_tracking_event',
-			'XMLHttpRequest',
-			'DOMContentLoaded',
-		);
-
-		$is_safe = false;
-		foreach ( $safe_script_keywords as $keyword ) {
-			if ( strpos( $script, $keyword ) !== false ) {
-				$is_safe = true;
-				break;
-			}
-		}
-		$dangerous_patterns = array(
-			'eval(',
-			'Function(',
-			'setTimeout(',
-			'setInterval(',
-			'document.write',
-			'document.cookie',
-			'innerHTML',
-			'outerHTML',
-		);
-
-		$is_dangerous = false;
-		foreach ( $dangerous_patterns as $pattern ) {
-			if ( strpos( $script, $pattern ) !== false ) {
-				$is_dangerous = true;
-				break;
-			}
-		}
-
-		// Only allow safe scripts without dangerous patterns
-		if ( $is_safe && ! $is_dangerous ) {
-			$scripts[] = $script;
-		}
-	}
-
-	// Remove scripts from content before escaping
-	$get_content = preg_replace( $script_pattern, '', $get_content );
-}
-
-// Escape HTML content (scripts already removed)
-$filtered_content = wp_kses_post( $get_content );
+$get_content = (string) apply_filters( 'xlwcty_additional_information_content', $get_content, $order_data );
 
 /**
- * Checking for the content
+ * Checking for visible content (ignore script/style bodies so tracking-only output stays hidden)
  */
-$parsed_content = strip_tags( $filtered_content );
-$parsed_content = trim( $parsed_content );
+$parsed_content = preg_replace( '/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', '', $get_content );
+$parsed_content = trim( wp_strip_all_tags( (string) $parsed_content ) );
 
 if ( '' !== $parsed_content ) {
 	?>
-    <div class="xlwcty_Box xlwcty_textBox xlwcty-wc-thankyou"><?php echo $filtered_content; ?>
+    <div class="xlwcty_Box xlwcty_textBox xlwcty-wc-thankyou"><?php echo $get_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted plugin hook output, printed as WooCommerce core does. ?>
     </div>
 	<?php
 } else {
 	?>
-    <div style="display: none;"><?php echo $filtered_content; ?>
+    <div style="display: none;"><?php echo $get_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted plugin hook output, printed as WooCommerce core does. ?>
     </div>
 	<?php
-}
-
-/**
- * Output validated scripts in wp_footer where they can execute properly
- * This maintains security while allowing legitimate tracking scripts
- */
-if ( ! empty( $scripts ) ) {
-	add_action( 'wp_footer', function () use ( $scripts ) {
-		foreach ( $scripts as $script ) {
-			// Scripts have been validated - output directly
-			echo $script; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		}
-	}, 6 );
 }

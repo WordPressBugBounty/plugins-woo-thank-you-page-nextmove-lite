@@ -45,7 +45,7 @@ if ( '' !== $this->data->url || '' !== $this->data->embed ) {
 										'controls' => '0',
 									), $youtube_url );
 							}
-							printf( '<iframe src="%s" width="1020" height="574" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen %s></iframe>', $youtube_url, $autoplay_attr );
+							printf( '<iframe src="%s" width="1020" height="574" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen %s></iframe>', esc_url( $youtube_url ), $autoplay_attr );
 						}
 					} elseif ( strpos( $this->data->url, 'vimeo' ) !== false ) {
 						$vimeo_id = XLWCTY_Common::get_video_id( $this->data->url, 'vimeo' );
@@ -61,7 +61,7 @@ if ( '' !== $this->data->url || '' !== $this->data->embed ) {
 										'loop' => '1',
 									), $vimeo_url );
 							}
-							printf( '<iframe src="%s" width="1020" height="574" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>', $vimeo_url );
+							printf( '<iframe src="%s" width="1020" height="574" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>', esc_url( $vimeo_url ) );
 						}
 					} else {
 						echo apply_filters( 'the_content', sprintf( '[embed]%s[/embed]', $this->data->url ) );
@@ -69,24 +69,13 @@ if ( '' !== $this->data->url || '' !== $this->data->embed ) {
 				}
 				if ( 'embed' === $this->data->source ) {
 					// SECURITY FIX: Sanitize embed code to prevent XSS while allowing iframes
-					echo wp_kses( $this->data->embed, array(
-							'iframe' => array(
-								'src'                   => array(),
-								'width'                 => array(),
-								'height'                => array(),
-								'frameborder'           => array(),
-								'allowfullscreen'       => array(),
-								'webkitallowfullscreen' => array(),
-								'mozallowfullscreen'    => array(),
-								'allow'                 => array(),
-							),
-						) );
+					echo wp_kses( $this->data->embed, XLWCTY_Video::get_embed_allowed_html() );
 				}
 				?>
             </div>
 			<?php
 			if ( 'yes' === $this->data->show_btn && '' !== $this->data->btn_text ) {
-				$btn_link = ! empty( $this->data->btn_link ) !== '' ? $this->data->btn_link : 'javascript:void(0)';
+				$btn_link = ! empty( $this->data->btn_link ) ? $this->data->btn_link : '';
 				?>
                 <div class="xlwcty_clear_20"></div>
                 <div class="xlwcty_clearfix xlwcty_center">
@@ -94,7 +83,7 @@ if ( '' !== $this->data->url || '' !== $this->data->embed ) {
 					$btn_link_parsed = XLWCTY_Common::maype_parse_merge_tags( $btn_link );
 					$btn_text_parsed = XLWCTY_Common::maype_parse_merge_tags( $this->data->btn_text );
 					?>
-                    <a href="<?php echo esc_url( $btn_link_parsed ); ?>" class="xlwcty_btn">
+                    <a<?php echo $btn_link_parsed ? ' href="' . esc_url( $btn_link_parsed ) . '"' : ''; ?> class="xlwcty_btn">
 						<?php echo wp_kses_post( $btn_text_parsed ); ?>
                     </a>
                 </div>

@@ -3,7 +3,7 @@
  * Plugin Name: NextMove Lite - Thank You Page for WooCommerce
  * Plugin URI: https://xlplugins.com/woocommerce-thank-you-page-nextmove/
  * Description: The only plugin in WooCommerce that empowers you to build profit-pulling Thank You Pages with plug & play components. It's for store owners who want to get repeat orders on autopilot.
- * Version: 2.24.0
+ * Version: 2.25.0
  * Author: XLPlugins
  * Author URI: https://www.xlplugins.com
  * License: GPLv3 or later
@@ -13,10 +13,11 @@
  * XL: True
  * XLTOOLS: True
  * Requires at least: 5.0
- * Tested up to: 6.9.4
+ * Tested up to: 7.1.5
  * Requires PHP: 7.4
  * WC requires at least: 4.4
- * WC tested up to: 10.6.1
+ * WC tested up to: 11.3.1
+ * Requires Plugins: woocommerce
  *
  * NextMove Lite - Thank You Page for WooCommerce is free software.
  * You can redistribute it and/or modify it under the terms of the GNU General Public License as published by
@@ -65,9 +66,11 @@ add_action( 'before_woocommerce_init', 'xlwcty_hpos_compatibility_declaration' )
  *
  * @return void
  */
-function xlwcty_hpos_compatibility_declaration() {
-	if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
-		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+if ( ! function_exists( 'xlwcty_hpos_compatibility_declaration' ) ) {
+	function xlwcty_hpos_compatibility_declaration() {
+		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+		}
 	}
 }
 
@@ -155,12 +158,17 @@ if ( ! class_exists( 'XLWCTY_Core' ) ) :
 				 * Maybe load admin if admin screen
 				 */
 				$this->maybe_load_admin();
+			} else {
+				/**
+				 * Block activation when WooCommerce is not active (WP < 6.5 ignores the Requires Plugins header)
+				 */
+				register_activation_hook( __FILE__, array( $this, 'xlwcty_block_activation_without_wc' ) );
 			}
 		}
 
 		public function define_plugin_properties() {
 			/** Defining Constants */
-            define( 'XLWCTY_VERSION', '2.24.0' );
+            define( 'XLWCTY_VERSION', '2.25.0' );
 			define( 'XLWCTY_MIN_WC_VERSION', '4.4' );
 			define( 'XLWCTY_NAME', 'NextMove Lite' );
 			define( 'XLWCTY_FULL_NAME', 'NextMove Lite - Thank You Page for WooCommerce' );
@@ -184,6 +192,18 @@ if ( ! class_exists( 'XLWCTY_Core' ) ) :
 			}
 		}
 
+		/**
+		 * Stop plugin activation when WooCommerce is not active.
+		 * wp_die() runs before WordPress saves the plugin as active, so the plugin stays inactive.
+		 */
+		public function xlwcty_block_activation_without_wc() {
+			wp_die(
+				esc_html__( 'NextMove Lite requires WooCommerce. Please install and activate WooCommerce first, then activate NextMove Lite.', 'woo-thank-you-page-nextmove-lite' ),
+				esc_html__( 'Plugin activation error', 'woo-thank-you-page-nextmove-lite' ),
+				array( 'back_link' => true )
+			);
+		}
+
 		public function maybe_load_activation() {
 			/** Hooking action to the activation */
 			register_activation_hook( __FILE__, array( $this, 'xlwcty_activation' ) );
@@ -199,7 +219,8 @@ if ( ! class_exists( 'XLWCTY_Core' ) ) :
 			add_action( 'init', array( $this, 'xlwcty_init_localization' ) );
 
 			/** Redirecting Plugin to the settings page after activation */
-			add_action( 'activated_plugin', array( $this, 'xlwcty_settings_redirect' ) );
+			add_action( 'activated_plugin', array( $this, 'xlwcty_settings_redirect' ), 10, 2 );
+			add_action( 'admin_init', array( $this, 'xlwcty_maybe_redirect_after_activation' ) );
 
 			add_action( 'xl_loaded', array( $this, 'xlwcty_load_xl_core_require_files' ), 10, 1 );
 
@@ -322,21 +343,46 @@ if ( ! class_exists( 'XLWCTY_Core' ) ) :
 		}
 
 		/**
-		 * Added redirection on plugin activation
+		 * Flag a redirect to the settings page after a single, interactive activation of this plugin.
+		 * The redirect itself happens on the next admin_init, so activated_plugin is never interrupted
+		 * (bulk activation, REST and programmatic activate_plugin() calls keep working).
 		 *
-		 * @param $plugin
+		 * @param string $plugin       Activated plugin basename.
+		 * @param bool   $network_wide Whether the plugin was network activated.
 		 */
-		public function xlwcty_settings_redirect( $plugin ) {
-			if ( ! defined( 'WP_CLI' ) && xlwcty_is_woocommerce_active() && class_exists( 'WooCommerce' ) ) {
-				if ( $plugin === plugin_basename( __FILE__ ) ) {
-					wp_safe_redirect( add_query_arg( array(
-						'page'      => 'wc-settings',
-						'tab'       => XLWCTY_Common::get_wc_settings_tab_slug(),
-						'activated' => 'yes',
-					), admin_url( 'admin.php' ) ) );
-					exit;
-				}
+		public function xlwcty_settings_redirect( $plugin, $network_wide = false ) {
+			if ( $plugin !== plugin_basename( __FILE__ ) || $network_wide || defined( 'WP_CLI' ) || wp_doing_ajax() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+				return;
 			}
+			// Only the single "Activate" link on plugins.php; bulk activation uses action=activate-selected.
+			if ( ! isset( $_GET['action'] ) || 'activate' !== sanitize_key( wp_unslash( $_GET['action'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- core verified the activation nonce.
+				return;
+			}
+			set_transient( 'xlwcty_activation_redirect', 1, 30 );
+		}
+
+		/**
+		 * Redirect to the settings page once, after a single activation flagged by xlwcty_settings_redirect().
+		 */
+		public function xlwcty_maybe_redirect_after_activation() {
+			if ( ! get_transient( 'xlwcty_activation_redirect' ) ) {
+				return;
+			}
+			delete_transient( 'xlwcty_activation_redirect' );
+
+			if ( wp_doing_ajax() || is_network_admin() || isset( $_GET['activate-multi'] ) || ! current_user_can( 'manage_woocommerce' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only check.
+				return;
+			}
+			if ( ! xlwcty_is_woocommerce_active() || ! class_exists( 'WooCommerce' ) || ! class_exists( 'XLWCTY_Common' ) ) {
+				return;
+			}
+
+			wp_safe_redirect( add_query_arg( array(
+				'page'      => 'wc-settings',
+				'tab'       => XLWCTY_Common::get_wc_settings_tab_slug(),
+				'activated' => 'yes',
+			), admin_url( 'admin.php' ) ) );
+			exit;
 		}
 
 		/**
@@ -352,7 +398,7 @@ if ( ! class_exists( 'XLWCTY_Core' ) ) :
 					return false;
 				}
 
-				if ( isset( $_GET['xlwcty_disable'] ) && sanitize_text_field( wp_unslash( $_GET['xlwcty_disable'] ) ) === 'yes' && is_user_logged_in() && current_user_can( 'administrator' ) ) {
+				if ( isset( $_GET['xlwcty_disable'] ) && sanitize_text_field( wp_unslash( $_GET['xlwcty_disable'] ) ) === 'yes' && is_user_logged_in() && current_user_can( 'manage_woocommerce' ) ) {
 					return false;
 				}
 				require plugin_dir_path( XLWCTY_PLUGIN_FILE ) . 'includes/xlwcty-data.php';
@@ -371,7 +417,7 @@ if ( ! class_exists( 'XLWCTY_Core' ) ) :
                 <p>
 					<?php
 					/* translators: %1$s: Min required woocommerce version */
-					printf( esc_html( 'NextMove requires WooCommerce version %1$s or greater. Kindly update the WooCommerce plugin.', 'woo-thank-you-page-nextmove-lite' ) );
+					printf( esc_html__( 'NextMove requires WooCommerce version %1$s or greater. Kindly update the WooCommerce plugin.', 'woo-thank-you-page-nextmove-lite' ), esc_html( XLWCTY_MIN_WC_VERSION ) );
 					?>
                 </p>
             </div>
@@ -383,7 +429,7 @@ if ( ! class_exists( 'XLWCTY_Core' ) ) :
             <div class="error">
                 <p>
 					<?php
-					echo esc_html( 'WooCommerce is not installed or activated. NextMove is a WooCommerce Extension and would only work if WooCommerce is activated. Please install the WooCommerce Plugin first.', 'woo-thank-you-page-nextmove-lite' );
+					esc_html_e( 'WooCommerce is not installed or activated. NextMove is a WooCommerce Extension and would only work if WooCommerce is activated. Please install the WooCommerce Plugin first.', 'woo-thank-you-page-nextmove-lite' );
 					?>
                 </p>
             </div>
@@ -423,22 +469,9 @@ if ( ! function_exists( 'XLWCTY_Core' ) ) {
 require plugin_dir_path( __FILE__ ) . 'includes/xlwcty-logging.php';
 
 /**
- * Collect PHP fatal errors and save it in the log file so that it can be later viewed
- * @see register_shutdown_function
+ * The former site-wide fatal error collector (xlplugins_collect_errors) was removed: it wrote every PHP fatal of the
+ * site to a publicly reachable file in uploads. Fatal errors are already logged by WooCommerce (WC > Status > Logs,
+ * source "fatal-errors") and handled by WordPress' fatal error handler.
  */
-if ( ! function_exists( 'xlplugins_collect_errors' ) ) {
-	function xlplugins_collect_errors() {
-		$error = error_get_last();
-
-		if ( ! isset( $error['type'] ) || empty( $error['type'] ) ) {
-			return;
-		}
-		if ( E_ERROR === $error['type'] ) {
-			xlplugins_force_log( $error['message'] . PHP_EOL, 'fatal-errors.txt' );
-		}
-	}
-
-	register_shutdown_function( 'xlplugins_collect_errors' );
-}
 
 $GLOBALS['XLWCTY_Core'] = XLWCTY_Core();

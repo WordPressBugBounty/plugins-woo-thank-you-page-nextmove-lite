@@ -20,16 +20,6 @@ class XLWCTY_remove_builder {
 		return self::$ins;
 	}
 
-	public function fl_builder_post_types( $post_types ) {
-		$index = array_search( $this->post_type, $post_types );
-		if ( $index ) {
-			unset( $post_types[ $index ] );
-		}
-
-		return $post_types;
-	}
-
-
 	public function vc_check_post_type_validation( $roles, $type ) {
 		if ( $this->post_type === $type ) {
 			return false;
@@ -47,8 +37,8 @@ class XLWCTY_remove_builder {
 	}
 
 	public function divi_builder_post_types( $post_types ) {
-		$index = array_search( $this->post_type, $post_types );
-		if ( $index ) {
+		$index = array_search( $this->post_type, (array) $post_types, true );
+		if ( false !== $index ) {
 			unset( $post_types[ $index ] );
 		}
 

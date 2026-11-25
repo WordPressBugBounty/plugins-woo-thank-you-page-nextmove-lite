@@ -27,7 +27,7 @@ class xlwcty_Input_Term_Select extends xlwcty_Input_Text {
 		$args = array(
 			'name'             => $field['name'],
 			'id'               => $field['id'],
-			'show_option_none' => __( 'Select category' ),
+			'show_option_none' => __( 'Select category', 'woo-thank-you-page-nextmove-lite' ),
 			'show_count'       => 0,
 			'orderby'          => 'name',
 			'echo'             => 0,

@@ -20,6 +20,13 @@ class XLWCTY_WPML {
 	 */
 	private static $translation_cache = array();
 
+	/**
+	 * Language that was active before setup_thankyou_post() switched it (null when nothing was switched).
+	 *
+	 * @var string|null
+	 */
+	private $language_before_switch = null;
+
 	public function __construct() {
 		if ( ! $this->is_wpml_active() ) {
 			return;
@@ -52,6 +59,7 @@ class XLWCTY_WPML {
 		add_filter( 'xlwcty_permalink_reset_note', array( $this, 'add_permalink_reset_note' ), 10, 1 );
 		add_filter( 'post_link', array( $this, 'fix_post_permalink' ), 10, 3 );
 		add_action( 'xlwcty_before_setup_thankyou_post', array( $this, 'maybe_switch_language_from_order' ), 10, 1 );
+		add_action( 'xlwcty_after_query', array( $this, 'restore_language_after_query' ), 10, 0 );
 		add_action( 'wpml_loaded', array( $this, 'register_post_type_with_wpml' ) );
 	}
 
@@ -188,7 +196,7 @@ class XLWCTY_WPML {
 			if ( $url_lang ) {
 				$sitepress = $this->get_sitepress();
 				if ( $sitepress ) {
-					$sitepress->switch_lang( $url_lang, true );
+					$this->switch_language_for_query( $url_lang );
 				}
 			}
 
@@ -202,7 +210,7 @@ class XLWCTY_WPML {
 			if ( $url_lang ) {
 				$sitepress = $this->get_sitepress();
 				if ( $sitepress ) {
-					$sitepress->switch_lang( $url_lang, true );
+					$this->switch_language_for_query( $url_lang );
 				}
 			}
 
@@ -214,12 +222,12 @@ class XLWCTY_WPML {
 		$current_lang   = $this->get_current_language();
 
 		if ( $sitepress && $order_language && $order_language !== $current_lang ) {
-			$sitepress->switch_lang( $order_language, true );
+			$this->switch_language_for_query( $order_language );
 		} elseif ( $sitepress && ! $order_language ) {
 			// Fallback to URL detection
 			$url_lang = $this->detect_language_from_url();
 			if ( $url_lang && $url_lang !== $current_lang ) {
-				$sitepress->switch_lang( $url_lang, true );
+				$this->switch_language_for_query( $url_lang );
 			}
 		}
 	}
@@ -330,7 +338,7 @@ class XLWCTY_WPML {
 			if ( $url_lang ) {
 				$sitepress = $this->get_sitepress();
 				if ( $sitepress ) {
-					$sitepress->switch_lang( $url_lang, true );
+					$this->switch_language_for_query( $url_lang );
 				}
 			}
 
@@ -344,7 +352,7 @@ class XLWCTY_WPML {
 			if ( $url_lang ) {
 				$sitepress = $this->get_sitepress();
 				if ( $sitepress ) {
-					$sitepress->switch_lang( $url_lang, true );
+					$this->switch_language_for_query( $url_lang );
 				}
 			}
 
@@ -356,14 +364,71 @@ class XLWCTY_WPML {
 		$current_language = $this->get_current_language();
 
 		if ( $sitepress && $order_language && $order_language !== $current_language ) {
-			$sitepress->switch_lang( $order_language, true );
+			$this->switch_language_for_query( $order_language );
 		} elseif ( $sitepress && ! $order_language ) {
 			// Fallback to URL detection
 			$url_lang = $this->detect_language_from_url();
 			if ( $url_lang && $url_lang !== $current_language ) {
-				$sitepress->switch_lang( $url_lang, true );
+				$this->switch_language_for_query( $url_lang );
 			}
 		}
+	}
+
+	/**
+	 * Switch WPML to a language.
+	 *
+	 * @param string $lang Language code.
+	 *
+	 * @return string|null Language that was active before the switch, null if WPML is unavailable.
+	 */
+	public function switch_to_language( $lang ) {
+		$sitepress = $this->get_sitepress();
+		if ( ! $lang || ! $sitepress ) {
+			return null;
+		}
+
+		$previous = $this->get_current_language();
+		if ( $lang !== $previous ) {
+			$sitepress->switch_lang( $lang, true );
+		}
+
+		return $previous;
+	}
+
+	/**
+	 * Restore a language returned by switch_to_language().
+	 *
+	 * @param string|null $previous Language code.
+	 */
+	public function restore_language( $previous ) {
+		$sitepress = $this->get_sitepress();
+		if ( $sitepress && $previous && $previous !== $this->get_current_language() ) {
+			$sitepress->switch_lang( $previous, true );
+		}
+	}
+
+	/**
+	 * Switch language for the thank you page lookup and remember the language to restore afterwards.
+	 *
+	 * @param string $lang Language code.
+	 */
+	private function switch_language_for_query( $lang ) {
+		$previous = $this->switch_to_language( $lang );
+		if ( null === $this->language_before_switch && $previous && $previous !== $lang ) {
+			$this->language_before_switch = $previous;
+		}
+	}
+
+	/**
+	 * Restore the language that was active before setup_thankyou_post() switched it.
+	 */
+	public function restore_language_after_query() {
+		if ( null === $this->language_before_switch ) {
+			return;
+		}
+		$previous                     = $this->language_before_switch;
+		$this->language_before_switch = null;
+		$this->restore_language( $previous );
 	}
 
 	/**

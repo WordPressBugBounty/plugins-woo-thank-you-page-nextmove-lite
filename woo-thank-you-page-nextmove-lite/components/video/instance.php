@@ -28,6 +28,46 @@ class XLWCTY_Video extends XLWCTY_Component {
 		return self::$instance;
 	}
 
+	/**
+	 * Tags and attributes allowed in the video embed code (iframes only).
+	 *
+	 * @return array
+	 */
+	public static function get_embed_allowed_html() {
+		return array(
+			'iframe' => array(
+				'src'                   => array(),
+				'width'                 => array(),
+				'height'                => array(),
+				'frameborder'           => array(),
+				'allowfullscreen'       => array(),
+				'webkitallowfullscreen' => array(),
+				'mozallowfullscreen'    => array(),
+				'allow'                 => array(),
+			),
+		);
+	}
+
+	/**
+	 * CMB2 sanitization callback for the video embed code.
+	 *
+	 * Users with unfiltered_html keep the value as entered. Everyone else is limited to the iframe allow-list,
+	 * so no <script> or event handlers are stored. wp_kses() also drops javascript: and other disallowed URL schemes from src.
+	 *
+	 * @param mixed $value      Submitted value.
+	 * @param array $field_args Field arguments (unused).
+	 * @param mixed $field      CMB2_Field instance (unused).
+	 *
+	 * @return mixed
+	 */
+	public static function sanitize_embed_code( $value, $field_args = array(), $field = null ) {
+		if ( current_user_can( 'unfiltered_html' ) ) {
+			return $value;
+		}
+
+		return wp_kses( (string) $value, self::get_embed_allowed_html() );
+	}
+
 	public function prepare_out_put_data() {
 		parent::prepare_out_put_data();
 	}

@@ -73,7 +73,7 @@ return array(
 		'id'          => 'ga_fb_pixel_id',
 		'desc'        => __( 'Log into your facebook ads account to find your Pixel ID. <a href="https://www.facebook.com/ads/manager/pixel/facebook_pixel" target="_blank">Click here for more info</a>.', 'woo-thank-you-page-nextmove-lite' ),
 		'row_classes' => array( 'xlwcty_no_border', 'xlwcty_hide_label', 'xlwcty_pt0' ),
-		'before'      => '<p>Facebook Pixel ID</p>',
+		'before'      => '<p>' . esc_html__( 'Facebook Pixel ID', 'woo-thank-you-page-nextmove-lite' ) . '</p>',
 		'type'        => 'text',
 		'attributes'  => array(
 			'data-conditional-id'    => 'enable_fb_ecom_tracking',
@@ -144,7 +144,7 @@ return array(
 		'id'          => 'ga_analytics_id',
 		'desc'        => __( 'Log into your google analytics account to <a href="https://support.google.com/analytics/answer/1008080?hl=en#trackingID" target="_blank">find your ID</a>. eg: G-XXXXXXXX.', 'woo-thank-you-page-nextmove-lite' ),
 		'row_classes' => array( 'xlwcty_no_border', 'xlwcty_hide_label', 'xlwcty_pt0' ),
-		'before'      => '<p>Note: GA4 must be activated in your Google Analytics account. To enable GA4 <a href="https://support.google.com/analytics/answer/9304153?hl=en&ref_topic=9303319" target="_blank">click here for more information.</a></p><p>Google Analytics ID</p>',
+		'before'      => '<p>' . __( 'Note: GA4 must be activated in your Google Analytics account. To enable GA4 <a href="https://support.google.com/analytics/answer/9304153?hl=en&ref_topic=9303319" target="_blank">click here for more information.</a>', 'woo-thank-you-page-nextmove-lite' ) . '</p><p>' . esc_html__( 'Google Analytics ID', 'woo-thank-you-page-nextmove-lite' ) . '</p>',
 		'after_row'   => $ga_after_row_text,
 		'type'        => 'text',
 		'attributes'  => array(

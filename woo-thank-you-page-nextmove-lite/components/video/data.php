@@ -3,7 +3,7 @@ defined( 'ABSPATH' ) || exit;
 
 $config             = array();
 $config['slug']     = '_xlwcty_video';
-$config['title']    = 'Video';
+$config['title']    = __( 'Video', 'woo-thank-you-page-nextmove-lite' );
 $config['instance'] = require __DIR__ . '/instance.php';
 $config['fields']   = array(
 	'id'                        => $config['slug'] . '_1',
@@ -34,7 +34,7 @@ $config['fields']   = array(
 				'id'          => $config['slug'] . '_heading_1',
 				'type'        => 'text',
 				'row_classes' => array( 'xlwcty_no_border' ),
-				'desc'        => '<a href="javascript:void(0);" onclick="xlwcty_show_tb(\'Merge Tags\',\'xlwcty_merge_tags_invenotry_bar_help\');">Dynamic merge tags list</a>',
+				'desc'        => '<a href="javascript:void(0);" onclick="xlwcty_show_tb(\'Merge Tags\',\'xlwcty_merge_tags_invenotry_bar_help\');">' . esc_html__( 'Dynamic merge tags list', 'woo-thank-you-page-nextmove-lite' ) . '</a>',
 				'attributes'  => array(
 					'data-conditional-id'    => $config['slug'] . '_enable_1',
 					'data-conditional-value' => '1',
@@ -45,7 +45,7 @@ $config['fields']   = array(
 				'id'          => $config['slug'] . '_heading_font_size_1',
 				'type'        => 'text_small',
 				'row_classes' => array( 'xlwcty_hide_label', 'xlwcty_pt0', 'xlwcty_combine_2_field_start' ),
-				'before'      => '<p>Font Size (px)</p>',
+				'before'      => '<p>' . esc_html__( 'Font Size (px)', 'woo-thank-you-page-nextmove-lite' ) . '</p>',
 				'attributes'  => array(
 					'type'                   => 'number',
 					'min'                    => '0',
@@ -59,7 +59,7 @@ $config['fields']   = array(
 				'id'          => $config['slug'] . '_heading_alignment_1',
 				'type'        => 'select',
 				'row_classes' => array( 'xlwcty_hide_label', 'xlwcty_pt0', 'xlwcty_combine_2_field_end' ),
-				'before'      => '<p>Alignment</p>',
+				'before'      => '<p>' . esc_html__( 'Alignment', 'woo-thank-you-page-nextmove-lite' ) . '</p>',
 				'options'     => array(
 					'left'   => __( 'Left', 'woo-thank-you-page-nextmove-lite' ),
 					'center' => __( 'Center', 'woo-thank-you-page-nextmove-lite' ),
@@ -75,7 +75,7 @@ $config['fields']   = array(
 				'id'          => $config['slug'] . '_desc_1',
 				'type'        => 'textarea_small',
 				'row_classes' => array( 'xlwcty_no_border' ),
-				'desc'        => '<a href="javascript:void(0);" onclick="xlwcty_show_tb(\'Merge Tags\',\'xlwcty_merge_tags_invenotry_bar_help\');">Dynamic merge tags list</a>',
+				'desc'        => '<a href="javascript:void(0);" onclick="xlwcty_show_tb(\'Merge Tags\',\'xlwcty_merge_tags_invenotry_bar_help\');">' . esc_html__( 'Dynamic merge tags list', 'woo-thank-you-page-nextmove-lite' ) . '</a>',
 				'attributes'  => array(
 					'data-conditional-id'    => $config['slug'] . '_enable_1',
 					'data-conditional-value' => '1',
@@ -86,7 +86,7 @@ $config['fields']   = array(
 				'id'          => $config['slug'] . '_desc_alignment_1',
 				'type'        => 'select',
 				'row_classes' => array( 'xlwcty_hide_label', 'xlwcty_pt0', 'xlwcty_select_small' ),
-				'before'      => '<p>Alignment</p>',
+				'before'      => '<p>' . esc_html__( 'Alignment', 'woo-thank-you-page-nextmove-lite' ) . '</p>',
 				'options'     => array(
 					'left'   => __( 'Left', 'woo-thank-you-page-nextmove-lite' ),
 					'center' => __( 'Center', 'woo-thank-you-page-nextmove-lite' ),
@@ -130,7 +130,7 @@ $config['fields']   = array(
 				'type'            => 'textarea_small',
 				'desc'            => __( 'Embed source of video', 'woo-thank-you-page-nextmove-lite' ),
 				'row_classes'     => array( 'xlwcty_hide_label', 'xlwcty_pt0' ),
-				'sanitization_cb' => array( 'XLWCTY_Component', 'save_original_content' ),
+				'sanitization_cb' => array( 'XLWCTY_Video', 'sanitize_embed_code' ),
 				'attributes'      => array(
 					'data-conditional-id'           => $config['slug'] . '_enable_1',
 					'data-conditional-value'        => '1',
@@ -157,7 +157,7 @@ $config['fields']   = array(
 				'id'          => $config['slug'] . '_btn_text_1',
 				'type'        => 'text',
 				'row_classes' => array( 'xlwcty_hide_label', 'xlwcty_no_border', 'xlwcty_pt0' ),
-				'before'      => '<p>Text</p>',
+				'before'      => '<p>' . esc_html__( 'Text', 'woo-thank-you-page-nextmove-lite' ) . '</p>',
 				'attributes'  => array(
 					'data-conditional-id'           => $config['slug'] . '_enable_1',
 					'data-conditional-value'        => '1',
@@ -169,10 +169,10 @@ $config['fields']   = array(
 				'name'        => __( 'Button Link', 'woo-thank-you-page-nextmove-lite' ),
 				'desc'        => __( 'Use ', 'woo-thank-you-page-nextmove-lite' ) . ' {{home_url}}, {{shop_url}} ' . __( 'for dynamic links.', 'woo-thank-you-page-nextmove-lite' ),
 				'id'          => $config['slug'] . '_btn_link_1',
-				'desc'        => '<a href="javascript:void(0);" onclick="xlwcty_show_tb(\'Merge Tags\',\'xlwcty_merge_tags_invenotry_bar_help\');">Dynamic merge tags list</a>',
+				'desc'        => '<a href="javascript:void(0);" onclick="xlwcty_show_tb(\'Merge Tags\',\'xlwcty_merge_tags_invenotry_bar_help\');">' . esc_html__( 'Dynamic merge tags list', 'woo-thank-you-page-nextmove-lite' ) . '</a>',
 				'type'        => 'text',
 				'row_classes' => array( 'xlwcty_no_border', 'xlwcty_hide_label', 'xlwcty_pt0' ),
-				'before'      => '<p>Link</p>',
+				'before'      => '<p>' . esc_html__( 'Link', 'woo-thank-you-page-nextmove-lite' ) . '</p>',
 				'attributes'  => array(
 					'data-conditional-id'           => $config['slug'] . '_enable_1',
 					'data-conditional-value'        => '1',
@@ -185,7 +185,7 @@ $config['fields']   = array(
 				'id'          => $config['slug'] . '_btn_font_size_1',
 				'type'        => 'text_small',
 				'row_classes' => array( 'xlwcty_no_border', 'xlwcty_hide_label', 'xlwcty_pt0', 'xlwcty_combine_3_field_start' ),
-				'before'      => '<p>Font Size (px)</p>',
+				'before'      => '<p>' . esc_html__( 'Font Size (px)', 'woo-thank-you-page-nextmove-lite' ) . '</p>',
 				'attributes'  => array(
 					'type'                          => 'number',
 					'min'                           => '1',
@@ -201,7 +201,7 @@ $config['fields']   = array(
 				'id'          => $config['slug'] . '_btn_color_1',
 				'type'        => 'colorpicker',
 				'row_classes' => array( 'xlwcty_no_border', 'xlwcty_hide_label', 'xlwcty_pt0', 'xlwcty_combine_3_field_middle' ),
-				'before'      => '<p>Text Color</p>',
+				'before'      => '<p>' . esc_html__( 'Text Color', 'woo-thank-you-page-nextmove-lite' ) . '</p>',
 				'attributes'  => array(
 					'data-conditional-id'           => $config['slug'] . '_enable_1',
 					'data-conditional-value'        => '1',
@@ -214,7 +214,7 @@ $config['fields']   = array(
 				'id'          => $config['slug'] . '_btn_bg_color_1',
 				'type'        => 'colorpicker',
 				'row_classes' => array( 'xlwcty_no_border', 'xlwcty_hide_label', 'xlwcty_pt0', 'xlwcty_combine_3_field_end' ),
-				'before'      => '<p>Background Color</p>',
+				'before'      => '<p>' . esc_html__( 'Background Color', 'woo-thank-you-page-nextmove-lite' ) . '</p>',
 				'attributes'  => array(
 					'data-conditional-id'           => $config['slug'] . '_enable_1',
 					'data-conditional-value'        => '1',
@@ -227,7 +227,7 @@ $config['fields']   = array(
 				'id'          => $config['slug'] . '_border_style_1',
 				'type'        => 'select',
 				'row_classes' => array( 'xlwcty_no_border', 'xlwcty_select_small', 'xlwcty_combine_3_field_start' ),
-				'before'      => '<p class="xlwcty_mt5 xlwcty_mb5">Style</p>',
+				'before'      => '<p class="xlwcty_mt5 xlwcty_mb5">' . esc_html__( 'Style', 'woo-thank-you-page-nextmove-lite' ) . '</p>',
 				'options'     => array(
 					'dotted' => __( 'Dotted', 'woo-thank-you-page-nextmove-lite' ),
 					'dashed' => __( 'Dashed', 'woo-thank-you-page-nextmove-lite' ),
@@ -245,7 +245,7 @@ $config['fields']   = array(
 				'id'          => $config['slug'] . '_border_width_1',
 				'type'        => 'text_small',
 				'row_classes' => array( 'xlwcty_no_border', 'xlwcty_hide_label', 'xlwcty_combine_3_field_middle' ),
-				'before'      => '<p class="xlwcty_mt5 xlwcty_mb5">Width (px)</p>',
+				'before'      => '<p class="xlwcty_mt5 xlwcty_mb5">' . esc_html__( 'Width (px)', 'woo-thank-you-page-nextmove-lite' ) . '</p>',
 				'attributes'  => array(
 					'type'                   => 'number',
 					'min'                    => '0',
@@ -259,7 +259,7 @@ $config['fields']   = array(
 				'id'          => $config['slug'] . '_border_color_1',
 				'type'        => 'colorpicker',
 				'row_classes' => array( 'xlwcty_border_top', 'xlwcty_hide_label', 'xlwcty_combine_3_field_end' ),
-				'before'      => '<p class="xlwcty_mt5 xlwcty_mb5">Color</p>',
+				'before'      => '<p class="xlwcty_mt5 xlwcty_mb5">' . esc_html__( 'Color', 'woo-thank-you-page-nextmove-lite' ) . '</p>',
 				'attributes'  => array(
 					'data-conditional-id'    => $config['slug'] . '_enable_1',
 					'data-conditional-value' => '1',

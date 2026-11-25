@@ -16,7 +16,7 @@ class xlwcty_Input_Date extends xlwcty_Input_Text {
 			$field['id'] = sanitize_title( $field['id'] );
 		}
 
-		echo '<input name="' . $field['name'] . '" type="text" id="' . esc_attr( $field['id'] ) . '" class="xlwcty-date-picker-field' . esc_attr( $field['class'] ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . $value . '" />';
+		echo '<input name="' . xlwcty_Input_Builder::esc_name( $field['name'] ) . '" type="text" id="' . esc_attr( $field['id'] ) . '" class="xlwcty-date-picker-field' . esc_attr( $field['class'] ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . esc_attr( $value ) . '" />';
 	}
 
 }

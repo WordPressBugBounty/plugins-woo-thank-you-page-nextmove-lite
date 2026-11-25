@@ -17,7 +17,9 @@ if ( ! class_exists( 'XL_API' ) ) :
 	class XL_API {
 
 		public static $xl_api_url = 'https://xlplugins.com/';
-		public static $is_ssl = false;
+		// Verify TLS certificates on all vendor API calls (prevents MITM of opt-in /
+		// system-info / licensing traffic). Overridable via the xl_api_sslverify filter.
+		public static $is_ssl = true;
 
 		/**
 		 * Get all the plugins that can be pushed from the API

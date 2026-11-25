@@ -21,14 +21,15 @@ class XLWCTY_JILT {
 	public function xlwcty_jilt_post_registration() {
 		$order = XLWCTY_Core()->data->get_order();
 		if ( ! $order instanceof WC_Order ) {
-			echo __( 'WooCommerce order not found', 'thank-you-page-for-woocommerce-nextmove' );
+			return esc_html__( 'WooCommerce order not found', 'woo-thank-you-page-nextmove-lite' );
 		}
 		if ( ! class_exists( 'WC_Jilt_Frontend' ) ) {
-			echo __( 'Jilt Frontend class doesn\'t exist.', 'thank-you-page-for-woocommerce-nextmove' );
+			return esc_html__( 'Jilt Frontend class doesn\'t exist.', 'woo-thank-you-page-nextmove-lite' );
 		}
 
 		$jilt_frontend_object = new WC_Jilt_Frontend();
-		echo $jilt_registration_message = $jilt_frontend_object->maybe_render_account_prompt( '', $order );
+
+		return (string) $jilt_frontend_object->maybe_render_account_prompt( '', $order );
 
 	}
 

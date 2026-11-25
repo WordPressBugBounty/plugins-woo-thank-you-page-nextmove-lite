@@ -46,10 +46,10 @@ class xlwcty_Input_Geo_Postal_Code_Entry {
             </tr>
             <tr>
                 <td style="width:162px; vertical-align:top;">
-                    <input type="text" id="<?php echo $field['id']; ?>_qty" name="<?php echo $field['name']; ?>[qty]" value="<?php echo isset( $value['qty'] ) ? $value['qty'] : 1; ?>"/>
+                    <input type="text" id="<?php echo esc_attr( $field['id'] ); ?>_qty" name="<?php echo xlwcty_Input_Builder::esc_name( $field['name'] ); ?>[qty]" value="<?php echo esc_attr( isset( $value['qty'] ) ? $value['qty'] : 1 ); ?>"/>
                 </td>
                 <td>
-					<?php echo '<textarea style="width:100%" rows="20" name="' . $field['name'] . '[codes]" type="text" id="' . esc_attr( $field['id'] ) . '" class="' . esc_attr( $field['class'] ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '">' . esc_textarea( $value['codes'] ) . '</textarea>'; ?>
+					<?php echo '<textarea style="width:100%" rows="20" name="' . xlwcty_Input_Builder::esc_name( $field['name'] ) . '[codes]" type="text" id="' . esc_attr( $field['id'] ) . '" class="' . esc_attr( $field['class'] ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '">' . esc_textarea( $value['codes'] ) . '</textarea>'; ?>
                 </td>
                 </td>
             </tr>

@@ -201,7 +201,7 @@ class XLWCTY_ShortCode_Merge_Tags {
 		}
 
 		// Escape output
-		return esc_html( date_i18n( $atts['format'], $date_obj->getTimestamp() ) );
+		return esc_html( date_i18n( $atts['format'], $date_obj->getTimestamp() + $date_obj->getOffset() ) );
 	}
 
 	protected static function is_not_excluded_date( $date, $exclusions ) {
@@ -323,7 +323,7 @@ class XLWCTY_ShortCode_Merge_Tags {
 		/**
 		 * iterating all over the recursive check for a valid date
 		 */
-		while ( $itr < self::$threshold_to_date && ( ( ( $atts['exclude_days'] !== '' ) && ( self::is_not_excluded_date( $date_obj, $atts['exclude_dates'] ) === false ) ) || ( ( $atts['exclude_days'] !== '' ) && ( self::is_not_excluded_day( $date_obj, $atts['exclude_days'] ) === false ) ) ) ) {
+		while ( $itr < self::$threshold_to_date && ( ( ( $atts['exclude_dates'] !== '' ) && ( self::is_not_excluded_date( $date_obj, $atts['exclude_dates'] ) === false ) ) || ( ( $atts['exclude_days'] !== '' ) && ( self::is_not_excluded_day( $date_obj, $atts['exclude_days'] ) === false ) ) ) ) {
 			$date_obj->modify( '+1 day' );
 			$itr ++;
 		}
@@ -339,13 +339,13 @@ class XLWCTY_ShortCode_Merge_Tags {
 		/**
 		 * iterating all over the recursive check for a valid date
 		 */
-		while ( $itr < self::$threshold_to_date && ( ( ( $atts['exclude_days'] !== '' ) && ( self::is_not_excluded_date( $date_obj, $atts['exclude_dates'] ) === false ) ) || ( ( $atts['exclude_days'] !== '' ) && ( self::is_not_excluded_day( $date_obj, $atts['exclude_days'] ) === false ) ) ) ) {
+		while ( $itr < self::$threshold_to_date && ( ( ( $atts['exclude_dates'] !== '' ) && ( self::is_not_excluded_date( $date_obj, $atts['exclude_dates'] ) === false ) ) || ( ( $atts['exclude_days'] !== '' ) && ( self::is_not_excluded_day( $date_obj, $atts['exclude_days'] ) === false ) ) ) ) {
 			$date_obj->modify( '+1 day' );
 			$itr ++;
 		}
 
 		// Escape output
-		return esc_html( date_i18n( 'l', $date_obj->getTimestamp() ) );
+		return esc_html( date_i18n( 'l', $date_obj->getTimestamp() + $date_obj->getOffset() ) );
 	}
 
 	public static function process_today( $shortcode_attrs ) {
@@ -423,14 +423,14 @@ class XLWCTY_ShortCode_Merge_Tags {
 			 * iterating all over the recursive check for a valid date
 			 */
 			$itr = 0;
-			while ( $itr < self::$threshold_to_date && ( ( ( $atts['exclude_days'] !== '' ) && ( self::is_not_excluded_date( $date_obj, $atts['exclude_dates'] ) === false ) ) || ( ( $atts['exclude_days'] !== '' ) && ( self::is_not_excluded_day( $date_obj, $atts['exclude_days'] ) === false ) ) ) ) {
+			while ( $itr < self::$threshold_to_date && ( ( ( $atts['exclude_dates'] !== '' ) && ( self::is_not_excluded_date( $date_obj, $atts['exclude_dates'] ) === false ) ) || ( ( $atts['exclude_days'] !== '' ) && ( self::is_not_excluded_day( $date_obj, $atts['exclude_days'] ) === false ) ) ) ) {
 				$date_obj->modify( '+1 day' );
 				$itr ++;
 				$is_excluded = true;
 			}
 
 			if ( $is_excluded ) {
-				return esc_html( date_i18n( 'l', $date_obj->getTimestamp() ) );
+				return esc_html( date_i18n( 'l', $date_obj->getTimestamp() + $date_obj->getOffset() ) );
 			} else {
 				return esc_html( __( 'tomorrow', 'woo-thank-you-page-nextmove-lite' ) );
 			}
@@ -440,13 +440,13 @@ class XLWCTY_ShortCode_Merge_Tags {
 			 * iterating all over the recursive check for a valid date
 			 */
 			$itr = 0;
-			while ( $itr < self::$threshold_to_date && ( ( ( $atts['exclude_days'] !== '' ) && ( self::is_not_excluded_date( $date_obj, $atts['exclude_dates'] ) === false ) ) || ( ( $atts['exclude_days'] !== '' ) && ( self::is_not_excluded_day( $date_obj, $atts['exclude_days'] ) === false ) ) ) ) {
+			while ( $itr < self::$threshold_to_date && ( ( ( $atts['exclude_dates'] !== '' ) && ( self::is_not_excluded_date( $date_obj, $atts['exclude_dates'] ) === false ) ) || ( ( $atts['exclude_days'] !== '' ) && ( self::is_not_excluded_day( $date_obj, $atts['exclude_days'] ) === false ) ) ) ) {
 				$date_obj->modify( '+1 day' );
 				$is_excluded = true;
 				$itr ++;
 			}
 			if ( $is_excluded ) {
-				return esc_html( date_i18n( 'l', $date_obj->getTimestamp() ) );
+				return esc_html( date_i18n( 'l', $date_obj->getTimestamp() + $date_obj->getOffset() ) );
 			} else {
 				return esc_html( __( 'today', 'woo-thank-you-page-nextmove-lite' ) );
 			}
@@ -454,7 +454,8 @@ class XLWCTY_ShortCode_Merge_Tags {
 	}
 
 	public static function process_time( $shortcode_attrs ) {
-		$default_f = XLWCTY_Common::xlwcty_get_time_format();
+		$default_f = get_option( 'time_format' );
+		$default_f = $default_f ? $default_f : 'g:i a';
 		$atts      = shortcode_atts( array(
 			'format'     => $default_f, //has to be user friendly , user will not understand 12:45 PM (g:i A) (https://codex.wordpress.org/Formatting_Date_and_Time)
 			'adjustment' => '',
@@ -485,7 +486,7 @@ class XLWCTY_ShortCode_Merge_Tags {
 		}
 
 		// Escape output
-		return esc_html( date_i18n( $atts['format'], $date_obj->getTimestamp() ) );
+		return esc_html( date_i18n( $atts['format'], $date_obj->getTimestamp() + $date_obj->getOffset() ) );
 	}
 
 	public static function countdown_timer_admin( $shortcode_attrs ) {

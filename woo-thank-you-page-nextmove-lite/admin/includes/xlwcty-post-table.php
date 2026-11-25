@@ -18,17 +18,14 @@ class XLWCTY_Post_Table extends WP_List_Table {
 	 */
 	public function __construct( $args = array() ) {
 		global $status, $page;
-		parent::__construct( array(
+		parent::__construct( wp_parse_args( $args, array(
 			'singular' => 'Thank You Page', //singular name of the listed records
 			'plural'   => 'Thank You Pages', //plural name of the listed records
 			'ajax'     => false,        //does this table support ajax?
-		) );
+		) ) );
 		$status     = 'all';
 		$page       = $this->get_pagenum();
 		$this->data = array();
-		// Make sure this file is loaded, so we have access to plugins_api(), etc.
-		require_once( ABSPATH . '/wp-admin/includes/plugin-install.php' );
-		parent::__construct( $args );
 	}
 
 	/**
@@ -99,8 +96,6 @@ class XLWCTY_Post_Table extends WP_List_Table {
 		if ( isset( $data['menu_order'] ) ) {
 			return $data['menu_order'];
 		} else {
-			update_post_meta( (int) $item['id'], '_xlwcty_menu_order', 0 );
-
 			return 0;
 		}
 	}
@@ -123,8 +118,6 @@ class XLWCTY_Post_Table extends WP_List_Table {
 	public function column_template( $item ) {
 		$template = get_post_meta( (int) $item['id'], '_wp_page_template', true );
 		if ( empty( $template ) ) {
-			update_post_meta( (int) $item['id'], '_wp_page_template', 'default' );
-
 			return 'Default';
 		} elseif ( 'default' === $template ) {
 			return 'Default';
@@ -149,7 +142,7 @@ class XLWCTY_Post_Table extends WP_List_Table {
 								if ( in_array( $component['slug'], $premium_components, true ) ) {
 									continue;
 								}
-								echo '<p>' . $component['name'] . '</p>';
+								echo '<p>' . esc_html( $component['name'] ) . '</p>';
 							}
 						}
 					}

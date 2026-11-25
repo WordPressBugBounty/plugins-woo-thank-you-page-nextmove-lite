@@ -41,6 +41,9 @@ class XLWCTY_Static_Merge_Tags {
 						$single = str_replace( '{{', '', $old_match );
 						$single = str_replace( '}}', '', $single );
 
+						if ( ! method_exists( __CLASS__, $single ) ) {
+							continue;
+						}
 						$get_parsed_value = call_user_func( array( __CLASS__, $single ) );
 						$content          = str_replace( $old_match, $get_parsed_value, $content );
 					}

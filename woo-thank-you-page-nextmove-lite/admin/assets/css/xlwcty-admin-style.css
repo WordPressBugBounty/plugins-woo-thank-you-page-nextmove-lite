@@ -293,7 +293,7 @@ ul.icon_tick li:before{content:'\2713';color:#46b450;font-size:14px;position:abs
 .xlwcty-instance-table #appearance{width:22%}
 .xlwcty-instance-table #status{width:10%}
 .xlwcty-instance-table #priority{width:12%}
-.striped.woocommerce_page_wc-settings > tbody > :nth-child(odd){background-color:#f4f4f4}
+.striped.woocommerce_page_wc-settings > tbody > :nth-child(odd),.striped.thankyoupages > tbody > :nth-child(odd){background-color:#f4f4f4}
 .wrap.woocommerce ul.subsubsub.subsubsub_xlwcty li:after{content:"|";padding:0 3px}
 .wrap.woocommerce ul.subsubsub.subsubsub_xlwcty{position:relative;margin:0;top:36px}
 .wrap.woocommerce ul.subsubsub.subsubsub_xlwcty li:last-child:after{content:""}

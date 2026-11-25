@@ -247,26 +247,6 @@ abstract class XLWCTY_Component {
 		}
 	}
 
-	public function get_highest_order_product() {
-		$max_product = array();
-		$maxs        = array();
-		$product     = array();
-		$order_data  = $order = XLWCTY_Core()->data->get_order();
-		if ( $order instanceof WC_Order ) {
-			foreach ( $order_data->get_items() as $key => $val ) {
-				$pro                 = XLWCTY_Compatibility::get_product_from_item( $order_data, $val );
-				$pid                 = $pro->get_id();
-				$product[ $pid ]     = $pro;
-				$max_product[ $pid ] = XLWCTY_Compatibility::get_item_subtotal( $order_data, $val );
-			}
-			if ( is_array( $max_product ) && count( $max_product ) > 0 ) {
-				$maxs = array_keys( $max_product, max( $max_product ) );
-			}
-		}
-
-		return $maxs;
-	}
-
 	public function get_wp_date_format() {
 		return get_option( 'date_format', 'Y-m-d' );
 	}

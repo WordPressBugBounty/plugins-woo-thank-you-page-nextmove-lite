@@ -67,7 +67,7 @@ class xlwcty_Input_Select {
 			$field['name'] .= '[]';
 		}
 
-		echo '<select id="' . $field['id'] . '" class="' . $field['class'] . '" name="' . $field['name'] . '" ' . $multiple . ' >';
+		echo '<select id="' . esc_attr( $field['id'] ) . '" class="' . esc_attr( $field['class'] ) . '" name="' . xlwcty_Input_Builder::esc_name( $field['name'] ) . '" ' . $multiple . ' >';
 
 		// null
 		if ( $field['allow_null'] ) {
@@ -80,7 +80,7 @@ class xlwcty_Input_Select {
 				if ( $optgroup ) {
 					// this select is grouped with optgroup
 					if ( $key != '' ) {
-						echo '<optgroup label="' . $key . '">';
+						echo '<optgroup label="' . esc_attr( $key ) . '">';
 					}
 
 					if ( is_array( $value ) ) {
@@ -91,7 +91,7 @@ class xlwcty_Input_Select {
 							if ( $field['class'] == 'rule_type' && empty( $rule_object ) ) {
 								$disabled = 'disabled';
 							}
-							echo '<option value="' . $id . '" ' . $selected . ' ' . $disabled . '>' . $label . '</option>';
+							echo '<option value="' . esc_attr( $id ) . '" ' . $selected . ' ' . $disabled . '>' . esc_html( $label ) . '</option>';
 						}
 					}
 
@@ -100,7 +100,7 @@ class xlwcty_Input_Select {
 					}
 				} else {
 					$selected = in_array( $key, $field['value'] ) ? 'selected="selected"' : '';
-					echo '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
+					echo '<option value="' . esc_attr( $key ) . '" ' . $selected . '>' . esc_html( $value ) . '</option>';
 				}
 			}
 		}

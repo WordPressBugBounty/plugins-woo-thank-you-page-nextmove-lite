@@ -2,8 +2,8 @@
 Contributors: xlplugins, amans2k
 Tags: WooCommerce, WooCommerce Thank You, WooCommerce Thank You Page, Custom Thank You Page, Woo Thank You Page
 Requires at least: 5.0
-Tested up to: 6.9.4
-Stable tag: 2.24.0
+Tested up to: 7.1
+Stable tag: 2.25.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -228,6 +228,13 @@ Yes, you can easily create Thank You Pages in your language. We are also compati
 8. Help/Troubleshoot
 
 == Changelog ==
+
+= 2.25.0 (2026-11-25) =
+* Compatible upto WordPress 7.1.5
+* Compatible upto WooCommerce 11.3.1
+* Security: Enhanced security to prevent potential Cross-Site Scripting (XSS) attacks. (fix/188,fix/197)
+* compatibility: Added compatibility Polylang + Subscription. (fix/191)
+* compatibility: Added compatibility WP Consent plugins (fix/190)
 
 = 2.24.0 (2026-03-14) =
 * Compatible upto WordPress 6.9.4

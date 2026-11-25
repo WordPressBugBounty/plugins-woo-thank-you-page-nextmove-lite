@@ -46,7 +46,8 @@ jQuery(document).ready(function ($) {
                     xli_button.prop('disabled', false);
                     loader.css('opacity', '0');
                     var errorMessage = response && response.data ? response.data : 'Something went wrong. Please try again.';
-                    var notice = $('<div><div class="xl_installation_alert">' + errorMessage + '</div></div>');
+                    var notice = $('<div><div class="xl_installation_alert"></div></div>');
+                    notice.find('.xl_installation_alert').text(errorMessage);
                     $('#xl_installation_error').prepend(notice);
                 }
             },
@@ -55,7 +56,8 @@ jQuery(document).ready(function ($) {
                 loader.css('opacity', '0');
                 console.error(xhr.responseText);
                 // Show admin notice for error
-                var notice = $('<div class="notice notice-error is-dismissible"><p>Error: ' + xhr.responseText + '</p></div>');
+                var notice = $('<div class="notice notice-error is-dismissible"><p></p></div>');
+                notice.find('p').text('Error: ' + xhr.responseText);
                 $('#wpbody-content').prepend(notice);
             }
         });

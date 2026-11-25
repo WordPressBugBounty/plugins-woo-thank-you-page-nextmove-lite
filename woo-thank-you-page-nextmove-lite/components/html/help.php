@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 ob_start();
 ?>
     <div style="display:none;" class="xlwcty_tb_content" id="xlwcty_component_settings<?php echo $config['slug']; ?>_help">
-        <h3><?php echo $config['title'] . ' ' . __( 'Component Design & Settings', 'woo-thank-you-page-nextmove-lite' ); ?></h3>
+        <h3><?php echo esc_html( $config['title'] . ' ' . __( 'Component Design & Settings', 'woo-thank-you-page-nextmove-lite' ) ); ?></h3>
         <p class="xlwcty_center"><img src="<?php echo plugin_dir_url( XLWCTY_PLUGIN_FILE ) . 'components/html/help.jpg'; ?>"/></p>
         <table align="center" width="650" class="xlwcty_modal_table">
             <tr>
